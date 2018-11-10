@@ -1,0 +1,14 @@
+NonMedicalFlightCompany_service.wsdl	1.0
+ProvideMedicalFlightInformation_services.wsdl	0.995279848575592
+SelectFlight_service.wsdl	0.8609781861305237
+BookMedicalFlight_service.wsdl	0.7856274247169495
+BookNonMedicalFlight_service.wsdl	0.7856274247169495
+GetNonMedicalFlightAccount_service.wsdl	0.6824660301208496
+GetMedicalFlightAccount_service.wsdl	0.6680610179901123
+ProvideMedicalTransportInformation_service.wsdl	0.6391656398773193
+ProvideNonMedicalTransportInformation_service.wsdl	0.6297498345375061
+PatientTransport_service.wsdl	0.5177854299545288
+HospitalPhysician_service.wsdl	0.5141701102256775
+UpdatePatientMedicalRecords_service.wsdl	0.5120162963867188
+GetMedicalTransportAccount_service.wsdl	0.5049310326576233
+BookMedicalTransport_service.wsdl	0.5002233386039734

@@ -1,0 +1,9 @@
+EmergencyPhysician_service.wsdl	1.0
+InformHospital_service.wsdl	0.7444587349891663
+CheckHospitalAvailability_service.wsdl	0.5514988303184509
+PatientTransport_service.wsdl	0.539993166923523
+hospital_diagnosticprocess_MedDiagservice.wsdl	0.52337646484375
+hospital_diagnosticprocess_service.wsdl	0.52337646484375
+questionhospital_diagnosticprocess_service.wsdl	0.5209985971450806
+AuthorizePhysician_service.wsdl	0.5077221989631653
+ProvideMedicalTransportInformation_service.wsdl	0.5018057823181152

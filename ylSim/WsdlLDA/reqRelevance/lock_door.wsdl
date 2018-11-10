@@ -1,0 +1,16 @@
+lock_door.wsdl	3
+close_door.wsdl	2
+agent_movement.wsdl	0
+fall_down_pill.wsdl	0
+fill_pills.wsdl	0
+flip_down_slider.wsdl	0
+flip_slider.wsdl	0
+flip_up_slider.wsdl	0
+greenLight_to_off.wsdl	0
+greenLight_to_on.wsdl	0
+open_door.wsdl	0
+redLight_to_off.wsdl	0
+redLight_to_on.wsdl	0
+switch_off_messemodul.wsdl	0
+switch_on_messemodul.wsdl	0
+unlock_door.wsdl	0

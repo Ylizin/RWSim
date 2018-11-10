@@ -1,0 +1,16 @@
+calculateSunriseTime.wsdl	1.0
+getSunsetAndSunriseTime.wsdl	0.797082781791687
+getElevationFromLocation.wsdl	0.6420091390609741
+getSunsetSunriseTwilightTime.wsdl	0.5814233422279358
+calculateDistanceUsingSphericalGeometry.wsdl	0.5707291960716248
+calculatorDistanceSphericalLawOfCosines.wsdl	0.5662339329719543
+getAltitudeOfLocation.wsdl	0.5532445311546326
+getGeographicAreaOfZipCode.wsdl	0.5468468070030212
+getLocationOfCityWorldwide.wsdl	0.5364221334457397
+getPopulationDensityOfLocation.wsdl	0.5330696702003479
+googleGeocodingAPI.wsdl	0.5318822860717773
+getDrivingDirections.wsdl	0.5241256356239319
+findNearbyPostalCodes.wsdl	0.5193807482719421
+findNearbyWikipediaArticles.wsdl	0.512748122215271
+getLocationOfAddress.wsdl	0.5063881874084473
+getDistanceBetweenLocations.wsdl	0.5019433498382568

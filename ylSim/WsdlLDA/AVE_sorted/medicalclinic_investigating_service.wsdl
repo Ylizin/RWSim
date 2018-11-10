@@ -1,0 +1,12 @@
+medicalclinic_investigating_MedService.wsdl	1.0
+medicalclinic_investigating_service.wsdl	1.0
+hospital_investigating_service.wsdl	0.8986063003540039
+careorganization_investigating_service.wsdl	0.8487793207168579
+_investigating_Saarservice.wsdl	0.8227812051773071
+hospital_investigatingaddress_service.wsdl	0.7323275208473206
+hospital_postal-addressinvestigating_service.wsdl	0.6252528429031372
+_medicaldoctor_UNOservice.wsdl	0.5863966941833496
+InformHospital_service.wsdl	0.5518450140953064
+medicalclinic_predicting_service.wsdl	0.5431464910507202
+medicalclinic_experimenting_service.wsdl	0.539347231388092
+medicalclinic_diagnosticprocess_service.wsdl	0.5216090679168701

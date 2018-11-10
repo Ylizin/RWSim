@@ -1,0 +1,5 @@
+SelectTransport_service.wsdl	1.0
+ProvideNonMedicalTransportInformation_service.wsdl	0.7991992235183716
+ProvideMedicalTransportInformation_service.wsdl	0.7743596434593201
+BookMedicalTransport_service.wsdl	0.5445348620414734
+BookNonMedicalTransport_service.wsdl	0.543500542640686

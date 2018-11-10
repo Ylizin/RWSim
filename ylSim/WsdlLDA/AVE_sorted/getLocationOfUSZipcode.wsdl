@@ -1,0 +1,9 @@
+getLocationOfUSZipcode.wsdl	1.0
+usPostalCode_distance.wsdl	0.8371419310569763
+getLocationOfZipCodeWorldwide.wsdl	0.8138062953948975
+getZipcodeForUSCity.wsdl	0.8093924522399902
+getGeographicAreaOfZipCode.wsdl	0.7031240463256836
+getZipCodeLocation.wsdl	0.6928678750991821
+city_state_ZipCodes.wsdl	0.5944743156433105
+getUSZipCodeLocation.wsdl	0.5158801078796387
+getListOfMatchingCities.wsdl	0.5081178545951843

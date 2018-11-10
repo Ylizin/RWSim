@@ -1,0 +1,6 @@
+CheckEquipmentAvailability_service.wsdl	1.0
+CheckPersonnelAvailability_service.wsdl	0.9217391014099121
+CheckRoomAvailability_service.wsdl	0.90205979347229
+CheckHospitalAvailability_service.wsdl	0.8922144174575806
+ProvideMedicalTransportInformation_service.wsdl	0.5350310802459717
+ProvideNonMedicalTransportInformation_service.wsdl	0.5104435682296753
