@@ -202,7 +202,7 @@ def generatePlot(RelevReqPath, wsdlPath):
     k = 1.2
     b = 0.75
 
-    p = Pool(18)
+    p = Pool(int(os.cpu_count()/2))
     for file in os.listdir(RelevReqPath):
 
         fullpath = os.path.join(RelevReqPath, file)

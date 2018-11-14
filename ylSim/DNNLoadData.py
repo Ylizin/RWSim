@@ -44,38 +44,33 @@ def loadFeatures(featurePath):
     print('features reading complete')
 
 
-def generateTrainAndTest():
+def generateTrainAndTest(cvNum):
     '''
-     do 5 fold cross validation
+     do cvNum fold cross validation
      return train , test seqs
     '''
     # random the seqs for each invoke
     random.shuffle(seqs)
     total_len = len(seqs)
-    fold_len = int(total_len/5)
-    train1 = seqs[fold_len:]
-    test1 = seqs[:fold_len]
-    train2 = seqs[:fold_len]+seqs[2*fold_len:]
-    test2 = seqs[fold_len:2*fold_len]
-    train3 = seqs[:2*fold_len]+seqs[3*fold_len:]
-    test3 = seqs[2*fold_len:3*fold_len]
-    train4 = seqs[:3*fold_len]+seqs[4*fold_len:]
-    test3 = seqs[3*fold_len:4*fold_len]
-    train4 = seqs[:3*fold_len]+seqs[4*fold_len:]
-    test4 = seqs[3*fold_len:4*fold_len]
-    train5 = seqs[:4*fold_len]
-    test5 = seqs[4*fold_len:]
-    return train1, train2, train3, train4, train5, test1, test2, test3, test4, test5
+    fold_len = int(total_len/cvNum)
+    train_testLists = []
+    for i in range(1, cvNum+1):
+        train = seqs[:(i-1)*fold_len] + seqs[i*fold_len:]
+        test = seqs[(i-1)*fold_len:i*fold_len]
+        train_testLists.append((train,test))
+
+    return train_testLists
 
 
 class SimDataSet(Dataset):
-    def __init__(self, seqs):
+    def __init__(self, seqs, level = 3):
         self.seqs = seqs
+        self.level = level
 
     def __len__(self):
         return len(self.seqs)
 
     def __getitem__(self, index):
         seq = torch.tensor(self.seqs[index][:-1])
-        label = torch.tensor(self.seqs[index][-1])
+        label = torch.tensor(1 if self.seqs[index][-1]>self.level-0.1 else 0)
         return seq, label
