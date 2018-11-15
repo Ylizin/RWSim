@@ -1,7 +1,7 @@
 import argparse
 import os
-from multiprocessing import Manager, Pool
 import traceback
+from multiprocessing import Manager, Pool
 
 import numpy as np
 import torch
@@ -16,7 +16,6 @@ import utils
 from DNN import DNN
 
 _CUDA = torch.cuda.is_available()
-utils.generateDirs('./models')
 
 def errorCB(e):
     print('error:'+str(e))
@@ -56,6 +55,8 @@ def calculateTPFP(pred, r):
     # return tp.item(), fp.item()
 
 def trainOneModel(args,model,trainSeqs,testSeqs,level,index,syncPrecision,lock,doPrint=False):
+    if index%5==0:
+        doPrint = True
     trainDataset = DNNLoadData.SimDataSet(trainSeqs,level)
     testDataset = DNNLoadData.SimDataSet(testSeqs,level)
 
@@ -65,7 +66,7 @@ def trainOneModel(args,model,trainSeqs,testSeqs,level,index,syncPrecision,lock,d
         testDataset, args.batchSize, num_workers=args.numWorkers)
     
     # 1, 5, 5, 5 is a nice weight for rrelu
-    lossWeight = torch.tensor([5.0, 50])
+    lossWeight = torch.tensor([150.0, 100])
     if _CUDA:
         torch.cuda.set_device(0)
         model = model.cuda()
@@ -74,7 +75,7 @@ def trainOneModel(args,model,trainSeqs,testSeqs,level,index,syncPrecision,lock,d
 
     # add weight to emphasize the high relevance case
     lossFunc = nn.CrossEntropyLoss(lossWeight)
-    optimizer = optim.Adam(model.parameters(), args.lr)
+    optimizer = optim.Adam(model.parameters(), args.lr,weight_decay= 3e-5)
     scheduler = StepLR(optimizer, step_size=60, gamma=0.5)
     
     bestPrecision = 0.0
@@ -159,13 +160,14 @@ def main():
     parser = argparse.ArgumentParser("DNN")
     parser.add_argument('--outDim', type=int, default=2)
     parser.add_argument('--seqLen', type=int, default=8)
-    parser.add_argument('--hiddenDim1', type=int, default=15)
-    parser.add_argument('--hiddenDim2', type=int, default=30)
-    parser.add_argument('--hiddenDim3', type=int, default=15)
+    parser.add_argument('--hiddenDim1', type=int, default=40)
+    parser.add_argument('--hiddenDim2', type=int, default=60)
+    parser.add_argument('--hiddenDim3', type=int, default=40)
 
     parser.add_argument('--numWorkers', type=int, default=0)
     parser.add_argument('--lr', type=float, default=1e-2)
     parser.add_argument('--foldNum', type=int, default=5)
+    parser.add_argument('--level', type=int, default=1)
 
     parser.add_argument('--nepoch', type=int, default=500)
     parser.add_argument('--testEvery', type=int, default=10)
@@ -178,10 +180,10 @@ def main():
 
     ttSeqs = DNNLoadData.generateTrainAndTest(args.foldNum)
     DNNModels = [DNN(args) for i in range(args.foldNum)]#level has 1,2,3 each level we train foldNum models
-    level = 1
+    level = args.level
 
     manager = Manager()
-    p = Pool(int(os.cpu_count()/2)+1)
+    p = Pool(int(os.cpu_count()/2))
     lock = manager.Lock()
     precision = manager.Value('d',0.0)
     # testSetPrecision = []
@@ -272,4 +274,5 @@ def main():
 
 
 if __name__ == '__main__':
+    utils.generateDirs('./models')
     main()
