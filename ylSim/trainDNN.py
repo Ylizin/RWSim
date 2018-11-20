@@ -164,7 +164,7 @@ def main():
     parser.add_argument('--hiddenDim2', type=int, default=60)
     parser.add_argument('--hiddenDim3', type=int, default=40)
 
-    parser.add_argument('--numWorkers', type=int, default=0)
+     parser.add_argument('--numWorkers', type=int, default=0)
     parser.add_argument('--lr', type=float, default=1e-2)
     parser.add_argument('--foldNum', type=int, default=5)
     parser.add_argument('--level', type=int, default=1)

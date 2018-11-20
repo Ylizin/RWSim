@@ -12,3 +12,6 @@ def generateDirs(dirPath):
         return
     else:
         os.makedirs(dirPath)
+
+def errorCallBack(e):
+    print(repr(e))
