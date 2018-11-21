@@ -10,19 +10,21 @@ from torch.utils.data import Dataset
 import loadRelevance
 import utils
 
-loadRelevance.loadRelevance()
-relevanceDict = loadRelevance.relevanceDict
-
-seqs = []
+relevanceDict = {}
+seqs = {}
 
 
 def loadFeatures(featurePath):
+    loadRelevance.loadRelevance()
+    global relevanceDict
+    relevanceDict.update(loadRelevance.relevanceDict)
+
     for file in os.listdir(featurePath):
         fullpath = os.path.join(featurePath, file)
         if os.path.isdir(fullpath):
             continue
-
         fileDict = relevanceDict[file]
+        seq = []
         with open(fullpath, 'r') as f:
             for line in f:
                 data = line.strip().split()
@@ -40,7 +42,8 @@ def loadFeatures(featurePath):
                     feature.append(1)
                 else:
                     feature.append(0)
-                seqs.append(feature)
+                seq.append(feature)
+        seqs[file] = seq
     print('features reading complete')
 
 
@@ -49,18 +52,34 @@ def generateTrainAndTest(cvNum):
      do cvNum fold cross validation
      return train , test seqs
     '''
+    seqs_keys = list(seqs.keys())
+
     # random the seqs for each invoke
-    random.shuffle(seqs)
-    total_len = len(seqs)
+    random.shuffle(seqs_keys)
+    total_len = len(seqs_keys)
     fold_len = int(total_len/cvNum)
     train_testLists = []
     for i in range(1, cvNum+1):
-        train = seqs[:(i-1)*fold_len] + seqs[i*fold_len:]
-        test = seqs[(i-1)*fold_len:i*fold_len]
-        train_testLists.append((train,test))
-
+        train_keys = seqs_keys[:(i-1)*fold_len] + seqs_keys[i*fold_len:]
+        test_keys = seqs_keys[(i-1)*fold_len:i*fold_len]
+        train_testLists.append((train_keys,test_keys))
     return train_testLists
 
+def getSeqsFromKeys(keys):
+    '''
+       careful that for evaluation metrics procedure, requests should be test separately
+    '''
+    if len(seqs) == 0:
+        loadFeatures(utils.featurePath)
+
+    if isinstance(keys,str) : #if the param is a single str 
+        keys = [keys]
+    key_seqs = []
+    for key in keys:
+        key_seqs += seqs[key]
+    random.shuffle(key_seqs)
+
+    return key_seqs
 
 class SimDataSet(Dataset):
     def __init__(self, seqs, level = 3):
@@ -72,5 +91,8 @@ class SimDataSet(Dataset):
 
     def __getitem__(self, index):
         seq = torch.tensor(self.seqs[index][:-1])
-        label = torch.tensor(1 if self.seqs[index][-1]>self.level-0.1 else 0)
+        #for binary classification
+        # label = torch.tensor(1 if self.seqs[index][-1]>self.level-0.1 else 0)
+
+        label = torch.FloatTensor(self.seqs[index][-1:])
         return seq, label

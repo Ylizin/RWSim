@@ -20,7 +20,7 @@ def calculateDCG(rel, K0=1, *, K1):
     '''
     DCG = 0.0
     for i in range(K0, K1+1):
-        DCG += 2**rel / np.log2(i+1)
+        DCG += (2**rel -1) / np.log2(i+1)
     return DCG
 
 
@@ -40,12 +40,12 @@ def calculateIDCG(thisReqName, topK):
         IDCG += calculateDCG(3, K1=high_relevant)
         IDCG += calculateDCG(2, high_relevant+1,
                              K1=high_relevant + mid_relevant)
-        IDCG += calculateDCG(1, high_relevant+low_relevant+1, K1=topK)
+        IDCG += calculateDCG(1, high_relevant+mid_relevant+1, K1=topK)
     else:
         IDCG += calculateDCG(3, K1=high_relevant)
         IDCG += calculateDCG(2, high_relevant+1,
                              K1=high_relevant + mid_relevant)
-        IDCG += calculateDCG(1, high_relevant+low_relevant+1,
+        IDCG += calculateDCG(1, high_relevant+mid_relevant+1,
                              K1=high_relevant+mid_relevant+low_relevant)
 
     return IDCG

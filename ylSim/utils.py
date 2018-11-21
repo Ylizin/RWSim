@@ -1,4 +1,5 @@
 import os
+import traceback
 
 rootPath = os.getcwd()
 featurePath = rootPath+r'\WsdlLDA\reqRelevance\features'

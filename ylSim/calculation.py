@@ -250,6 +250,7 @@ def generatePlot(RelevReqPath, wsdlPath):
     precision3 = precision3/count
     NDCG = NDCG/count
 
+    print()
     with open("WSresult.txt", "w") as f:
         f.writelines("r1" + "\t" + "{0}".format(precision1) + "\n")
         f.writelines("r2" + "\t" + "{0}".format(precision2) + "\n")
