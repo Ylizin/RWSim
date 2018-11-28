@@ -13,7 +13,6 @@ import utils
 relevanceDict = {}
 seqs = {}
 
-
 def loadFeatures(featurePath):
     loadRelevance.loadRelevance()
     global relevanceDict
@@ -46,7 +45,6 @@ def loadFeatures(featurePath):
         seqs[file] = seq
     print('features reading complete')
 
-
 def generateTrainAndTest(cvNum):
     '''
      do cvNum fold cross validation
@@ -68,6 +66,7 @@ def generateTrainAndTest(cvNum):
 def getSeqsFromKeys(keys):
     '''
        careful that for evaluation metrics procedure, requests should be test separately
+
     '''
     if len(seqs) == 0:
         loadFeatures(utils.featurePath)
@@ -80,6 +79,23 @@ def getSeqsFromKeys(keys):
     random.shuffle(key_seqs)
 
     return key_seqs
+
+def getLen(reqName,level):
+    if len(seqs) == 0:
+        loadFeatures(utils.featurePath)
+    fileDict = relevanceDict[reqName]
+    thisHighReq = fileDict['highRelevance']
+    thisMidReq = fileDict['midRelevance']
+    thisLowReq = fileDict['lowRelevance']
+    len_high = len(thisHighReq)
+    len_mid = len(thisMidReq)
+    len_low = len(thisLowReq)
+    if level == 3:
+        return len_high
+    elif level == 2:
+        return len_high+len_mid
+    else:
+        return len_high+len_mid+len_low
 
 class SimDataSet(Dataset):
     def __init__(self, seqs, level = 3):

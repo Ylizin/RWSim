@@ -57,12 +57,17 @@ def calculateTPFP(pred, r):
 def simplePrecisionNDCG(reqName, pred_r, topK=5, level=3, doDCG=False):
     '''
         pred_r is sorted and cut out topK 
+        if nr < k then k = nr
     '''
     tp = 0
     fp = 1
     DCG = 0.0
     IDCG = 1
+    len_p = DNNLoadData.getLen(reqName,level)
+    topK = topK if topK<len_p else len_p
     for i, t in enumerate(pred_r):
+        if i > topK :
+            break
         pred, r = t
         if doDCG:
             DCG += calculatePrecision.calculateDCG(r, i+1, K1=i+1)
@@ -244,9 +249,9 @@ def main():
     parser = argparse.ArgumentParser("DNN")
     parser.add_argument('--outDim', type=int, default=1)
     parser.add_argument('--seqLen', type=int, default=8)
-    parser.add_argument('--hiddenDim1', type=int, default=40)
+    parser.add_argument('--hiddenDim1', type=int, default=20)
     parser.add_argument('--hiddenDim2', type=int, default=60)
-    parser.add_argument('--hiddenDim3', type=int, default=40)
+    parser.add_argument('--hiddenDim3', type=int, default=10)
 
     parser.add_argument('--numWorkers', type=int, default=0)
     parser.add_argument('--lr', type=float, default=1e-4)

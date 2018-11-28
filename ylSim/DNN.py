@@ -18,10 +18,10 @@ class DNN(nn.Module):
         self.relu = nn.RReLU()
         self.fc2 = nn.Linear(self.hiddenDim1,self.hiddenDim2)
         self.bn2 = nn.BatchNorm1d(self.hiddenDim2)
-        self.tanh = nn.Tanh()
+
         self.fc3 = nn.Linear(self.hiddenDim2,self.hiddenDim3)
         self.bn3 = nn.BatchNorm1d(self.hiddenDim3)
-        self.tanh2 = nn.Tanh()
+
         self.out = nn.Linear(self.hiddenDim3,self.outDim)
         self.dnn = nn.Sequential(
             self.fc1,
@@ -29,10 +29,10 @@ class DNN(nn.Module):
             self.relu,
             self.fc2,
             self.bn2,
-            self.tanh,
+            self.relu,
             self.fc3,
             self.bn3,
-            self.tanh2,
+            self.relu,
             self.out,
         )
 
