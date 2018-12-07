@@ -1,4 +1,5 @@
 import os
+import traceback
 
 rootPath = os.getcwd()
 featurePath = rootPath+r'\WsdlLDA\reqRelevance\features'
@@ -13,3 +14,6 @@ def generateDirs(dirPath):
         return
     else:
         os.makedirs(dirPath)
+
+def errorCallBack(e):
+    print(repr(e))

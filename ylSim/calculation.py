@@ -47,7 +47,8 @@ def sumWS(long_sentence, short_sentence, idfs, k, b, avgdl):
     sem_matrix = sem_matrix.reshape(-1)
     Sum_Fews = 0
     for i in range(len(long_sentence)):
-        Sum_Fews += idfs[i] * (sem_matrix[i]) * (k + 1) / (sem_matrix[i] + factor)
+        Sum_Fews += idfs[i] * (sem_matrix[i]) * (k + 1) / \
+            (sem_matrix[i] + factor)
 
     return Sum_Fews
 
@@ -144,8 +145,8 @@ def processFilePath(file, dir):  # rely on my dir structure
 
 
 def calculateSimMultiProcess(
-    RQFile, WSDLPath, k, b, avgdl, tp1, fp1, tp2, fp2, tp3, fp3, lock
-):
+    RQFile, WSDLPath, k, b, avgdl,count, p1, p2, p3,ndcg, lock
+):#for the 'RQFile' calculate and rank the top relevant-WSDLs
     confusionMatrix1 = [[0], [0]]
     confusionMatrix2 = [[0], [0]]
     confusionMatrix3 = [[0], [0]]
@@ -166,33 +167,39 @@ def calculateSimMultiProcess(
     for i in range(5):
         wsdlName, _ = sortedResult[i]
         top5Predict.append(wsdlName)
-    confusionMatrix1 = calculatePrecision.calHighRelevancePrecision(
+    #NDCG is the same for these different standards 
+    confusionMatrix1,NDCG = calculatePrecision.calHighRelevancePrecision(
         RQFile, top5Predict, confusionMatrix1
     )
-    confusionMatrix2 = calculatePrecision.calHighAndMidPrecision(
+    confusionMatrix2,_ = calculatePrecision.calHighAndMidPrecision(
         RQFile, top5Predict, confusionMatrix2
     )
-    confusionMatrix3 = calculatePrecision.calHighAndMidAndLowPrecision(
+    confusionMatrix3,_ = calculatePrecision.calHighAndMidAndLowPrecision(
         RQFile, top5Predict, confusionMatrix3
     )
+    tp1 = confusionMatrix1[0][0]
+    fp1 = confusionMatrix1[1][0]
+    tp2 = confusionMatrix2[0][0]
+    fp2 = confusionMatrix2[1][0]
+    tp3 = confusionMatrix3[0][0]
+    fp3 = confusionMatrix3[1][0]
 
     with lock:
-        tp1.value += confusionMatrix1[0][0]
-        fp1.value += confusionMatrix1[1][0]
-        tp2.value += confusionMatrix2[0][0]
-        fp2.value += confusionMatrix2[1][0]
-        tp3.value += confusionMatrix3[0][0]
-        fp3.value += confusionMatrix3[1][0]
+        count.value += 1
+        ndcg.value += NDCG
+        p1.value += tp1/(tp1+fp1)
+        p2.value += tp2/(tp2+fp2)
+        p3.value += tp3/(tp3+fp3)
+        
 
 
 def generatePlot(RelevReqPath, wsdlPath):
     manager = Manager()
-    tp1 = manager.Value("i", 0)
-    fp1 = manager.Value("i", 0)
-    tp2 = manager.Value("i", 0)
-    fp2 = manager.Value("i", 0)
-    tp3 = manager.Value("i", 0)
-    fp3 = manager.Value("i", 0)
+    count = manager.Value('i',0)
+    precision1 = manager.Value('d', 0.0)
+    precision2 = manager.Value('d', 0.0)
+    precision3 = manager.Value('d', 0.0)
+    NDCG = manager.Value('d',0.0)
     lock = manager.Lock()
     avgdl = 0
     with open("AVGDL.txt", "r") as f:
@@ -202,7 +209,7 @@ def generatePlot(RelevReqPath, wsdlPath):
     k = 1.2
     b = 0.75
 
-    p = Pool(18)
+    p = Pool(int(os.cpu_count()/2))
     for file in os.listdir(RelevReqPath):
 
         fullpath = os.path.join(RelevReqPath, file)
@@ -218,66 +225,38 @@ def generatePlot(RelevReqPath, wsdlPath):
                 k,
                 b,
                 avgdl,
-                tp1,
-                fp1,
-                tp2,
-                fp2,
-                tp3,
-                fp3,
+                count,
+                precision1,
+                precision2,
+                precision3,
+                NDCG,
                 lock,
             ),
+            error_callback = utils.errorCallBack
         )
-        # Idfs1, sentence1 = processFilePath(
-        #     RQFile, utils.RQPath
-        # )  # from request dir load idf and sentence
-        # result = {}
-        # for file in os.listdir(WSDLPath):
-        #     fullPath = os.path.join(WSDLPath, file)
-        #     if not os.path.isdir(fullPath):
-        #         Idfs2, sentence2 = processFilePath(file, WSDLPath)
-        #         result[file] = WS(sentence1, sentence2, Idfs1, Idfs2, avgdl, k, b)
-        #         # result[file] = UNWS(sentence1,sentence2)
-        #         # result[file] = AVECosFeature(RQFile, file)
-
-        # sortedResult = sorted(result.items(), key=lambda k: k[1], reverse=True)
-        # top5Predict = []
-        # for i in range(5):
-        #     wsdlName, _ = sortedResult[i]
-        #     top5Predict.append(wsdlName)
-        # confusionMatrix1 = calculatePrecision.calHighRelevancePrecision(
-        #     RQFile, top5Predict, confusionMatrix1
-        # )
-        # confusionMatrix2 = calculatePrecision.calHighAndMidPrecision(
-        #     RQFile, top5Predict, confusionMatrix2
-        # )
-        # confusionMatrix3 = calculatePrecision.calHighAndMidAndLowPrecision(
-        #     RQFile, top5Predict, confusionMatrix3
-        # )
-
-    # tp1 = confusionMatrix1[0][0]
-    # fp1 = confusionMatrix1[1][0]
-    # tp2 = confusionMatrix2[0][0]
-    # fp2 = confusionMatrix2[1][0]
-    # tp3 = confusionMatrix3[0][0]
-    # fp3 = confusionMatrix3[1][0]
+        
     p.close()
     p.join()
 
-    tp1 = tp1.value
-    fp1 = fp1.value
-    tp2 = tp2.value
-    fp2 = fp2.value
-    tp3 = tp3.value
-    fp3 = fp3.value
+    
+    count = count.value
+    precision1 = precision1.value
+    precision2 = precision2.value
+    precision3 = precision3.value
+    NDCG = NDCG.value
 
-    r1 = tp1 / float(tp1 + fp1)
-    r2 = tp2 / float(tp2 + fp2)
-    r3 = tp3 / float(tp3 + fp3)
+    precision1 = precision1/count
+    precision2 = precision2/count
+    precision3 = precision3/count
+    NDCG = NDCG/count
 
+    print()
     with open("WSresult.txt", "w") as f:
-        f.writelines("r1" + "\t" + "{0}".format(r1) + "\n")
-        f.writelines("r2" + "\t" + "{0}".format(r2) + "\n")
-        f.writelines("r3" + "\t" + "{0}".format(r3) + "\n")
+        f.writelines("r1" + "\t" + "{0}".format(precision1) + "\n")
+        f.writelines("r2" + "\t" + "{0}".format(precision2) + "\n")
+        f.writelines("r3" + "\t" + "{0}".format(precision3) + "\n")
+        f.writelines("NDCG" + "\t" + "{0}".format(NDCG) + "\n")
+
 
 
 def calculateMultiProcess(RQFile, RelevReqPath, FeatureDir, WSDLPath, k, b, avgdl):
@@ -293,7 +272,8 @@ def calculateMultiProcess(RQFile, RelevReqPath, FeatureDir, WSDLPath, k, b, avgd
             continue
         concatedFeatures = []
         Idfs2, sentence2 = processFilePath(file, WSDLPath)
-        concatedFeatures += WS(sentence1, sentence2, Idfs1, Idfs2, avgdl, k, b, True)
+        concatedFeatures += WS(sentence1, sentence2,
+                               Idfs1, Idfs2, avgdl, k, b, True)
         concatedFeatures += UNWS(sentence1, sentence2, True)
         concatedFeatures.append(AVECosFeature(RQFile, file))
         res[file] = concatedFeatures
@@ -370,4 +350,3 @@ if __name__ == "__main__":
     # with open('test.txt','w') as f:
     #     for key,value in sortedResult:
     #         f.writelines(key+'\t'+'{0}'.format(value)+'\n')
-

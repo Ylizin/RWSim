@@ -4,8 +4,8 @@ import os
 import vectorize as vec
 
 outputDir = "C:\\Users\\dell\\Desktop\\WsdlLDA\\AVE_sorted"
-targetDir = "C:\\Users\\dell\\Desktop\\WsdlLDA\\originaWSDLsWords\\vec"
-sourceDir = "C:\\Users\\dell\\Desktop\\WsdlLDA\\originRequestsWords\\vec"
+targetDir = utils.WSDLPath + r'\vec'
+sourceDir = utils.RQPath + r'\vec'
 threshold = 0.5 # only if the similarity of this rq-wsdl is larger than threshold will it save in file
 
 def loadVec(fileName):
