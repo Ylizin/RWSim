@@ -158,9 +158,9 @@ def calculateSimMultiProcess(
         fullPath = os.path.join(WSDLPath, file)
         if not os.path.isdir(fullPath):
             Idfs2, sentence2 = processFilePath(file, WSDLPath)
-            result[file] = WS(sentence1, sentence2, Idfs1, Idfs2, avgdl, k, b)
+            # result[file] = WS(sentence1, sentence2, Idfs1, Idfs2, avgdl, k, b)
             # result[file] = UNWS(sentence1,sentence2)
-            # result[file] = AVECosFeature(RQFile, file)
+            result[file] = AVECosFeature(RQFile, file)
 
     sortedResult = sorted(result.items(), key=lambda k: k[1], reverse=True)
     top5Predict = []
@@ -251,7 +251,7 @@ def generatePlot(RelevReqPath, wsdlPath):
     NDCG = NDCG/count
 
     print()
-    with open("WSresult.txt", "w") as f:
+    with open("AVEresult.txt", "w") as f:
         f.writelines("r1" + "\t" + "{0}".format(precision1) + "\n")
         f.writelines("r2" + "\t" + "{0}".format(precision2) + "\n")
         f.writelines("r3" + "\t" + "{0}".format(precision3) + "\n")

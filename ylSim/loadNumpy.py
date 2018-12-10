@@ -2,6 +2,7 @@ import numpy as np
 import cosineSim as cs
 import os
 import vectorize as vec
+import utils
 
 outputDir = "C:\\Users\\dell\\Desktop\\WsdlLDA\\AVE_sorted"
 targetDir = utils.WSDLPath + r'\vec'
