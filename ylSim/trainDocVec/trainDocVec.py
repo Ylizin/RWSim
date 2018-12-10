@@ -30,7 +30,7 @@ def generateTaggedDoc(corpus_path,file_name_index_path = DefaultFileNameIndexPat
     return TaggedDocs
 
 def trainDocVec(TaggedDocs, vectorSize=300):
-    return doc2vec.Doc2Vec(TaggedDocs, vector_size=vectorSize,epochs=100)
+    return doc2vec.Doc2Vec(TaggedDocs, vector_size=vectorSize,epochs=1000)
 
 def saveModel(model, modelPath=DefaultModelPath):
     model.save(modelPath)
@@ -39,7 +39,7 @@ def loadModel(modelPath=DefaultModelPath):
     model = None
     if not os.path.exists(modelPath) or os.path.isdir(modelPath):
         model = trainDocVec(generateTaggedDoc(corpusPath))
-        saveModel(DocModel)
+        saveModel(model)
     else:
         #for test 
         # model = trainDocVec(generateTaggedDoc(corpusPath))
