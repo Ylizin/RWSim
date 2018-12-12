@@ -30,7 +30,7 @@ def generateTaggedDoc(corpus_path,file_name_index_path = DefaultFileNameIndexPat
     return TaggedDocs
 
 def trainDocVec(TaggedDocs, vectorSize=300):
-    return doc2vec.Doc2Vec(TaggedDocs, vector_size=vectorSize,epochs=1000)
+    return doc2vec.Doc2Vec(TaggedDocs, vector_size=vectorSize,epochs=10000)
 
 def saveModel(model, modelPath=DefaultModelPath):
     model.save(modelPath)

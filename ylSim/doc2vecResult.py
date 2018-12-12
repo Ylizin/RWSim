@@ -24,8 +24,8 @@ def getDoc2VecPrecision(topK = 5):
         results = docVec.get_topK_relevance(file)
         topPredict,_ = zip(*results[:topK])
         confusionMatrix1,NDCG = calculatePrecision.calHighRelevancePrecision(file,topPredict,confusionMatrix1,topK)
-        confusionMatrix2,_ = calculatePrecision.calHighAndMidPrecision(file,topPredict,confusionMatrix1,topK)
-        confusionMatrix3,_ = calculatePrecision.calHighAndMidAndLowPrecision(file,topPredict,confusionMatrix1,topK)
+        confusionMatrix2,_ = calculatePrecision.calHighAndMidPrecision(file,topPredict,confusionMatrix2,topK)
+        confusionMatrix3,_ = calculatePrecision.calHighAndMidAndLowPrecision(file,topPredict,confusionMatrix3,topK)
 
         tp1 = confusionMatrix1[0][0]
         fp1 = confusionMatrix1[1][0]
@@ -45,6 +45,6 @@ def getDoc2VecPrecision(topK = 5):
         f.write('NDCG\t'+str(sum_NDCG/count))
 
 if __name__ == '__main__':
-    getDoc2VecPrecision(topK= 10)
+    getDoc2VecPrecision(topK= 5)
 
         
