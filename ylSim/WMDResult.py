@@ -1,13 +1,13 @@
-import trainDocVec.trainDocVec as docVec
+import WMD.calWMD as WMD
 import calculatePrecision
 import os 
 import utils
-import DNNLoadData
+
 
 rqPredictPath = utils.RelevancePath
-doc2vecPath = utils.rootPath + r'\doc2vec.txt'
+WMDPath = utils.rootPath + r'\WMD.txt'
 
-def getDoc2VecPrecision(topK = 5):
+def getWMDPrecision(topK = 5):
     high_precision = 0.0
     mid_precision = 0.0
     low_precision = 0.0
@@ -22,7 +22,7 @@ def getDoc2VecPrecision(topK = 5):
         if os.path.isdir(full_path):
             continue
         count += 1
-        results = docVec.get_topK_relevance(file,topK = topK)
+        results = WMD.get_topK_relevance(file,topK = topK)
         topPredict,_ = zip(*results)
         confusionMatrix1,NDCG = calculatePrecision.calHighRelevancePrecision(file,topPredict,confusionMatrix1,topK)
         confusionMatrix2,_ = calculatePrecision.calHighAndMidPrecision(file,topPredict,confusionMatrix2,topK)
@@ -39,13 +39,13 @@ def getDoc2VecPrecision(topK = 5):
         low_precision += tp3/(tp3+fp3)
         sum_NDCG += NDCG
 
-    with open(doc2vecPath,'w') as f:
+    with open(WMDPath,'w') as f:
         f.write('high_precision\t'+str(high_precision/count) + '\n')
         f.write('mid_precision\t'+str(mid_precision/count)+'\n')
         f.write('low_precision\t'+str(low_precision/count)+'\n')
         f.write('NDCG\t'+str(sum_NDCG/count))
 
 if __name__ == '__main__':
-    getDoc2VecPrecision(topK= 5)
+    getWMDPrecision(topK= 5)
 
         

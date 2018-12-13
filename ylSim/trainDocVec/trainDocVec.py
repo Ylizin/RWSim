@@ -1,9 +1,15 @@
+import sys
+
+sys.path.append('..')
+
 import os
 import gensim
 from gensim.models import doc2vec
 import numpy as np
 
-rootPath = os.getcwd()
+import utils
+
+rootPath = utils.rootPath
 corpusPath = rootPath + r"\trainDocVec\total_corpus.txt"
 DocModel = None
 DefaultModelPath = r".\trainDocVec\docVecModel"
@@ -55,7 +61,7 @@ def loadTags(file_name_index_path = DefaultFileNameIndexPath):
             tag = tag.strip()
             tags.append(tag)
 
-def get_topK_relevance(reqName):
+def get_topK_relevance(reqName,topK = 5,Jaccard = False):
     reqName = reqName + '_rq'
     global DocModel
     if DocModel is None:
@@ -66,12 +72,17 @@ def get_topK_relevance(reqName):
             serviceNames.append(tag)
     
     results = []
-    for sv in serviceNames:
-        results.append((sv[:-3],DocModel.docvecs.similarity(reqName,sv)))
+    if Jaccard:
+        for sv in serviceNames:
+            results.append((sv[:-3],calculate_Jaccard_distance(DocModel[reqName],DocModel[sv])))
+    else:
+        for sv in serviceNames:
+            results.append((sv[:-3],DocModel.docvecs.similarity(reqName,sv)))
     
-    return sorted(results,key = lambda k: k[1],reverse = True)
+    return sorted(results,key = lambda k: k[1],reverse = True)[:topK]
 
-
+def calculate_Jaccard_distance(vec1,vec2):
+    return gensim.matutils.jaccard(vec1,vec2)
 
 
 # def test():
