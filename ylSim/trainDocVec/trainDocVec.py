@@ -61,7 +61,7 @@ def loadTags(file_name_index_path = DefaultFileNameIndexPath):
             tag = tag.strip()
             tags.append(tag)
 
-def get_topK_relevance(reqName,topK = 5,Jaccard = False):
+def get_topK_relevance(reqName,topK = 5,Euclidean_distance = False):
     reqName = reqName + '_rq'
     global DocModel
     if DocModel is None:
@@ -72,17 +72,24 @@ def get_topK_relevance(reqName,topK = 5,Jaccard = False):
             serviceNames.append(tag)
     
     results = []
-    if Jaccard:
+    if Euclidean_distance:
         for sv in serviceNames:
-            results.append((sv[:-3],calculate_Jaccard_distance(DocModel[reqName],DocModel[sv])))
+            results.append((sv[:-3],calculate_Eu_distance(DocModel[reqName],DocModel[sv])))
+        return sorted(results,key = lambda k: k[1])[:topK]
+        
     else:
         for sv in serviceNames:
             results.append((sv[:-3],DocModel.docvecs.similarity(reqName,sv)))
-    
-    return sorted(results,key = lambda k: k[1],reverse = True)[:topK]
+        return sorted(results,key = lambda k: k[1],reverse = True)[:topK]
 
-def calculate_Jaccard_distance(vec1,vec2):
-    return gensim.matutils.jaccard(vec1,vec2)
+    
+
+def calculate_Eu_distance(vec1,vec2):
+    return np.linalg.norm(vec1-vec2)
+    # dot_product = np.inner(vec1,vec2)
+    # square_v1 = np.sum(np.power(vec1,2))
+    # square_v2 = np.sum(np.power(vec2,2))
+    # return np.abs(dot_product/(square_v1+square_v2-dot_product))
 
 
 # def test():

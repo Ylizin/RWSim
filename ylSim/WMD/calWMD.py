@@ -7,7 +7,7 @@ import os
 import utils
 
 rootPath = utils.rootPath
-modelPath = rootPath + r'./WMD/wvmodel'
+modelPath = rootPath + r'./pretrained_word2vec/wvmodel'
 corpusPath = r'./WMD/total_corpus.txt'
 FileNamePath = r'./WMD/RQFileNameIndex'
 model = None
@@ -24,7 +24,7 @@ def getWMD(doc1,doc2):
 
 def loadSentences():
     global serviceSentences
-    global requestSenteces
+    global requestSentences
     corpus = []
     with open(corpusPath,'r') as f:
         for line in f:
@@ -50,7 +50,6 @@ def get_topK_relevance(reqName,topK=5):
         loadSentences()
         loadModel()
     rqSentence = requestSentences[reqName]
-
     results = []
     for key in serviceSentences:
         results.append((key,getWMD(rqSentence,serviceSentences[key])))

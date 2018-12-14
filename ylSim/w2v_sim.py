@@ -145,8 +145,9 @@ def processFilePath(file, dir):  # rely on my dir structure
 
 
 def calculateSimMultiProcess(
-    RQFile, WSDLPath, k, b, avgdl,count, p1, p2, p3,ndcg, lock
-):#for the 'RQFile' calculate and rank the top relevant-WSDLs
+    RQFile, topK, WSDLPath, k, b, avgdl, count, p1, p2, p3, ndcg, lock
+):  # for the 'RQFile' calculate and rank the top relevant-WSDLs
+
     Idfs1, sentence1 = processFilePath(
         RQFile, utils.RQPath
     )  # from request dir load idf and sentence
@@ -164,18 +165,18 @@ def calculateSimMultiProcess(
 
     sortedResult = sorted(result.items(), key=lambda k: k[1], reverse=True)
     top5Predict = []
-    for i in range(5):
+    for i in range(topK):
         wsdlName, _ = sortedResult[i]
         top5Predict.append(wsdlName)
-    #NDCG is the same for these different standards 
-    confusionMatrix1,NDCG = calculatePrecision.calHighRelevancePrecision(
-        RQFile, top5Predict, confusionMatrix1
+    # NDCG is the same for these different standards
+    confusionMatrix1, NDCG = calculatePrecision.calHighRelevancePrecision(
+        RQFile, top5Predict, confusionMatrix1, topK
     )
-    confusionMatrix2,_ = calculatePrecision.calHighAndMidPrecision(
-        RQFile, top5Predict, confusionMatrix2
+    confusionMatrix2, _ = calculatePrecision.calHighAndMidPrecision(
+        RQFile, top5Predict, confusionMatrix2, topK
     )
-    confusionMatrix3,_ = calculatePrecision.calHighAndMidAndLowPrecision(
-        RQFile, top5Predict, confusionMatrix3
+    confusionMatrix3, _ = calculatePrecision.calHighAndMidAndLowPrecision(
+        RQFile, top5Predict, confusionMatrix3, topK
     )
     tp1 = confusionMatrix1[0][0]
     fp1 = confusionMatrix1[1][0]
@@ -190,16 +191,15 @@ def calculateSimMultiProcess(
         p1.value += tp1/(tp1+fp1)
         p2.value += tp2/(tp2+fp2)
         p3.value += tp3/(tp3+fp3)
-        
 
 
-def generatePlot(RelevReqPath, wsdlPath):
+def generatePlot(RelevReqPath, wsdlPath, topK=5):
     manager = Manager()
-    count = manager.Value('i',0)
+    count = manager.Value('i', 0)
     precision1 = manager.Value('d', 0.0)
     precision2 = manager.Value('d', 0.0)
     precision3 = manager.Value('d', 0.0)
-    NDCG = manager.Value('d',0.0)
+    NDCG = manager.Value('d', 0.0)
     lock = manager.Lock()
     avgdl = 0
     with open("AVGDL.txt", "r") as f:
@@ -221,6 +221,7 @@ def generatePlot(RelevReqPath, wsdlPath):
             calculateSimMultiProcess,
             args=(
                 RQFile,
+                topK,
                 wsdlPath,
                 k,
                 b,
@@ -232,13 +233,12 @@ def generatePlot(RelevReqPath, wsdlPath):
                 NDCG,
                 lock,
             ),
-            error_callback = utils.errorCallBack
+            error_callback=utils.errorCallBack
         )
-        
+
     p.close()
     p.join()
 
-    
     count = count.value
     precision1 = precision1.value
     precision2 = precision2.value
@@ -249,14 +249,13 @@ def generatePlot(RelevReqPath, wsdlPath):
     precision2 = precision2/count
     precision3 = precision3/count
     NDCG = NDCG/count
-
-    print()
-    with open("AVEresult.txt", "w") as f:
+    with open("AVEresult.txt", "a") as f:
+        f.writelines("topK" + "\t" + "{0}".format(topK) + "\n")
         f.writelines("r1" + "\t" + "{0}".format(precision1) + "\n")
         f.writelines("r2" + "\t" + "{0}".format(precision2) + "\n")
         f.writelines("r3" + "\t" + "{0}".format(precision3) + "\n")
         f.writelines("NDCG" + "\t" + "{0}".format(NDCG) + "\n")
-
+    return precision1,precision2,precision3,NDCG
 
 
 def calculateMultiProcess(RQFile, RelevReqPath, FeatureDir, WSDLPath, k, b, avgdl):
@@ -321,7 +320,13 @@ if __name__ == "__main__":
     RQPath = utils.RQPath
     RelevReqPath = utils.RelevancePath
     # generateAllFeatureInDir(RelevReqPath,RQPath,WSDLPath)
-    generatePlot(RelevReqPath, WSDLPath)
+    *_, p1, n1 = generatePlot(RelevReqPath, WSDLPath, topK=5)
+    *_, p2, n2 = generatePlot(RelevReqPath, WSDLPath, topK=10)
+    *_, p3, n3 = generatePlot(RelevReqPath, WSDLPath, topK=15)
+    *_, p4, n4 = generatePlot(RelevReqPath, WSDLPath, topK=20)
+    with open('AVEresult.txt', 'a') as f:
+        f.write(
+            'ave-fin:\nprecision:{:.4},ndcg:{:.4}'.format((p1+p2+p3+p4)/4, (n1+n2+n3+n4)/4))
 
     # RQFile = os.path.join(RQPath,RQFile)
     # IDFS1 = os.path.join(RQPath,'IDFs',RQFile)

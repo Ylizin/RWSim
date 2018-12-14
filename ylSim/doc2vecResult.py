@@ -22,7 +22,8 @@ def getDoc2VecPrecision(topK = 5):
         if os.path.isdir(full_path):
             continue
         count += 1
-        results = docVec.get_topK_relevance(file,topK = topK)
+        results = docVec.get_topK_relevance(file,topK = topK,Euclidean_distance = True)
+       
         topPredict,_ = zip(*results)
         confusionMatrix1,NDCG = calculatePrecision.calHighRelevancePrecision(file,topPredict,confusionMatrix1,topK)
         confusionMatrix2,_ = calculatePrecision.calHighAndMidPrecision(file,topPredict,confusionMatrix2,topK)
@@ -39,13 +40,26 @@ def getDoc2VecPrecision(topK = 5):
         low_precision += tp3/(tp3+fp3)
         sum_NDCG += NDCG
 
-    with open(doc2vecPath,'w') as f:
-        f.write('high_precision\t'+str(high_precision/count) + '\n')
-        f.write('mid_precision\t'+str(mid_precision/count)+'\n')
-        f.write('low_precision\t'+str(low_precision/count)+'\n')
-        f.write('NDCG\t'+str(sum_NDCG/count))
+    high_precision = high_precision/count
+    mid_precision = mid_precision/count
+    low_precision = low_precision/count
+    NDCG = sum_NDCG/count
+    with open(doc2vecPath,'a') as f:
+        f.write(str(topK)+ ':\n')
+        f.write('high_precision\t'+str(high_precision) + '\n')
+        f.write('mid_precision\t'+str(mid_precision)+'\n')
+        f.write('low_precision\t'+str(low_precision)+'\n')
+        f.write('NDCG\t'+str(sum_NDCG))
+        f.write('--------------------------\n')
+    return high_precision, mid_precision, low_precision, NDCG
+
 
 if __name__ == '__main__':
-    getDoc2VecPrecision(topK= 5)
-
+    *_, p1, n1 = getDoc2VecPrecision(topK= 5)
+    *_, p2, n2 = getDoc2VecPrecision(topK= 10)
+    *_, p3, n3 = getDoc2VecPrecision(topK= 15)
+    *_, p4, n4 = getDoc2VecPrecision(topK= 20)
+    with open(doc2vecPath, 'a') as f:
+        f.write(
+            'ave-fin:\nprecision:{:.4},ndcg:{:.4}'.format((p1+p2+p3+p4)/4, (n1+n2+n3+n4)/4))
         
