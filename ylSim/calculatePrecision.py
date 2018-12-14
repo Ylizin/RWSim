@@ -5,9 +5,28 @@
 import loadRelevance
 import numpy as np
 
+
 loadRelevance.loadRelevance()
 relevanceDict = loadRelevance.relevanceDict
 
+def getLen(reqName,level):
+    global relevanceDict
+    if len(relevanceDict) == 0:
+        loadRelevance.loadRelevance()
+        relevanceDict = loadRelevance.relevanceDict
+    fileDict = relevanceDict[reqName]
+    thisHighReq = fileDict['highRelevance']
+    thisMidReq = fileDict['midRelevance']
+    thisLowReq = fileDict['lowRelevance']
+    len_high = len(thisHighReq)
+    len_mid = len(thisMidReq)
+    len_low = len(thisLowReq)
+    if level == 3:
+        return len_high
+    elif level == 2:
+        return len_high+len_mid
+    else:
+        return len_high+len_mid+len_low
 
 def calculateDCG(rel, K0=1, *, K1):
     '''
@@ -58,7 +77,7 @@ def calculateNDCG(thisReqName, topKPredict, topK):
     low_relevance = thisDict['lowRelevance']
 
     DCG = 0.0
-    for i, predict in enumerate(topKPredict):
+    for i, predict in enumerate(topKPredict[:topK]):
         rel = 0
         if predict in high_relevance:
             rel = 3
@@ -69,16 +88,20 @@ def calculateNDCG(thisReqName, topKPredict, topK):
         # calculate DCG at position i+1, i started from 0
         DCG += calculateDCG(rel, i+1, K1 = i+1)
 
+    
     return DCG/calculateIDCG(thisReqName, topK)
 
 
-def calHighRelevancePrecision(thisReqName, top5Predict, confusionMatrix, topK=5):
+def calHighRelevancePrecision(thisReqName, topKPredict, confusionMatrix, topK=5):
     '''
         confusionMatrix : tp fn
                           fp tn
     '''
     thisHighReq = relevanceDict[thisReqName]['highRelevance']
-    for predict in top5Predict:
+    if topK > getLen(thisReqName,3):
+        topK = getLen(thisReqName,3)
+    #if the true high relevant services are less than topK, we treat topK as the len of true label
+    for predict in topKPredict[:topK]:
         if predict in thisHighReq:
             # tp
             confusionMatrix[0][0] += 1
@@ -86,29 +109,33 @@ def calHighRelevancePrecision(thisReqName, top5Predict, confusionMatrix, topK=5)
             # fp
             confusionMatrix[1][0] += 1
 
-    return confusionMatrix, calculateNDCG(thisReqName, top5Predict, topK)
+    return confusionMatrix, calculateNDCG(thisReqName, topKPredict, topK)
 
 
-def calHighAndMidPrecision(thisReqName, top5Predict, confusionMatrix, topK=5):
+def calHighAndMidPrecision(thisReqName, topKPredict, confusionMatrix, topK=5):
     thisHighReq = relevanceDict[thisReqName]['highRelevance']
     thisMidReq = relevanceDict[thisReqName]['midRelevance']
-    for predict in top5Predict:
+    if topK > getLen(thisReqName,2):
+       topK = getLen(thisReqName,2)
+    for predict in topKPredict[:topK]:
         if predict in thisHighReq or predict in thisMidReq:
             confusionMatrix[0][0] += 1
         else:
             confusionMatrix[1][0] += 1
 
-    return confusionMatrix, calculateNDCG(thisReqName, top5Predict, topK)
+    return confusionMatrix, calculateNDCG(thisReqName, topKPredict, topK)
 
 
-def calHighAndMidAndLowPrecision(thisReqName, top5Predict, confusionMatrix, topK=5):
+def calHighAndMidAndLowPrecision(thisReqName, topKPredict, confusionMatrix, topK=5):
     thisHighReq = relevanceDict[thisReqName]['highRelevance']
     thisMidReq = relevanceDict[thisReqName]['midRelevance']
     thisLowReq = relevanceDict[thisReqName]['lowRelevance']
-    for predict in top5Predict:
+    if topK > getLen(thisReqName,1):
+       topK = getLen(thisReqName,1)
+    for predict in topKPredict[:topK]:
         if predict in thisHighReq or predict in thisMidReq or predict in thisLowReq:
             confusionMatrix[0][0] += 1
         else:
             confusionMatrix[1][0] += 1
 
-    return confusionMatrix, calculateNDCG(thisReqName, top5Predict, topK)
+    return confusionMatrix, calculateNDCG(thisReqName, topKPredict, topK)
