@@ -77,7 +77,7 @@ def calculateNDCG(thisReqName, topKPredict, topK):
     low_relevance = thisDict['lowRelevance']
 
     DCG = 0.0
-    for i, predict in enumerate(topKPredict):
+    for i, predict in enumerate(topKPredict[:topK]):
         rel = 0
         if predict in high_relevance:
             rel = 3
@@ -88,6 +88,7 @@ def calculateNDCG(thisReqName, topKPredict, topK):
         # calculate DCG at position i+1, i started from 0
         DCG += calculateDCG(rel, i+1, K1 = i+1)
 
+    
     return DCG/calculateIDCG(thisReqName, topK)
 
 

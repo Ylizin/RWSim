@@ -147,14 +147,14 @@ def processFilePath(file, dir):  # rely on my dir structure
 def calculateSimMultiProcess(
     RQFile, WSDLPath, k, b, avgdl,count, p1, p2, p3,ndcg, lock
 ):#for the 'RQFile' calculate and rank the top relevant-WSDLs
-    confusionMatrix1 = [[0], [0]]
-    confusionMatrix2 = [[0], [0]]
-    confusionMatrix3 = [[0], [0]]
     Idfs1, sentence1 = processFilePath(
         RQFile, utils.RQPath
     )  # from request dir load idf and sentence
     result = {}
     for file in os.listdir(WSDLPath):
+        confusionMatrix1 = [[0], [0]]
+        confusionMatrix2 = [[0], [0]]
+        confusionMatrix3 = [[0], [0]]
         fullPath = os.path.join(WSDLPath, file)
         if not os.path.isdir(fullPath):
             Idfs2, sentence2 = processFilePath(file, WSDLPath)
