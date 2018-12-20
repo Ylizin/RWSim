@@ -22,7 +22,7 @@ def getDoc2VecPrecision(topK = 5):
         if os.path.isdir(full_path):
             continue
         count += 1
-        results = docVec.get_topK_relevance(file,topK = topK,Euclidean_distance = True)
+        results = docVec.get_topK_relevance(file,topK = topK,Euclidean_distance = False)
        
         topPredict,_ = zip(*results)
         confusionMatrix1,NDCG = calculatePrecision.calHighRelevancePrecision(file,topPredict,confusionMatrix1,topK)
@@ -49,7 +49,7 @@ def getDoc2VecPrecision(topK = 5):
         f.write('high_precision\t'+str(high_precision) + '\n')
         f.write('mid_precision\t'+str(mid_precision)+'\n')
         f.write('low_precision\t'+str(low_precision)+'\n')
-        f.write('NDCG\t'+str(sum_NDCG))
+        f.write('NDCG\t'+str(NDCG))
         f.write('--------------------------\n')
     return high_precision, mid_precision, low_precision, NDCG
 
