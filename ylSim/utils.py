@@ -6,6 +6,8 @@ featurePath = rootPath+r'\WsdlLDA\reqRelevance\features'
 WSDLPath = rootPath+r'\WsdlLDA\originaWSDLsWords'
 RQPath = rootPath+r'\WsdlLDA\originRequestsWords'
 RelevancePath = rootPath+r'\WsdlLDA\reqRelevance'
+
+bertPath = rootPath + r'\bert'
 total_corpus_path = rootPath + r'\trainDocVec\total_corpus.txt'
 dw = 300
 
