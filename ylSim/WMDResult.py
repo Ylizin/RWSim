@@ -64,4 +64,4 @@ if __name__ == '__main__':
     *_, p4, n4 = getWMDPrecision(topK=20)
     with open(WMDPath, 'a') as f:
         f.write(
-            'ave-fin:\nprecision:{:.4},ndcg:{:.4}'.format((p1+p2+p3+p4)/4, (n1+n2+n3+n4)/4))
+            'ave-fin:\nprecision:{:.4},ndcg:{:.4}\n'.format((p1+p2+p3+p4)/4, (n1+n2+n3+n4)/4))
