@@ -255,6 +255,7 @@ def generatePlot(RelevReqPath, wsdlPath, topK=5):
         f.writelines("r2" + "\t" + "{0}".format(precision2) + "\n")
         f.writelines("r3" + "\t" + "{0}".format(precision3) + "\n")
         f.writelines("NDCG" + "\t" + "{0}".format(NDCG) + "\n")
+        f.write('--------------------------\n')
     return precision1,precision2,precision3,NDCG
 
 
