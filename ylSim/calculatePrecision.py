@@ -18,15 +18,19 @@ def getLen(reqName,level):
     thisHighReq = fileDict['highRelevance']
     thisMidReq = fileDict['midRelevance']
     thisLowReq = fileDict['lowRelevance']
+    thisNonReq = fileDict['nonRelevance']
     len_high = len(thisHighReq)
     len_mid = len(thisMidReq)
     len_low = len(thisLowReq)
+    len_non = len(thisNonReq)
     if level == 3:
         return len_high
     elif level == 2:
         return len_high+len_mid
-    else:
+    elif level == 1:
         return len_high+len_mid+len_low
+    else :
+        return len_high+len_mid+len_low + len_non
 
 def calculateDCG(rel, K0=1, *, K1):
     '''
@@ -134,6 +138,22 @@ def calHighAndMidAndLowPrecision(thisReqName, topKPredict, confusionMatrix, topK
        topK = getLen(thisReqName,1)
     for predict in topKPredict[:topK]:
         if predict in thisHighReq or predict in thisMidReq or predict in thisLowReq:
+            confusionMatrix[0][0] += 1
+        else:
+            confusionMatrix[1][0] += 1
+
+    return confusionMatrix, calculateNDCG(thisReqName, topKPredict, topK)
+
+
+def calHighAndMidAndLowAndNonPrecision(thisReqName, topKPredict, confusionMatrix, topK=5):
+    thisHighReq = relevanceDict[thisReqName]['highRelevance']
+    thisMidReq = relevanceDict[thisReqName]['midRelevance']
+    thisLowReq = relevanceDict[thisReqName]['lowRelevance']
+    thisNonReq = relevanceDict[thisReqName]['nonRelevance']
+    if topK > getLen(thisReqName,0):
+       topK = getLen(thisReqName,0)
+    for predict in topKPredict[:topK]:
+        if predict in thisHighReq or predict in thisMidReq or predict in thisLowReq or predict in thisNonReq:
             confusionMatrix[0][0] += 1
         else:
             confusionMatrix[1][0] += 1

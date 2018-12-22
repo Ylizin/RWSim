@@ -175,7 +175,7 @@ def calculateSimMultiProcess(
     confusionMatrix2, _ = calculatePrecision.calHighAndMidPrecision(
         RQFile, top5Predict, confusionMatrix2, topK
     )
-    confusionMatrix3, _ = calculatePrecision.calHighAndMidAndLowPrecision(
+    confusionMatrix3, _ = calculatePrecision.calHighAndMidAndLowAndNonPrecision(
         RQFile, top5Predict, confusionMatrix3, topK
     )
     tp1 = confusionMatrix1[0][0]

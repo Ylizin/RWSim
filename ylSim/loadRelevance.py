@@ -10,20 +10,22 @@ def readRelevanceFile(filePath):
     highRelevance = []
     midRelevance = []
     lowRelevance = []
+    nonRelevance = []
     with open(filePath,'r') as f:
         for line in f:
             data = line.strip().split()
             name = data[0]
             relevance = int(data[1])
-
-            if relevance == 1:
+            if relevance == 0:
+                nonRelevance.append(name)
+            elif relevance == 1:
                 lowRelevance.append(name)
             elif relevance == 2:
                 midRelevance.append(name)
             elif relevance ==3:
                 highRelevance.append(name)
     
-    return highRelevance,midRelevance,lowRelevance
+    return highRelevance,midRelevance,lowRelevance,nonRelevance
 
 def loadRelevance():
     global relevanceDict
@@ -32,10 +34,11 @@ def loadRelevance():
         if os.path.isdir(fullpath):
             continue
         dict = {}
-        highRelevance,midRelevance,lowRelevance = readRelevanceFile(fullpath)
+        highRelevance,midRelevance,lowRelevance,nonRelevance = readRelevanceFile(fullpath)
         dict['highRelevance'] = highRelevance
         dict['midRelevance'] = midRelevance
         dict['lowRelevance'] = lowRelevance
+        dict['nonRelevance'] = nonRelevance
         relevanceDict[file] = dict
 
 if __name__ == '__main__':
