@@ -105,14 +105,14 @@ def calHighRelevancePrecision(thisReqName, topKPredict, confusionMatrix, topK=5)
     if topK > getLen(thisReqName,3):
         topK = getLen(thisReqName,3)
     #if the true high relevant services are less than topK, we treat topK as the len of true label
-    for predict in topKPredict[:topK]:
+    for predict in topKPredict:
         if predict in thisHighReq:
             # tp
             confusionMatrix[0][0] += 1
-        else:
+        # else:
             # fp
-            confusionMatrix[1][0] += 1
-
+            # confusionMatrix[1][0] += 1
+    confusionMatrix[1][0] += topK-confusionMatrix[0][0]
     return confusionMatrix, calculateNDCG(thisReqName, topKPredict, topK)
 
 
@@ -121,12 +121,12 @@ def calHighAndMidPrecision(thisReqName, topKPredict, confusionMatrix, topK=5):
     thisMidReq = relevanceDict[thisReqName]['midRelevance']
     if topK > getLen(thisReqName,2):
        topK = getLen(thisReqName,2)
-    for predict in topKPredict[:topK]:
+    for predict in topKPredict:
         if predict in thisHighReq or predict in thisMidReq:
             confusionMatrix[0][0] += 1
-        else:
-            confusionMatrix[1][0] += 1
-
+        # else:
+            # confusionMatrix[1][0] += 1
+    confusionMatrix[1][0] += topK-confusionMatrix[0][0]
     return confusionMatrix, calculateNDCG(thisReqName, topKPredict, topK)
 
 
@@ -154,10 +154,11 @@ def calHighAndMidAndLowAndNonPrecision(thisReqName, topKPredict, confusionMatrix
     thisNonReq = relevanceDict[thisReqName]['nonRelevance']
     if topK > getLen(thisReqName,0):
        topK = getLen(thisReqName,0)
-    for predict in topKPredict[:topK]:
+    for predict in topKPredict:
         if predict in thisHighReq or predict in thisMidReq or predict in thisLowReq or predict in thisNonReq:
             confusionMatrix[0][0] += 1
-        else:
-            confusionMatrix[1][0] += 1
+        # else:
+            # confusionMatrix[1][0] += 1
+    confusionMatrix[1][0] += topK-confusionMatrix[0][0]
 
     return confusionMatrix, calculateNDCG(thisReqName, topKPredict, topK)
