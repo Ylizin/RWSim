@@ -81,7 +81,7 @@ def calculateNDCG(thisReqName, topKPredict, topK):
     low_relevance = thisDict['lowRelevance']
 
     DCG = 0.0
-    for i, predict in enumerate(topKPredict[:topK]):
+    for i, predict in enumerate(topKPredict):#here i delete [:topK]
         rel = 0
         if predict in high_relevance:
             rel = 3
@@ -136,11 +136,13 @@ def calHighAndMidAndLowPrecision(thisReqName, topKPredict, confusionMatrix, topK
     thisLowReq = relevanceDict[thisReqName]['lowRelevance']
     if topK > getLen(thisReqName,1):
        topK = getLen(thisReqName,1)
-    for predict in topKPredict[:topK]:
+    for predict in topKPredict:
         if predict in thisHighReq or predict in thisMidReq or predict in thisLowReq:
             confusionMatrix[0][0] += 1
-        else:
-            confusionMatrix[1][0] += 1
+        # else:
+        #     confusionMatrix[1][0] += 1
+    #this is another calculaion strategy
+    confusionMatrix[1][0] += topK-confusionMatrix[0][0]
 
     return confusionMatrix, calculateNDCG(thisReqName, topKPredict, topK)
 
