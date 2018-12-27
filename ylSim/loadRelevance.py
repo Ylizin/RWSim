@@ -24,7 +24,6 @@ def readRelevanceFile(filePath):
                 midRelevance.append(name)
             elif relevance ==3:
                 highRelevance.append(name)
-    
     return highRelevance,midRelevance,lowRelevance,nonRelevance
 
 def loadRelevance():
@@ -40,6 +39,7 @@ def loadRelevance():
         dict['lowRelevance'] = lowRelevance
         dict['nonRelevance'] = nonRelevance
         relevanceDict[file] = dict
+ 
 
 if __name__ == '__main__':
     loadRelevance()
