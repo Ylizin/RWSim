@@ -150,22 +150,3 @@ def calHighAndMidAndLowPrecision(thisReqName, topKPredict, confusionMatrix, topK
     confusionMatrix[1][0] += precisionK-confusionMatrix[0][0]
 
     return confusionMatrix, calculateNDCG(thisReqName, topKPredict, topK)
-
-
-def calHighAndMidAndLowAndNonPrecision(thisReqName, topKPredict, confusionMatrix, topK=5):
-    thisHighReq = relevanceDict[thisReqName]['highRelevance']
-    thisMidReq = relevanceDict[thisReqName]['midRelevance']
-    thisLowReq = relevanceDict[thisReqName]['lowRelevance']
-    thisNonReq = relevanceDict[thisReqName]['nonRelevance']
-    precisionK = topK
-
-    if topK > getLen(thisReqName,0):
-       precisionK = getLen(thisReqName,0)
-    for predict in topKPredict:
-        if predict in thisHighReq or predict in thisMidReq or predict in thisLowReq or predict in thisNonReq:
-            confusionMatrix[0][0] += 1
-        # else:
-            # confusionMatrix[1][0] += 1
-    confusionMatrix[1][0] += precisionK-confusionMatrix[0][0]
-
-    return confusionMatrix, calculateNDCG(thisReqName, topKPredict, topK)
