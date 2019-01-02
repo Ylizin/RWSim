@@ -46,9 +46,15 @@ class  RWLSTM(nn.Module):
         #here the output is packedsequence and after padding, it's b X len X 2*hidden
         #then we do index_select to restore the order of the batch
         output = pad_packed_sequence(lstm_output,batch_first=True)
+
+        # output is padded output_seq of lstm, and restored by the idx 
+        # output : (batch, seq_len, num_directions * hidden_size)
+        # hn : (num_layers * num_directions, batch, hidden_size)
+        # cn : (num_layers * num_directions, batch, hidden_size)
         output = output.index_select(idx_unsort)
         hn = hn.index_select(idx_unsort)
         cn = cn.index_select(idx_unsort)
+
         return output,hn,cn
 
         
