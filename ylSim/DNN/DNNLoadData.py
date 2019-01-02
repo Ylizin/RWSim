@@ -70,7 +70,6 @@ def generateTrainAndTest(cvNum):
 def getSeqsFromKeys(keys):
     '''
        careful that for evaluation metrics procedure, requests should be test separately
-
     '''
     if len(seqs) == 0:
         loadFeatures(utils.featurePath)

@@ -19,8 +19,9 @@ wsdlFeatures = {}
 
 reqFeaturePath = utils.RQPath+r'\raw_vec'
 wsdlFeaturePath = utils.WSDLPath+r'\raw_vec'
+    
 
-def loadFeatures(relevancePath, wsdlPath):
+def loadFeatures(relevancePath= utils.RelevancePath, wsdlPath =utils.WSDLPath):
     loadRelevance.loadRelevance()
     global relevanceDict
     relevanceDict.update(loadRelevance.relevanceDict)
@@ -64,7 +65,7 @@ def getSeqsFromKeys(keys):
 
     '''
     if len(reqFeatures) == 0:
-        loadFeatures(utils.RelevancePath,utils.WSDLPath)
+        loadFeatures()
 
     if isinstance(keys,str) : #if the param is a single str 
         keys = [keys]
