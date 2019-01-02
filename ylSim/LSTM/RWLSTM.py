@@ -58,7 +58,7 @@ class  RWLSTM(nn.Module):
         lstm_input = pack_sequence(self.__list_index_select(seqs,idx_sort))
         h0,c0 = self.__init_hidden(curren_batchsize)
         lstm_output,(hn,cn) = self.rnn(lstm_input,(h0,c0))
-        lstm_output = PackedSequence(self.dropout(lstm_output.data),lstm_output.batch_sizes)
+        # lstm_output = PackedSequence(self.dropout(lstm_output.data),lstm_output.batch_sizes)
 
         #here the output is packedsequence and after padding, it's b X len X 2*hidden
         #then we do index_select to restore the order of the batch
@@ -75,8 +75,6 @@ class  RWLSTM(nn.Module):
         
         hn = hn.view(hn.size()[1],-1)
         cn = cn.view(cn.size()[1],-1)
+        hn = self.dropout(hn)
+        cn = self.dropout(cn)
         return output,hn,cn
-
-        
-        
-        
