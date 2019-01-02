@@ -123,7 +123,9 @@ class LSTMDataLoader(object):
         batch_size = self.batch_size
         #when idx == length means it runs out of the dataset
         if idx >= self.len:
-            idx %= self.len
+            self._idx = 0
+            raise StopIteration
         upper_bound = self.len if self.len <= idx + batch_size else idx + batch_size
+        self._idx += self.batch_size
         return self.data[idx:upper_bound]
         

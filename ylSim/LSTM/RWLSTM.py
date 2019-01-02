@@ -27,7 +27,7 @@ class  RWLSTM(nn.Module):
             ret.append(_tensor)
         return ret
 
-    def __init_hidden(self):
+    def __init_hidden(self,current_Batchsize):
         device = None
         if _CUDA :
             device = torch.device('cuda')
@@ -35,7 +35,7 @@ class  RWLSTM(nn.Module):
         num_dir = 1
         if self.bidirectional:
             num_dir = 2
-        return torch.randn(num_dir,self.batch_size,self.hidden_size,device = device),torch.randn(num_dir,self.batch_size,self.hidden_size,device = device)
+        return torch.randn(num_dir,current_Batchsize,self.hidden_size,device = device),torch.randn(num_dir,current_Batchsize,self.hidden_size,device = device)
 
     def forward(self, seqs):
         '''
@@ -45,6 +45,7 @@ class  RWLSTM(nn.Module):
             second: through torch...pack_sequence, we can get the input of LSTM as a packed seq
             thirdly: we unsort the output of the LSTM then return it for sim calculation afterwards
         '''
+        curren_batchsize = len(seqs)
         lengths = [k.shape[0] for k in seqs]
         lengths = torch.tensor(lengths)
         if _CUDA:
@@ -55,7 +56,7 @@ class  RWLSTM(nn.Module):
         _,idx_unsort = torch.sort(idx_sort)
             
         lstm_input = pack_sequence(self.__list_index_select(seqs,idx_sort))
-        h0,c0 = self.__init_hidden()
+        h0,c0 = self.__init_hidden(curren_batchsize)
         lstm_output,(hn,cn) = self.rnn(lstm_input,(h0,c0))
         lstm_output = PackedSequence(self.dropout(lstm_output.data),lstm_output.batch_sizes)
 
