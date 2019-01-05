@@ -10,10 +10,9 @@ class RWBiLinear(nn.Module):
             self.inf = args.hidden_size 
 
         self.outf = args.outDim
-        self.bi = nn.Bilinear(self.inf,self.inf,self.outf)
+        self.cs = nn.CosineSimilarity()
 
     def forward(self,feature1, feature2):
-        return self.bi(feature1,feature2)
-
-    
-        
+        feature1 = torch.mean(feature1,1)
+        feature2 = torch.mean(feature2,1)
+        return self.cs(feature1,feature2)

@@ -189,7 +189,7 @@ def trainOneModel(args, model, trainSeqs, testSeqs, testSeqs_keys, index, syncCo
             precision3 = precision3/len(testSeqs_keys)
             NDCG = NDCG/len(testSeqs_keys)
             NDCG = NDCG.item()
-            if precision1 > bestPrecision:
+            if precision1 > bestPrecision  or bestPrecision == 0.0 :
                 torch.save(model.state_dict(), args.modelFile +
                            str(level)+str(index))
                 bestPrecision = precision1

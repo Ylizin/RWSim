@@ -22,6 +22,19 @@ from LSTM.totalmodel import RWLSTMModel
 _CUDA = torch.cuda.is_available()
 
 
+def customizedLoss(pred, r):
+    '''
+        pred,r are shape of N,1
+        do weighted MSELoss
+        output = (ri+0.1)*[(predi-ri)^2]
+    '''
+    pred = pred.view(-1)
+    r = r.view(-1)
+    diff = torch.add(pred, -1, r)  # do pred - r
+    weighted = torch.add(r, 0.1)  # do r + 0.1
+    pow_diff = torch.pow(diff, 2)  # do diff^2
+    return torch.mean(torch.mul(pow_diff, weighted))
+
 def simplePrecisionNDCG(reqName, pred_r, topK=5, level=3, doDCG=False):
     """
         pred_r is sorted and cut out topK 
@@ -85,7 +98,7 @@ def trainOneModel(
         # lossWeight = lossWeight.cuda()
 
     # add weight to emphasize the high relevance case
-    lossFunc = nn.CrossEntropyLoss()
+    lossFunc = customizedLoss
     optimizer = optim.Adam(model.parameters(), args.lr, weight_decay=1e-5)
     scheduler = StepLR(optimizer, step_size=50, gamma=0.5)
 
@@ -103,7 +116,7 @@ def trainOneModel(
                 r = r.cuda()
             r.view(-1)
             pred = model(seq1, seq2)
-            
+            r = r.type_as(pred)
             l = lossFunc(pred, r)
             totalLoss += l.item()
             optimizer.zero_grad()
@@ -130,10 +143,10 @@ def trainOneModel(
                         r = r.cuda()
                     r = r.view(-1)
                     pred = model(seq1, seq2)
-                    pred = nn.functional.softmax(pred, dim=1)
-                    prob, predIndex_long = torch.max(pred, dim=1)
-                    predIndex = predIndex_long.type_as(prob)
-                    pred = torch.add(predIndex, prob)
+                    # pred = nn.functional.softmax(pred, dim=1)
+                    # prob, predIndex_long = torch.max(pred, dim=1)
+                    # predIndex = predIndex_long.type_as(prob)
+                    # pred = torch.add(predIndex, prob)
                     r = r.type_as(pred)
                     # sort by pred , calculate by r
                     predicts += list(zip(pred, r))  # list of (predict,r)
@@ -156,8 +169,7 @@ def trainOneModel(
             precision3 = precision3 / len(testSeqs_keys)
             NDCG = NDCG / len(testSeqs_keys)
             NDCG = NDCG.item()
-            if precision1 > bestPrecision:
-                utils.generateDirs(args.modelFile)
+            if precision1 > bestPrecision or bestPrecision == 0.0 :
                 torch.save(model.state_dict(), args.modelFile + str(level) + str(index))
                 bestPrecision = precision1
             if doPrint:
@@ -188,10 +200,10 @@ def trainOneModel(
                 r = r.cuda()
             r = r.view(-1)
             pred = model(seq1, seq2)
-            pred = nn.functional.softmax(pred, dim=1)
-            prob, predIndex_long = torch.max(pred, dim=1)
-            predIndex = predIndex_long.type_as(prob)
-            pred = torch.add(predIndex, prob)
+            # pred = nn.functional.softmax(pred, dim=1)
+            # prob, predIndex_long = torch.max(pred, dim=1)
+            # predIndex = predIndex_long.type_as(prob)
+            # pred = torch.add(predIndex, prob)
             r = r.type_as(pred)
             # sort by pred , calculate by r
             predicts += list(zip(pred, r))  # list of (predict,r)
@@ -235,7 +247,7 @@ def main():
     parser.add_argument("--foldNum", type=int, default=5)
     parser.add_argument("--level", type=int, default=3)
 
-    parser.add_argument("--nepoch", type=int, default=300)
+    parser.add_argument("--nepoch", type=int, default=500)
     parser.add_argument("--testEvery", type=int, default=20)
     parser.add_argument("--batch_size", type=int, default=128)
     parser.add_argument("--modelFile", default="./models/LSTM")

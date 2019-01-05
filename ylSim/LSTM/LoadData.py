@@ -94,7 +94,13 @@ def getSeqsFromKeys(keys):
 
 class LSTMDataSet(Dataset):
     def __init__(self,seqs):
-        self.seqs = seqs
+        self.seqs = seqs + self.__swap_req_wsdl(seqs)
+
+    def __swap_req_wsdl(self,seqs):
+        new_seqs = []
+        for reqF,wsdlF,rel in seqs:
+            new_seqs.append((wsdlF,reqF,rel))
+        return new_seqs
 
     def __len__(self):
         return len(self.seqs)

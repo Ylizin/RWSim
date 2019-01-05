@@ -13,6 +13,6 @@ class RWLSTMModel(nn.Module):
     def forward(self, inseq1 , inseq2):
         output1,h1,c1 = self.lstm(inseq1)
         output2,h2,c2 = self.lstm(inseq2)
-        return self.bi(h1,h2)
+        return self.bi(output1,output2)
 
     
