@@ -68,6 +68,8 @@ def trainOneModel(
     model,
     trainSeqs,
     testSeqs,
+    trainSeqs_keys,
+
     testSeqs_keys,
     index,
     syncCount,
@@ -103,6 +105,7 @@ def trainOneModel(
     scheduler = StepLR(optimizer, step_size=50, gamma=0.5)
 
     bestPrecision = 0.0
+    bestNDCG = 0.0
     for i in range(args.nepoch):
         totalLoss = 0.0
         scheduler.step()
@@ -169,9 +172,11 @@ def trainOneModel(
             precision3 = precision3 / len(testSeqs_keys)
             NDCG = NDCG / len(testSeqs_keys)
             NDCG = NDCG.item()
-            if precision1 > bestPrecision or bestPrecision == 0.0 :
+            if NDCG > bestNDCG or bestNDCG == 0.0:
+            # if precision1 > bestPrecision or bestPrecision == 0.0 :
                 torch.save(model.state_dict(), args.modelFile + str(level) + str(index))
                 bestPrecision = precision1
+                bestNDCG = NDCG
             if doPrint:
                 print(
                     "epoch:{},Precision1:{:.4},Precision2:{:.4},Precision3:{:.4},NDCG:{:.4}".format(
@@ -181,6 +186,8 @@ def trainOneModel(
 
     if doPrint:
         print("bestPrecision:{}".format(bestPrecision))
+        print("bestNDCG:{}".format(bestNDCG))
+
     model.load_state_dict(torch.load(args.modelFile + str(level) + str(index)))
 
     precision1 = 0.0
@@ -247,8 +254,8 @@ def main():
     parser.add_argument("--foldNum", type=int, default=5)
     parser.add_argument("--level", type=int, default=3)
 
-    parser.add_argument("--nepoch", type=int, default=500)
-    parser.add_argument("--testEvery", type=int, default=20)
+    parser.add_argument("--nepoch", type=int, default=300)
+    parser.add_argument("--testEvery", type=int, default=10)
     parser.add_argument("--batch_size", type=int, default=128)
     parser.add_argument("--modelFile", default="./models/LSTM")
 
@@ -283,6 +290,8 @@ def main():
                 model,
                 trainSeqs,
                 testSeqs,
+                trainSeqs_keys,
+
                 testSeqs_keys,
                 index,
                 count,

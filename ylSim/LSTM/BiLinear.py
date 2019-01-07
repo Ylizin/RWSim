@@ -13,6 +13,6 @@ class RWBiLinear(nn.Module):
         self.cs = nn.CosineSimilarity()
 
     def forward(self,feature1, feature2):
-        feature1 = torch.mean(feature1,1)
-        feature2 = torch.mean(feature2,1)
+        feature1 = torch.sum(feature1,1)
+        feature2 = torch.sum(feature2,1)
         return self.cs(feature1,feature2)
