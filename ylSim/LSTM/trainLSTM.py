@@ -167,10 +167,10 @@ def trainOneModel(
                 precision2 += p2
                 precision3 += p3
                 NDCG += ndcg
-            precision1 = precision1 / len(testSeqs_keys)
-            precision2 = precision2 / len(testSeqs_keys)
-            precision3 = precision3 / len(testSeqs_keys)
-            NDCG = NDCG / len(testSeqs_keys)
+            precision1 = precision1 / len(trainSeqs_keys)
+            precision2 = precision2 / len(trainSeqs_keys)
+            precision3 = precision3 / len(trainSeqs_keys)
+            NDCG = NDCG / len(trainSeqs_keys)
             NDCG = NDCG.item()
             if NDCG > bestNDCG or bestNDCG == 0.0:
             # if precision1 > bestPrecision or bestPrecision == 0.0 :
@@ -246,7 +246,7 @@ def main():
     parser.add_argument("--hidden_size", type=int, default=60)
     # parser.add_argument('--hiddenDim2', type=int, default=60)
     # parser.add_argument('--hiddenDim3', type=int, default=20)
-    parser.add_argument("--dropout", type=float, default=0.4)
+    parser.add_argument("--dropout", type=float, default=0.0)
     parser.add_argument("--bidirectional", type=bool, default=True)
 
     # parser.add_argument('--numWorkers', type=int, default=0)
