@@ -243,7 +243,7 @@ def main():
     parser = argparse.ArgumentParser("DNN")
     parser.add_argument("--outDim", type=int, default=4)
     parser.add_argument("--input_size", type=int, default=300)
-    parser.add_argument("--hidden_size", type=int, default=60)
+    parser.add_argument("--hidden_size", type=int, default=150)
     # parser.add_argument('--hiddenDim2', type=int, default=60)
     # parser.add_argument('--hiddenDim3', type=int, default=20)
     parser.add_argument("--dropout", type=float, default=0.0)

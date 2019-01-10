@@ -11,8 +11,12 @@ class RWBiLinear(nn.Module):
 
         self.outf = args.outDim
         self.cs = nn.CosineSimilarity()
+        self.norm = nn.BatchNorm1d(self.inf)
 
     def forward(self,feature1, feature2):
         feature1 = torch.sum(feature1,1)
         feature2 = torch.sum(feature2,1)
-        return self.cs(feature1,feature2)
+        # feature1 = self.norm(feature1)
+        # feature2 = self.norm(feature2)
+        # return torch.sum(torch.mul(feature1,feature2),dim = 1)
+        return self.cs(feature1,feature2)*3
