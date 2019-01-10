@@ -12,6 +12,9 @@ class DNN(nn.Module):
         self.hiddenDim1 = args.hiddenDim1
         self.hiddenDim2 = args.hiddenDim2
         self.hiddenDim3 = args.hiddenDim3
+        self.droprate = args.drop
+
+        self.drop = nn.Dropout(self.droprate)
         self.fc1 = nn.Linear(self.seqLen,self.hiddenDim1)
         self.bn1 = nn.BatchNorm1d(self.hiddenDim1)
         # self.relu = nn.RReLU()
@@ -28,6 +31,7 @@ class DNN(nn.Module):
             self.bn1,
             self.relu,
             self.fc2,
+            self.drop,
             self.bn2,
             self.relu,
             self.fc3,
@@ -42,4 +46,3 @@ class DNN(nn.Module):
         seq.view(-1)
         out = self.dnn(seq)
         return out
-        
