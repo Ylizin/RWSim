@@ -22,6 +22,22 @@ from LSTM.totalmodel import RWLSTMModel
 _CUDA = torch.cuda.is_available()
 
 
+def calculateLevelsPN(key,sortedResult):
+    p11, ndcg1 = simplePrecisionNDCG(key, sortedResult, 5, 1, doDCG=True)
+    p12, _ = simplePrecisionNDCG(key, sortedResult, 5, 2, doDCG=True)
+    p13, _ = simplePrecisionNDCG(key, sortedResult, 5, 3, doDCG=True)
+    p21, ndcg2 = simplePrecisionNDCG(key, sortedResult, 5, 1, doDCG=True)
+    p22, _ = simplePrecisionNDCG(key, sortedResult, 5, 2, doDCG=True)
+    p23, _ = simplePrecisionNDCG(key, sortedResult, 5, 3, doDCG=True)
+    p31, ndcg3 = simplePrecisionNDCG(key, sortedResult, 5, 1, doDCG=True)
+    p32, _ = simplePrecisionNDCG(key, sortedResult, 5, 2, doDCG=True)
+    p33, _ = simplePrecisionNDCG(key, sortedResult, 5, 3, doDCG=True)
+    p41, ndcg4 = simplePrecisionNDCG(key, sortedResult, 5, 1, doDCG=True)
+    p42, _ = simplePrecisionNDCG(key, sortedResult, 5, 2, doDCG=True)
+    p43, _ = simplePrecisionNDCG(key, sortedResult, 5, 3, doDCG=True)
+
+    return (ndcg1+ndcg2+ndcg3+ndcg4)/4,(p11+p21+p31+p41)/4,(p12+p22+p32+p42)/4,(p13+p23+p33+p43)/4
+
 def customizedLoss(pred, r):
     '''
         pred,r are shape of N,1
@@ -47,9 +63,10 @@ def simplePrecisionNDCG(reqName, pred_r, topK=5, level=3, doDCG=False):
     precisionK = len_p if len_p < topK else topK
     
     for i, t in enumerate(pred_r):
-        if i > topK:
+        if i >= topK:
             break
         pred, r = t
+        r = r.item()
         if doDCG:
             DCG += calculatePrecision.calculateDCG(r, i + 1, K1=i + 1)
         if r >= level:  # eg.  here we have a r=2 ranked here but level=3
@@ -81,7 +98,7 @@ def trainOneModel(
     level = args.level
     topK = 5
 
-    trainDataset = LoadData.LSTMDataSet(trainSeqs)
+    trainDataset = LoadData.LSTMDataSet(trainSeqs,eval=False)
     testDataset = LoadData.LSTMDataSet(testSeqs)
 
     trainDataLoader = LoadData.LSTMDataLoader(trainDataset)
@@ -211,18 +228,16 @@ def trainOneModel(
             # sort by pred , calculate by r
             predicts += list(zip(pred, r))  # list of (predict,r)
         sortedResult = sorted(predicts, key=lambda k: k[0], reverse=True)
-        p1, ndcg = simplePrecisionNDCG(key, sortedResult[:topK], topK, 1, doDCG=True)
-        p2, _ = simplePrecisionNDCG(key, sortedResult[:topK], topK, 2, doDCG=True)
-        p3, _ = simplePrecisionNDCG(key, sortedResult[:topK], topK, 3, doDCG=True)
-        precision1 += p1
-        precision2 += p2
-        precision3 += p3
-        NDCG += ndcg
+        NDCGs,p1s,p2s,p3s = calculateLevelsPN(key,sortedResult)
+        NDCG += NDCGs
+        p1 += p1s
+        p2 += p2s
+        p3 += p3s
 
-    precision1 = precision1 / len(testSeqs_keys)
-    precision2 = precision2 / len(testSeqs_keys)
-    precision3 = precision3 / len(testSeqs_keys)
 
+    precision1 = p1 / len(testSeqs_keys)
+    precision2 = p2 / len(testSeqs_keys)
+    precision3 = p3 / len(testSeqs_keys)
     NDCG = NDCG / len(testSeqs_keys)
     NDCG = NDCG.item()
     with lock:

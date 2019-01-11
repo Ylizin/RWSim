@@ -150,3 +150,4 @@ def calHighAndMidAndLowPrecision(thisReqName, topKPredict, confusionMatrix, topK
     confusionMatrix[1][0] += precisionK-confusionMatrix[0][0]
 
     return confusionMatrix, calculateNDCG(thisReqName, topKPredict, topK)
+

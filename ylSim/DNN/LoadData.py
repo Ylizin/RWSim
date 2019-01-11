@@ -93,8 +93,11 @@ def getSeqsFromKeys(keys):
 
 
 class MLPDataSet(Dataset):
-    def __init__(self,seqs):
-        self.seqs = seqs + self.__swap_req_wsdl(seqs)
+    def __init__(self,seqs,eval = True):
+        if eval:
+            self.seqs = seqs
+        else:
+            self.seqs = seqs + self.__swap_req_wsdl(seqs)
 
     def __swap_req_wsdl(self,seqs):
         new_seqs = []
