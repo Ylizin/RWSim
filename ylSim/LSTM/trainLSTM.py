@@ -41,26 +41,22 @@ def simplePrecisionNDCG(reqName, pred_r, topK=5, level=3, doDCG=False):
         if nr < k then k = nr
     """
     tp = 0
-    fp = 1
     DCG = 0.0
     IDCG = 1
     len_p = getLen(reqName, level)
-    topK = topK if topK < len_p else len_p
+    precisionK = len_p if len_p < topK else topK
+    
     for i, t in enumerate(pred_r):
         if i > topK:
             break
         pred, r = t
         if doDCG:
             DCG += calculatePrecision.calculateDCG(r, i + 1, K1=i + 1)
-        if r < level:  # eg.  here we have a r=2 but ecpected level 3
-            fp += 1
-        else:
-            tp += 1
+        if r >= level:  # eg.  here we have a r=2 ranked here but level=3
+            tp+=1
     if doDCG:
         IDCG = calculatePrecision.calculateIDCG(reqName, topK)
-    if fp > 1:
-        fp -= 1
-    return tp / (fp + tp), DCG / IDCG
+    return tp / (precisionK), DCG / IDCG
 
 
 def trainOneModel(
@@ -135,7 +131,7 @@ def trainOneModel(
             NDCG = 0.0
             model.eval()
 
-            for key in testSeqs_keys:  # do evaluation for every key respectively
+            for key in trainSeqs_keys:  # do evaluation for every key respectively
                 predicts = []
                 evalSeqs = LoadData.getSeqsFromKeys(key)
                 evalDataSet = LoadData.LSTMDataSet(evalSeqs)

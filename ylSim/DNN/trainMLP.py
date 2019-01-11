@@ -41,26 +41,23 @@ def simplePrecisionNDCG(reqName, pred_r, topK=5, level=3, doDCG=False):
         if nr < k then k = nr
     """
     tp = 0
-    fp = 1
     DCG = 0.0
     IDCG = 1
     len_p = getLen(reqName, level)
-    topK = topK if topK < len_p else len_p
+    precisionK = len_p if len_p < topK else topK
+    
     for i, t in enumerate(pred_r):
-        if i > topK:
+        if i >= topK:
             break
         pred, r = t
         if doDCG:
             DCG += calculatePrecision.calculateDCG(r, i + 1, K1=i + 1)
-        if r < level:  # eg.  here we have a r=2 but ecpected level 3
-            fp += 1
-        else:
-            tp += 1
+        if r >= level:  # eg.  here we have a r=2 ranked here but level=3
+            tp+=1
     if doDCG:
         IDCG = calculatePrecision.calculateIDCG(reqName, topK)
-    if fp > 1:
-        fp -= 1
-    return tp / (fp + tp), DCG / IDCG
+
+    return tp / (precisionK), DCG / IDCG
 
 
 def trainOneModel(
@@ -116,13 +113,14 @@ def trainOneModel(
             seq1 = torch.tensor(seq1)
             seq2 = torch.tensor(seq2)
             r = torch.tensor(r)
+            r = r.view(-1)
             if _CUDA:
                 seq1 = seq1.cuda()
                 seq2 = seq2.cuda()
                 r = r.cuda()
             r.view(-1)
-            seq = torch.cat((seq1,seq2),dim=1)
-            pred = model(seq)
+            # seq = torch.cat((seq1,seq2),dim=1)
+            pred = model(seq1,seq2)
             r = r.type_as(pred)
             l = lossFunc(pred, r)
             totalLoss += l.item()
@@ -139,7 +137,7 @@ def trainOneModel(
             NDCG = 0.0
             model.eval()
 
-            for key in testSeqs_keys:  # do evaluation for every key respectively
+            for key in trainSeqs_keys:  # do evaluation for every key respectively
                 predicts = []
                 evalSeqs = LoadData.getSeqsFromKeys(key)
                 evalDataSet = LoadData.MLPDataSet(evalSeqs)
@@ -153,13 +151,13 @@ def trainOneModel(
                         seq2 = seq2.cuda()
                         r = r.cuda()
                     r = r.view(-1)
-                    seq = torch.cat((seq1,seq2),dim=1)
-                    pred = model(seq)
+                    # seq = torch.cat((seq1,seq2),dim=1)
+                    pred = model(seq1,seq2)
                     # pred = nn.functional.softmax(pred, dim=1)
                     # prob, predIndex_long = torch.max(pred, dim=1)
                     # predIndex = predIndex_long.type_as(prob)
                     # pred = torch.add(predIndex, prob)
-                    r = r.type_as(pred)
+                    # r = r.type_as(pred)
                     # sort by pred , calculate by r
                     predicts += list(zip(pred, r))  # list of (predict,r)
                 sortedResult = sorted(predicts, key=lambda k: k[0], reverse=True)
@@ -189,7 +187,7 @@ def trainOneModel(
             if doPrint:
                 print(
                     "epoch:{},Precision1:{:.4},Precision2:{:.4},Precision3:{:.4},NDCG:{:.4}".format(
-                        i, precision1, precision2, precision3, NDCG
+                        i, float(precision1), float(precision2), float(precision3), float(NDCG)
                     )
                 )
 
@@ -219,8 +217,8 @@ def trainOneModel(
                 seq2 = seq2.cuda()
                 r = r.cuda()
             r = r.view(-1)
-            seq = torch.cat((seq1,seq2),dim=1)
-            pred = model(seq)
+            # seq = torch.cat((seq1,seq2),dim=1)
+            pred = model(seq1,seq2)
             
             # pred = nn.functional.softmax(pred, dim=1)
             # prob, predIndex_long = torch.max(pred, dim=1)
@@ -256,12 +254,12 @@ def trainOneModel(
 def main():
 
     parser = argparse.ArgumentParser("DNN")
-    parser.add_argument('--outDim', type=int, default=1)
-    parser.add_argument('--seqLen', type=int, default=600)
-    parser.add_argument('--hiddenDim1', type=int, default=256)
-    parser.add_argument('--hiddenDim2', type=int, default=100)
-    parser.add_argument('--hiddenDim3', type=int, default=20)
-    parser.add_argument('--drop', type=float, default=0.4)
+    parser.add_argument('--outDim', type=int, default=30)
+    parser.add_argument('--seqLen', type=int, default=300)
+    parser.add_argument('--hiddenDim1', type=int, default=200)
+    parser.add_argument('--hiddenDim2', type=int, default=90)
+    parser.add_argument('--hiddenDim3', type=int, default=80)
+    parser.add_argument('--drop', type=float, default=0.5)
 
     parser.add_argument('--numWorkers', type=int, default=0)
     parser.add_argument('--lr', type=float, default=3e-5)
@@ -269,7 +267,7 @@ def main():
     parser.add_argument('--level', type=int, default=3)
 
     parser.add_argument('--nepoch', type=int, default=300)
-    parser.add_argument('--testEvery', type=int, default=20)
+    parser.add_argument('--testEvery', type=int, default=10)
     parser.add_argument('--batchSize', type=int, default=128)
     parser.add_argument('--modelFile', default='./models/dnn')
 

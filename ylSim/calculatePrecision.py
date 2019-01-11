@@ -70,7 +70,7 @@ def calculateIDCG(thisReqName, topK):
                              K1=high_relevant + mid_relevant)
         IDCG += calculateDCG(1, high_relevant+mid_relevant+1,
                              K1=high_relevant+mid_relevant+low_relevant)
-
+    
     return IDCG
 
 
