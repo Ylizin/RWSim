@@ -240,6 +240,10 @@ def trainOneModel(
     precision3 = p3 / len(testSeqs_keys)
     NDCG = NDCG / len(testSeqs_keys)
     NDCG = NDCG.item()
+    with open(args.modelFile + 'testSeqs','a') as f:
+        f.write(str(level) + str(index)+':')
+        f.write(str(testSeqs_keys) + '\n')
+
     with lock:
         syncCount.value += 1
         syncPrecision1.value += precision1
