@@ -28,27 +28,27 @@ class DNN(nn.Module):
         self.out = nn.Linear(self.hiddenDim3,self.outDim)
         self.dnn1 = nn.Sequential(
             self.fc1,
-            # self.bn1,
+            self.bn1,
             self.relu,
             self.fc2,
             self.drop,
-            # self.bn2,
+            self.bn2,
             self.relu,
             self.fc3,
-            # self.bn3,
+            self.bn3,
             self.relu,
             self.out,
         )
         self.dnn2 = nn.Sequential(
             self.fc1,
-            # self.bn1,
+            self.bn1,
             self.relu,
             self.fc2,
             self.drop,
-            # self.bn2,
+            self.bn2,
             self.relu,
             self.fc3,
-            # self.bn3,
+            self.bn3,
             self.relu,
             self.out,
         )

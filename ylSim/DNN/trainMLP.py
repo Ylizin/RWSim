@@ -38,6 +38,19 @@ def calculateLevelsPN(key,sortedResult):
     return (ndcg1+ndcg2+ndcg3+ndcg4)/4,(p11+p21+p31+p41)/4,(p12+p22+p32+p42)/4,(p13+p23+p33+p43)/4
 
 
+# def customizedLoss(pred, r):
+#     '''
+#         pred,r are shape of N,1
+#         do weighted MSELoss
+#         output = ([10(predi-ri)]^2)
+#     '''
+#     pred = pred.view(-1)
+#     r = r.view(-1)
+#     diff = torch.add(pred,-1, r) * 10  # do (pred - r) * 10
+ 
+#     pow_diff = torch.pow(diff, 2)  # do diff^2
+#     return torch.mean(pow_diff)
+
 def customizedLoss(pred, r):
     '''
         pred,r are shape of N,1
@@ -46,7 +59,7 @@ def customizedLoss(pred, r):
     '''
     pred = pred.view(-1)
     r = r.view(-1)
-    diff = torch.add(pred, -1, r)  # do pred - r
+    diff = torch.add(pred, -1, r)   # do pred - r
     weighted = torch.add(r, 0.1)  # do r + 0.1
     pow_diff = torch.pow(diff, 2)  # do diff^2
     return torch.mean(torch.mul(pow_diff, weighted))
@@ -73,7 +86,15 @@ def simplePrecisionNDCG(reqName, pred_r, topK=5, level=3, doDCG=False):
             tp+=1
     if doDCG:
         IDCG = calculatePrecision.calculateIDCG(reqName, topK)
-    if DCG > IDCG :
+        #   here to guarantee DCG < IDCG , in some situation the dcg will be a very tiny larger than 
+        #   idcg due to the float storage
+        #   so we add 1e-3
+    if DCG > IDCG+1e-3 :
+        print(reqName+'\n')
+        print(pred_r)
+        print('\n')
+        print('DCG:{}\n'.format(DCG))
+        print('IDCG{}:\n'.format(IDCG))
         raise RuntimeError('NDCG larger than 1.')
     return tp / (precisionK), DCG / IDCG
 
@@ -115,9 +136,11 @@ def trainOneModel(
         # lossWeight = lossWeight.cuda()
 
     # add weight to emphasize the high relevance case
+    # lossFunc = nn.MSELoss()
+
     lossFunc = customizedLoss
     optimizer = optim.Adam(model.parameters(), args.lr, weight_decay=1e-5)
-    scheduler = StepLR(optimizer, step_size=50, gamma=0.5)
+    scheduler = StepLR(optimizer, step_size=50, gamma=0.3)
 
     bestPrecision = 0.0
     bestNDCG = 0.0
@@ -266,12 +289,12 @@ def trainOneModel(
 def main():
 
     parser = argparse.ArgumentParser("DNN")
-    parser.add_argument('--outDim', type=int, default=30)
+    parser.add_argument('--outDim', type=int, default=300)
     parser.add_argument('--seqLen', type=int, default=300)
     parser.add_argument('--hiddenDim1', type=int, default=250)
-    parser.add_argument('--hiddenDim2', type=int, default=150)
-    parser.add_argument('--hiddenDim3', type=int, default=120)
-    parser.add_argument('--drop', type=float, default=0.4)
+    parser.add_argument('--hiddenDim2', type=int, default=200)
+    parser.add_argument('--hiddenDim3', type=int, default=150)
+    parser.add_argument('--drop', type=float, default=0.5)
 
     parser.add_argument('--numWorkers', type=int, default=0)
     parser.add_argument('--lr', type=float, default=3e-5)

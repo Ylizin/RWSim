@@ -50,6 +50,13 @@ def customizedLoss(pred, r):
     pow_diff = torch.pow(diff, 2)  # do diff^2
     return torch.mean(torch.mul(pow_diff, weighted))
 
+def customizedLoss2(pred,r):
+    pred = pred.view(-1)
+    r = r.view(-1)
+    diff = torch.add(pred, -1, r)*10  # do pred - r
+    pow_diff = torch.pow(diff, 2)
+    return torch.mean(pow_diff)
+
 def simplePrecisionNDCG(reqName, pred_r, topK=5, level=3, doDCG=False):
     """
         pred_r is sorted and cut out topK 
@@ -112,7 +119,7 @@ def trainOneModel(
         # lossWeight = lossWeight.cuda()
 
     # add weight to emphasize the high relevance case
-    lossFunc = customizedLoss
+    lossFunc = customizedLoss2
     optimizer = optim.Adam(model.parameters(), args.lr, weight_decay=1e-5)
     scheduler = StepLR(optimizer, step_size=50, gamma=0.5)
 
@@ -253,7 +260,7 @@ def main():
     parser.add_argument("--hidden_size", type=int, default=150)
     # parser.add_argument('--hiddenDim2', type=int, default=60)
     # parser.add_argument('--hiddenDim3', type=int, default=20)
-    parser.add_argument("--dropout", type=float, default=0.0)
+    parser.add_argument("--dropout", type=float, default=0.4)
     parser.add_argument("--bidirectional", type=bool, default=True)
 
     # parser.add_argument('--numWorkers', type=int, default=0)
@@ -276,7 +283,7 @@ def main():
     level = args.level
 
     manager = Manager()
-    p = Pool(int(os.cpu_count() / 2))
+    p = Pool(int(os.cpu_count() / 2 -1))
     lock = manager.Lock()
     precision1 = manager.Value("d", 0.0)
     precision2 = manager.Value("d", 0.0)
