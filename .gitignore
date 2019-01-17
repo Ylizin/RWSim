@@ -104,6 +104,7 @@ venv.bak/
 .mypy_cache/
 
 models/*
+!models/niceModels
 .vscode/
 **/models/
 **/*.pt
