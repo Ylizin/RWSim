@@ -139,7 +139,7 @@ def trainOneModel(
     # lossFunc = nn.MSELoss()
 
     lossFunc = customizedLoss
-    optimizer = optim.Adam(model.parameters(), args.lr, weight_decay=1e-5)
+    optimizer = optim.Adam(model.parameters(), args.lr)
     scheduler = StepLR(optimizer, step_size=50, gamma=0.3)
 
     bestPrecision = 0.0
@@ -316,7 +316,7 @@ def main():
     level = args.level
 
     manager = Manager()
-    p = Pool(int(os.cpu_count() / 2))
+    p = Pool(int(os.cpu_count() / 2)+1)
     lock = manager.Lock()
     precision1 = manager.Value("d", 0.0)
     precision2 = manager.Value("d", 0.0)
