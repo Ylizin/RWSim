@@ -21,7 +21,8 @@ from LSTM.totalmodel import RWLSTMModel
 
 _CUDA = torch.cuda.is_available()
 
-def calculateLevelsPN(key,sortedResult):
+
+def calculateLevelsPN(key, sortedResult):
     p11, ndcg1 = simplePrecisionNDCG(key, sortedResult, 5, 1, doDCG=True)
     p12, _ = simplePrecisionNDCG(key, sortedResult, 5, 2, doDCG=True)
     p13, _ = simplePrecisionNDCG(key, sortedResult, 5, 3, doDCG=True)
@@ -35,14 +36,20 @@ def calculateLevelsPN(key,sortedResult):
     p42, _ = simplePrecisionNDCG(key, sortedResult, 20, 2, doDCG=True)
     p43, _ = simplePrecisionNDCG(key, sortedResult, 20, 3, doDCG=True)
 
-    return (ndcg1+ndcg2+ndcg3+ndcg4)/4,(p11+p21+p31+p41)/4,(p12+p22+p32+p42)/4,(p13+p23+p33+p43)/4
+    return (
+        (ndcg1 + ndcg2 + ndcg3 + ndcg4) / 4,
+        (p11 + p21 + p31 + p41) / 4,
+        (p12 + p22 + p32 + p42) / 4,
+        (p13 + p23 + p33 + p43) / 4,
+    )
+
 
 def customizedLoss(pred, r):
-    '''
+    """
         pred,r are shape of N,1
         do weighted MSELoss
         output = (ri+0.1)*[(predi-ri)^2]
-    '''
+    """
     pred = pred.view(-1)
     r = r.view(-1)
     diff = torch.add(pred, -1, r)  # do pred - r
@@ -50,12 +57,14 @@ def customizedLoss(pred, r):
     pow_diff = torch.pow(diff, 2)  # do diff^2
     return torch.mean(torch.mul(pow_diff, weighted))
 
-def customizedLoss2(pred,r):
+
+def customizedLoss2(pred, r):
     pred = pred.view(-1)
     r = r.view(-1)
-    diff = torch.add(pred, -1, r)*10  # do pred - r
+    diff = torch.add(pred, -1, r) * 10  # do pred - r
     pow_diff = torch.pow(diff, 2)
     return torch.mean(pow_diff)
+
 
 def simplePrecisionNDCG(reqName, pred_r, topK=5, level=3, doDCG=False):
     """
@@ -67,7 +76,7 @@ def simplePrecisionNDCG(reqName, pred_r, topK=5, level=3, doDCG=False):
     IDCG = 1
     len_p = getLen(reqName, level)
     precisionK = len_p if len_p < topK else topK
-    
+
     for i, t in enumerate(pred_r):
         if i >= topK:
             break
@@ -76,7 +85,7 @@ def simplePrecisionNDCG(reqName, pred_r, topK=5, level=3, doDCG=False):
         if doDCG:
             DCG += calculatePrecision.calculateDCG(r, i + 1, K1=i + 1)
         if r >= level:  # eg.  here we have a r=2 ranked here but level=3
-            tp+=1
+            tp += 1
     if doDCG:
         IDCG = calculatePrecision.calculateIDCG(reqName, topK)
     return tp / (precisionK), DCG / IDCG
@@ -88,7 +97,6 @@ def trainOneModel(
     trainSeqs,
     testSeqs,
     trainSeqs_keys,
-
     testSeqs_keys,
     index,
     syncCount,
@@ -104,7 +112,7 @@ def trainOneModel(
     level = args.level
     topK = 5
 
-    trainDataset = LoadData.LSTMDataSet(trainSeqs,eval=False)
+    trainDataset = LoadData.LSTMDataSet(trainSeqs, eval=False)
     testDataset = LoadData.LSTMDataSet(testSeqs)
 
     trainDataLoader = LoadData.LSTMDataLoader(trainDataset)
@@ -118,10 +126,9 @@ def trainOneModel(
         # default GPU is 0
         # lossWeight = lossWeight.cuda()
 
-    # add weight to emphasize the high relevance case
     lossFunc = customizedLoss2
     optimizer = optim.Adam(model.parameters(), args.lr, weight_decay=1e-5)
-    scheduler = StepLR(optimizer, step_size=50, gamma=0.5)
+    scheduler = StepLR(optimizer, step_size=50, gamma=1.0)
 
     bestPrecision = 0.0
     bestNDCG = 0.0
@@ -138,6 +145,7 @@ def trainOneModel(
                 r = r.cuda()
             r.view(-1)
             pred = model(seq1, seq2)
+
             r = r.type_as(pred)
             l = lossFunc(pred, r)
             totalLoss += l.item()
@@ -147,6 +155,7 @@ def trainOneModel(
 
         if doPrint:
             print("epoch:{},Training loss :{:.4}".format(i, totalLoss))
+
         if i % args.testEvery == (args.testEvery - 1):
             precision1 = 0.0
             precision2 = 0.0
@@ -173,7 +182,7 @@ def trainOneModel(
                     # sort by pred , calculate by r
                     predicts += list(zip(pred, r))  # list of (predict,r)
                 sortedResult = sorted(predicts, key=lambda k: k[0], reverse=True)
-                NDCGs,p1s,p2s,p3s = calculateLevelsPN(key,sortedResult)
+                NDCGs, p1s, p2s, p3s = calculateLevelsPN(key, sortedResult)
                 precision1 += p1s
                 precision2 += p2s
                 precision3 += p3s
@@ -184,17 +193,20 @@ def trainOneModel(
             precision3 = precision3 / len(trainSeqs_keys)
             NDCG = NDCG / len(trainSeqs_keys)
             NDCG = NDCG.item()
-            if NDCG > bestNDCG or bestNDCG == 0.0:
-            # if precision1 > bestPrecision or bestPrecision == 0.0 :
-                torch.save(model.state_dict(), args.modelFile + str(level) + str(index))
-                bestPrecision = precision1
-                bestNDCG = NDCG
+            
             if doPrint:
                 print(
                     "epoch:{},Precision1:{:.4},Precision2:{:.4},Precision3:{:.4},NDCG:{:.4}".format(
                         i, precision1, precision2, precision3, NDCG
                     )
                 )
+            if NDCG > bestNDCG or bestNDCG == 0.0:
+                # if precision1 > bestPrecision or bestPrecision == 0.0 :
+                torch.save(model.state_dict(), args.modelFile + str(level) + str(index))
+                bestPrecision = precision1
+                bestNDCG = NDCG
+                if bestNDCG > 0.900:
+                    break
 
     if doPrint:
         print("bestPrecision:{}".format(bestPrecision))
@@ -227,21 +239,20 @@ def trainOneModel(
             # sort by pred , calculate by r
             predicts += list(zip(pred, r))  # list of (predict,r)
         sortedResult = sorted(predicts, key=lambda k: k[0], reverse=True)
-        NDCGs,p1s,p2s,p3s = calculateLevelsPN(key,sortedResult)
+        NDCGs, p1s, p2s, p3s = calculateLevelsPN(key, sortedResult)
         NDCG += NDCGs
         p1 += p1s
         p2 += p2s
         p3 += p3s
-
 
     precision1 = p1 / len(testSeqs_keys)
     precision2 = p2 / len(testSeqs_keys)
     precision3 = p3 / len(testSeqs_keys)
     NDCG = NDCG / len(testSeqs_keys)
     NDCG = NDCG.item()
-    with open(args.modelFile + 'testSeqs','a') as f:
-        f.write(str(level) + str(index)+':')
-        f.write(str(testSeqs_keys) + '\n')
+    with open(args.modelFile + "testSeqs", "a") as f:
+        f.write(str(level) + str(index) + ":")
+        f.write(str(testSeqs_keys) + "\n")
 
     with lock:
         syncCount.value += 1
@@ -254,17 +265,18 @@ def trainOneModel(
 
 def main():
 
-    parser = argparse.ArgumentParser("DNN")
+    parser = argparse.ArgumentParser("LSTM")
     parser.add_argument("--outDim", type=int, default=4)
     parser.add_argument("--input_size", type=int, default=300)
     parser.add_argument("--hidden_size", type=int, default=150)
+    
     # parser.add_argument('--hiddenDim2', type=int, default=60)
     # parser.add_argument('--hiddenDim3', type=int, default=20)
     parser.add_argument("--dropout", type=float, default=0.4)
     parser.add_argument("--bidirectional", type=bool, default=True)
-
+    
     # parser.add_argument('--numWorkers', type=int, default=0)
-    parser.add_argument("--lr", type=float, default=3e-5)
+    parser.add_argument("--lr", type=float, default=3e-4)
     parser.add_argument("--foldNum", type=int, default=5)
     parser.add_argument("--level", type=int, default=3)
 
@@ -283,7 +295,7 @@ def main():
     level = args.level
 
     manager = Manager()
-    p = Pool(int(os.cpu_count() / 2 -1))
+    p = Pool(int(os.cpu_count() / 2))
     lock = manager.Lock()
     precision1 = manager.Value("d", 0.0)
     precision2 = manager.Value("d", 0.0)
@@ -305,7 +317,6 @@ def main():
                 trainSeqs,
                 testSeqs,
                 trainSeqs_keys,
-
                 testSeqs_keys,
                 index,
                 count,

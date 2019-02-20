@@ -16,7 +16,9 @@ class  RWLSTM(nn.Module):
         self.droprate = args.dropout
         self.bidirectional = args.bidirectional
         self.dropout = nn.Dropout(self.droprate)
-        self.rnn = nn.LSTM(self.input_size,self.hidden_size,bidirectional = args.bidirectional)
+       
+        self.layers = 1
+        self.rnn = nn.LSTM(self.input_size,self.hidden_size,self.layers,bidirectional = args.bidirectional)
 
     def __list_index_select(self,li,idx):
         ret = []
@@ -33,9 +35,10 @@ class  RWLSTM(nn.Module):
             device = torch.device('cuda')
         #hidden state should be (dirctions*layers,batch,hidden)
         num_dir = 1
+        num_layers = self.layers
         if self.bidirectional:
             num_dir = 2
-        return torch.randn(num_dir,current_Batchsize,self.hidden_size,device = device),torch.randn(num_dir,current_Batchsize,self.hidden_size,device = device)
+        return torch.randn(num_dir*num_layers,current_Batchsize,self.hidden_size,device = device),torch.randn(num_dir*num_layers,current_Batchsize,self.hidden_size,device = device)
 
     def forward(self, seqs):
         '''
@@ -51,11 +54,18 @@ class  RWLSTM(nn.Module):
         if _CUDA:
             lengths = lengths.cuda()
         #idx_sort is the sorted idx by lengths, which is applied in generating the lstm-input
-        #idx_unsort is the unsorted idx, which is leveraged to restore the input
+        #idx_unsort is the unsorted idx, which is leveraged to restore the order of the input sequence
         _,idx_sort = torch.sort(lengths,descending = True)
         _,idx_unsort = torch.sort(idx_sort)
             
         lstm_input = pack_sequence(self.__list_index_select(seqs,idx_sort))
+        padded_input = pad_packed_sequence(lstm_input,batch_first= True)[0]
+        raw_padded_input = padded_input.index_select(0,idx_unsort)
+        sum_input = torch.sum(raw_padded_input,1)
+        lengths = lengths.type_as(sum_input)
+        ave_input = torch.div(sum_input,lengths.view(-1,1))
+        # lstm_input = PackedSequence(self.dropout(lstm_input.data),lstm_input.batch_sizes)
+
         h0,c0 = self.__init_hidden(curren_batchsize)
         lstm_output,(hn,cn) = self.rnn(lstm_input,(h0,c0))
         lstm_output = PackedSequence(self.dropout(lstm_output.data),lstm_output.batch_sizes)
@@ -70,6 +80,13 @@ class  RWLSTM(nn.Module):
         # hn : (num_layers * num_directions, batch, hidden_size)
         # cn : (num_layers * num_directions, batch, hidden_size)
         output = output.index_select(0,idx_unsort) #dim,index
+
+        sum_output = torch.sum(output,1)
+        #here we take the output as the ave of words, lengths been viewed as 128,1 for broadcastable calculation
+        lengths = lengths.type_as(sum_output)
+        output = torch.div(sum_output,lengths.view(-1,1))
+
+        #here we take the first word's representation as the pooling
         hn = hn.index_select(1,idx_unsort)
         cn = cn.index_select(1,idx_unsort)
         
@@ -77,4 +94,5 @@ class  RWLSTM(nn.Module):
         cn = cn.view(cn.size()[1],-1)
         hn = self.dropout(hn)
         cn = self.dropout(cn)
-        return output,hn,cn
+        
+        return output,hn,cn,ave_input
