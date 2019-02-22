@@ -13,10 +13,10 @@ from torch.utils.data import DataLoader
 
 import calculatePrecision
 import LSTM.LoadData as LoadData
-import LSTM.totalmodel as totalmodel
+import LSTM.transformer_totalModel as totalmodel
 import utils
 from calculatePrecision import getLen
-from LSTM.totalmodel import RWLSTMModel
+from LSTM.transformer_totalModel import RWTSMModel
 
 from LSTM.trainLSTM import calculateLevelsPN,customizedLoss,customizedLoss2,trainOneModel
 
@@ -47,11 +47,11 @@ def main():
 
     train_test_Seqs = LoadData.generateTrainAndTest(args.foldNum)
     # level has 1,2,3 each level we train foldNum models
-    LSTMModels = [RWLSTMModel(args) for i in range(args.foldNum)]
+    TSMModels = [RWTSMModel(args) for i in range(args.foldNum)]
     level = args.level
 
     manager = Manager()
-    p = Pool(int(os.cpu_count() / 2))
+    p = Pool(int(1))  # transformer is too large
     lock = manager.Lock()
     precision1 = manager.Value("d", 0.0)
     precision2 = manager.Value("d", 0.0)
@@ -59,7 +59,7 @@ def main():
     NDCG = manager.Value("d", 0.0)
     count = manager.Value("i", 0)
     # testSetPrecision = []
-    for index, model in enumerate(LSTMModels):
+    for index, model in enumerate(TSMModels):
         # get the index fold train and test seqs
         ttSeq = train_test_Seqs[index]
         trainSeqs_keys, testSeqs_keys = ttSeq

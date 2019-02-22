@@ -1,13 +1,13 @@
 import torch
 from torch import nn
-from LSTM.TransformerModel as tsfm
+from LSTM.TransformerModel import Transformer as tsfm
 import LSTM.CalSim as Sim
 
 
-class RWLSTMModel(nn.Module):
+class RWTSMModel(nn.Module):
     def __init__(self,args):
         super().__init__()
-        self.transf= tsfm.Transformer(args)
+        self.transf= tsfm(args)
         self.bi = Sim.CalSim(args)
 
     def forward(self, inseq1 , inseq2):
