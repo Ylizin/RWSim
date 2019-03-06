@@ -16,6 +16,7 @@ def loadWordVector(Path):
     print("Word Vec loading:\n")
     model = KeyedVectors.load_word2vec_format(Path, binary=True)
     print("Word load complete.\n")
+    return model
 
 
 def word2Vec(Word):
