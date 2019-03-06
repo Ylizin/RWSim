@@ -8,11 +8,14 @@ _bert_type = 'bert-base-uncased'
 
 tokenizer = BertTokenizer.from_pretrained(_bert_type)
 model = BertModel.from_pretrained(_bert_type)
+if torch.cuda.is_available():
+    model = model.cuda()
+
 
 def generate_bert_vecs(sentences1,sentences2,return_seperated = True):
     '''
-        sentences 1 : len_s1
-        sentence  2 : len_s2
+        sentence 1 : len_s1
+        sentence 2 : len_s2
     '''
     t_s1 = tokenizer.tokenize(sentences1)
     t_s2 = tokenizer.tokenize(sentences2)
@@ -36,15 +39,57 @@ def generate_bert_vecs(sentences1,sentences2,return_seperated = True):
     i_tensor = torch.tensor([i_sentences]).view(1,-1)
     s_tensor = torch.tensor([segment_ids]).view(1,-1)
 
+    if torch.cuda.is_available():
+        i_tensor = i_tensor.cuda()
+        s_tensor = s_tensor.cuda()
     model.eval()
+    
     hidden_state,pooled_hidden = model(i_tensor,s_tensor,output_all_encoded_layers=False)
   
     hidden_state = hidden_state.squeeze(dim = 0)
  
     if return_seperated:
-        return hidden_state[1:len_s1+1],hidden_state[len_s1+2:-1]
+        return hidden_state[:len_s1+1],hidden_state[len_s1+2:-1]
     else:
         return hidden_state
+
+
+
+'''
+this function is not usable casue the memory consumption is too severe
+'''
+def generate_bert_vecs_forPT(reqPath = utils.RelevancePath,wsdlPath = utils.WSDLPath):
+    reqs = {} 
+    wsdls = {}
+    for file in os.listdir(reqPath):
+        full_path = os.path.join(reqPath,file)
+
+        if os.path.isdir(full_path):
+            continue
+        full_path = os.path.join(utils.RQPath,file)
+        with open(full_path,'r') as f:
+            for line in f:
+                data = line.strip()#.split()
+                reqs[file] = data
+    
+    for file in os.listdir(wsdlPath):
+        full_path = os.path.join(wsdlPath,file)
+
+        if os.path.isdir(full_path):
+            continue
+        
+        with open(full_path,'r') as f:
+            for line in f:
+                data = line.strip()#.split()
+                wsdls[file] = data    
+    
+    features = []
+    for req in reqs:
+        for wsdl in wsdls:
+            req_vec,wsdl_vec = generate_bert_vecs(reqs[req],wsdls[wsdl])
+            features.append((req,wsdl,req_vec,wsdl_vec))
+    
+    return features
 
 def generate_static_bert_twoSeq_vecs(reqPath,wsdlPath,resultPath):
     reqs = {} 
@@ -96,7 +141,7 @@ def generate_static_bert_twoSeq_vecs(reqPath,wsdlPath,resultPath):
                 f.write('\n')
     
 if __name__ == '__main__':
-    generate_static_bert_twoSeq_vecs(utils.RelevancePath,utils.WSDLPath,utils.rootPath+r'\bert')
+    generate_static_bert_twoSeq_vecs(utils.RelevancePath,utils.WSDLPath,utils.bertPath)
 
 
 

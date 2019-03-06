@@ -4,6 +4,12 @@ from LSTM.TransformerModel import Transformer as tsfm
 import LSTM.CalSim as Sim
 
 
+
+'''
+for transformer training procedure, the GPU memory consumption is too severely 
+because of the bp needs store the input
+'''
+
 class RWTSMModel(nn.Module):
     def __init__(self,args):
         super().__init__()

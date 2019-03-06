@@ -28,6 +28,8 @@ def readRelevanceFile(filePath):
 
 def loadRelevance():
     global relevanceDict
+    if not relevanceDict:# if the relevance Dic is already loaded, then do nothing 
+        return
     for file in os.listdir(relevanceDir):
         fullpath = os.path.join(relevanceDir,file)
         if os.path.isdir(fullpath):

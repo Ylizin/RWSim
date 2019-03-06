@@ -20,3 +20,19 @@ def generateDirs(dirPath):
 def errorCallBack(e):
     # print(str(e))
     print(repr(e))
+
+def get_relLevel(relevanceDict,req_name,wsdl_name):
+    relDict = relevanceDict[req_name]
+    thisHighReq = relDict['highRelevance']
+    thisMidReq = relDict['midRelevance']
+    thisLowReq = relDict['lowRelevance']
+    rel = None 
+    if wsdl_name in thisHighReq:
+        rel = 3
+    elif wsdl_name in thisMidReq:
+        rel = 2
+    elif wsdl_name in thisLowReq:
+        rel = 1
+    else:
+        rel = 0
+    return rel

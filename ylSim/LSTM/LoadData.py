@@ -19,9 +19,15 @@ wsdlFeatures = {}
 
 reqFeaturePath = utils.RQPath+r'\raw_vec'
 wsdlFeaturePath = utils.WSDLPath+r'\raw_vec'
-    
 
 def loadFeatures(relevancePath= utils.RelevancePath, wsdlPath =utils.WSDLPath):
+    '''for every req in rel_path, we load it 
+    
+    Keyword Arguments:
+        relevancePath {[type]} -- [description] (default: {utils.RelevancePath})
+        wsdlPath {[type]} -- [description] (default: {utils.WSDLPath})
+    '''
+
     loadRelevance.loadRelevance()
     global relevanceDict
     relevanceDict.update(loadRelevance.relevanceDict)
@@ -77,16 +83,7 @@ def getSeqsFromKeys(keys):
             reqF = reqFeatures[req]
             wsdlF = wsdlFeatures[wsdl]
             rel = 0
-            relDict = relevanceDict[req]
-            thisHighReq = relDict['highRelevance']
-            thisMidReq = relDict['midRelevance']
-            thisLowReq = relDict['lowRelevance'] 
-            if wsdl in thisHighReq:
-                rel = 3
-            elif wsdl in thisMidReq:
-                rel = 2
-            elif wsdl in thisLowReq:
-                rel = 1
+            rel = utils.get_relLevel(relevanceDict,req,wsdl)
             return_seqs.append((reqF,wsdlF,rel))
 
     return return_seqs

@@ -3,6 +3,7 @@ import utils
 import calculatePrecision
 import cosineSim
 
+
 bertPath = utils.bertPath
 bertResultPath = utils.rootPath + r'\bertAVE.txt'
 
@@ -13,7 +14,7 @@ def processData(line):
     wsdlName = p1[0]
     req = p1[1:]
     wsdl = p2
-    return wsdlName,[float(f) for f in req],[float(f) for f in wsdl]
+    return wsdlName,  [float(f) for f in req],[float(f) for f in wsdl]
 
 def getFileCosSim(fileName):
     sims = {}
