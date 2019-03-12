@@ -53,11 +53,13 @@ def __init_registered_vecs(registered_path):
     '''
     np_registered = None
     wsdl_names = []
+    
     for file in os.listdir(registered_path):
         full_path = os.path.join(registered_path,file)
         if not os.path.isfile(full_path):
             continue
         file_name,_ = os.path.splitext(file)
+    
         if np_registered is None:
             np_registered = np.load(full_path)
         else:
@@ -93,7 +95,7 @@ def test_runtime():
     w2vmodel = __init_w2v()
     req_path = utils.RQPath
     seqs = []
-    for file in os.listdir(req_path):
+    for file in os.listdir(utils.RelevancePath):
         full_path = os.path.join(req_path,file)
         if not os.path.isfile(full_path):
             continue
