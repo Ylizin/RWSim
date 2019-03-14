@@ -29,6 +29,7 @@ def loadFeatures(relevancePath= utils.RelevancePath, wsdlPath =utils.WSDLPath):
     '''
 
     loadRelevance.loadRelevance()
+   
     global relevanceDict
     relevanceDict.update(loadRelevance.relevanceDict)
 
@@ -115,10 +116,10 @@ class LSTMDataSet(Dataset):
         return req,wsdl,label
 
 class LSTMDataLoader(object):
-    def __init__(self, LSTMDataSet):
+    def __init__(self, LSTMDataSet,batch_size = 128):
         self.data = LSTMDataSet
         self.len = len(LSTMDataSet) 
-        self.batch_size = 128
+        self.batch_size = batch_size
         self._idx = 0
         
     def __iter__(self):

@@ -5,7 +5,10 @@ import os
 
 import LDA.LDALoadData as load_data
 
-def __make_lda_model(model_path,dict_path):
+__default_model_path = r'./LDA/LDA.model'
+__default_dict_path = r'./LDA/LDA.dict'
+
+def __make_lda_model(model_path = __default_model_path,dict_path = __default_dict_path):
 
     lda_text = load_data.load_LDA_data()
     lda_dict = __load_dict(dict_path)
@@ -45,10 +48,11 @@ def __get_similarity(model,co1,co2):
     pass
 
 if __name__ == '__main__':
-    model,dic,co = __make_lda_model('./LDA/LDA.model','./LDA/LDA.dict')
+    model,dic,co = __make_lda_model()
     co = co[0]
     
     # _,vec = zip(*model[co])
+    
     print(model.get_topics().shape)
     print(model.get_term_topics(dic.token2id['car']))
     print(model.get_document_topics(co,minimum_probability= 1e-6))

@@ -27,8 +27,8 @@ def readRelevanceFile(filePath):
     return highRelevance,midRelevance,lowRelevance,nonRelevance
 
 def loadRelevance():
-    global relevanceDict
-    if not relevanceDict:# if the relevance Dic is already loaded, then do nothing 
+    
+    if relevanceDict:# if the relevance Dic is already loaded, then do nothing 
         return
     for file in os.listdir(relevanceDir):
         fullpath = os.path.join(relevanceDir,file)

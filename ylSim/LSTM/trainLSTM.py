@@ -115,8 +115,8 @@ def trainOneModel(
     trainDataset = LoadData.LSTMDataSet(trainSeqs, eval=False)
     testDataset = LoadData.LSTMDataSet(testSeqs)
 
-    trainDataLoader = LoadData.LSTMDataLoader(trainDataset)
-    testDataloader = LoadData.LSTMDataLoader(testDataset)
+    trainDataLoader = LoadData.LSTMDataLoader(trainDataset,batch_size = args.batch_size)
+    testDataloader = LoadData.LSTMDataLoader(testDataset,batch_size = args.batch_size)
 
     # 1, 5, 5, 5 is a nice weight for rrelu
     # lossWeight = torch.tensor([10.0])
@@ -167,7 +167,7 @@ def trainOneModel(
                 predicts = []
                 evalSeqs = LoadData.getSeqsFromKeys(key)
                 evalDataSet = LoadData.LSTMDataSet(evalSeqs)
-                evalDataloader = LoadData.LSTMDataLoader(evalDataSet)
+                evalDataloader = LoadData.LSTMDataLoader(evalDataSet,batch_size = args.batch_size)
                 for seq1, seq2, r in evalDataloader:
                     r = torch.tensor(r)
                     if _CUDA:
@@ -224,7 +224,7 @@ def trainOneModel(
         predicts = []
         evalSeqs = LoadData.getSeqsFromKeys(key)
         evalDataSet = LoadData.LSTMDataSet(evalSeqs)
-        evalDataloader = LoadData.LSTMDataLoader(evalDataSet)
+        evalDataloader = LoadData.LSTMDataLoader(evalDataSet,batch_size = args.batch_size)
         for seq1, seq2, r in evalDataloader:
             r = torch.tensor(r)
             if _CUDA:

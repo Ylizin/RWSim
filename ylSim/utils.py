@@ -7,7 +7,11 @@ WSDLPath = rootPath+r'\WsdlLDA\originaWSDLsWords'
 RQPath = rootPath+r'\WsdlLDA\originRequestsWords'
 RelevancePath = rootPath+r'\WsdlLDA\reqRelevance'
 registered_path = rootPath+r'\WsdlLDA\originaWSDLsWords\registered'
-    
+
+RQ_TF_path = rootPath + r'\WsdlLDA\originalRequestsWordsTF'
+WSDL_TF_path = rootPath + r'\WsdlLDA\originalWSDLsWordsTF'
+
+
 bertPath = rootPath + r'\bert'
 total_corpus_path = rootPath + r'\trainDocVec\total_corpus.txt'
 dw = 300
@@ -37,3 +41,12 @@ def get_relLevel(relevanceDict,req_name,wsdl_name):
     else:
         rel = 0
     return rel
+
+def iterate_path(path):
+    paths = []
+    for file in os.listdir(path):
+        full_path = os.path.join(path,file)
+        if not os.path.isfile(full_path):
+            continue
+        paths.append(file)
+    return paths
