@@ -81,6 +81,18 @@ def getSeqsFromKeys(keys):
 
     return return_seqs
 
+def getAllBows():
+    if not reqBows: 
+        loadBow()
+    return_seqs = []
+    for key in reqBows:
+        return_seqs.append(reqBows[key]) 
+    for key in wsdlBows:
+        return_seqs.append(wsdlBows[key])
+    return_tuples = []
+    for seq in return_seqs:
+        return_tuples.append((seq,)*5)
+    return return_tuples
 
 class NTMDataSet(Dataset):
     def __init__(self, seqs,eval = True):
