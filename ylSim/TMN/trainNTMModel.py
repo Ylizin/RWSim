@@ -36,6 +36,7 @@ def trainNTM(args, model, seqs):
         totalLoss = 0.0
         model.train()
         for req_b, req, wsdl_b, wsdl, rel in data_loader:
+            
             predict_req_b, req_theta, req_mu, req_sigma,req_b = model(req_b)
             predict_wsdl_b, wsdl_theta, wsdl_mu, wsdl_sigma,wsdl_b = model(wsdl_b)
 
@@ -47,7 +48,9 @@ def trainNTM(args, model, seqs):
             optimizer.zero_grad()
             l.backward()
             optimizer.step()
-
+            if i%500 == 0:
+                print(req_b)
+                print(predict_req_b)
         print("epoch:{},Training loss :{:.4}".format(i, totalLoss))
 
     torch.save(model.state_dict(),args.modelFile + r".VAE")
