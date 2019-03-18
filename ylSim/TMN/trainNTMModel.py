@@ -48,9 +48,9 @@ def trainNTM(args, model, seqs):
             optimizer.zero_grad()
             l.backward()
             optimizer.step()
-            if i%500 == 0:
-                print(req_b)
-                print(predict_req_b)
+            if i%100 == 0:
+                print(req_b[11])
+                print(predict_req_b[11])
         print("epoch:{},Training loss :{:.4}".format(i, totalLoss))
 
     torch.save(model.state_dict(),args.modelFile + r".VAE")
@@ -62,8 +62,8 @@ def main():
     parser.add_argument("--hidden_size1", type=int, default=300)
     parser.add_argument("--topic_size", type=int, default=120)
 
-    parser.add_argument("--lr", type=float, default=3e-4)
-    parser.add_argument("--nepoch", type=int, default=3000)
+    parser.add_argument("--lr", type=float, default=1e-5)
+    parser.add_argument("--nepoch", type=int, default=500)
     parser.add_argument('--modelFile',default = './TMN/NTM')
     args = parser.parse_args()
 
@@ -81,7 +81,6 @@ def load_model():
     parser.add_argument("--hidden_size1", type=int, default=800)
     parser.add_argument("--topic_size", type=int, default=120)
 
-    parser.add_argument("--lr", type=float, default=3e-4)
     parser.add_argument('--modelFile',default = './TMN/NTM')
     args = parser.parse_args()
 

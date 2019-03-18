@@ -74,7 +74,7 @@ class NTMModel(nn.Module):
 
     @staticmethod
     def loss_function(X_bow, predict_x_bow, mu, log_var):
-        
+        #X_bow & predict_x_bow is batch*vocab_size, mu and log_var is the same
         mse_loss = mse(X_bow, predict_x_bow)
         KLD_element = mu.pow(2).add(log_var.exp()).mul(-1).add(1).add(log_var)
         KLD = torch.sum(KLD_element).mul(-0.5)
