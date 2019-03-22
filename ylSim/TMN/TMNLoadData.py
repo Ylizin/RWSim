@@ -6,9 +6,12 @@ import numpy as np
 import torch
 from torch import Tensor
 from torch.utils.data import Dataset
-from LSTM.LoadData import loadFeatures,generateTrainAndTest,relevanceDict,reqFeatures,wsdlFeatures
-import utils
+
 import loadRelevance
+import utils
+from LSTM.LoadData import (generateTrainAndTest, loadFeatures, relevanceDict,
+                           reqFeatures, wsdlFeatures)
+
 # relevanceDict = {}
 # reqFeatures = {}
 # wsdlFeatures = {}
@@ -18,9 +21,10 @@ wsdlBows = {}
 reqFeaturePath = utils.RQPath+r'\raw_vec'
 wsdlFeaturePath = utils.WSDLPath+r'\raw_vec'
 
-def loadBow(rqPath= utils.RQ_TF_path, wsdlPath =utils.WSDL_TF_path):
+
+def loadBow(rqPath=utils.RQ_TF_path, wsdlPath=utils.WSDL_TF_path):
     '''load the req and wsdl BoWs 
-    
+
     Keyword Arguments:
         relevancePath {[type]} -- [description] (default: {utils.RQ_TF_path})
         wsdlPath {[type]} -- [description] (default: {utils.WSDL_TF_path})
@@ -30,28 +34,29 @@ def loadBow(rqPath= utils.RQ_TF_path, wsdlPath =utils.WSDL_TF_path):
     RQ_paths = utils.iterate_path(rqPath)
     for file in RQ_paths:
         bow = []
-        with open(os.path.join(rqPath,file),'r') as f:
+        with open(os.path.join(rqPath, file), 'r') as f:
             for line in f:
                 line = line.strip().split()
                 for i_f in line:
-                    idx,freq = i_f.split(',')
+                    idx, freq = i_f.split(',')
                     idx = int(idx)
                     freq = int(freq)
-                    bow.append((idx,freq))
+                    bow.append((idx, freq))
         reqBows[file] = bow
-    
+
     WSDL_paths = utils.iterate_path(wsdlPath)
     for file in WSDL_paths:
         bow = []
-        with open(os.path.join(wsdlPath,file),'r') as f:
+        with open(os.path.join(wsdlPath, file), 'r') as f:
             for line in f:
                 line = line.strip().split()
                 for i_f in line:
-                    idx,freq = i_f.split(',')
+                    idx, freq = i_f.split(',')
                     idx = int(idx)
                     freq = int(freq)
-                    bow.append((idx,freq))
+                    bow.append((idx, freq))
         wsdlBows[file] = bow
+
 
 def getSeqsFromKeys(keys):
     '''
@@ -60,14 +65,14 @@ def getSeqsFromKeys(keys):
     '''
     if not reqFeatures:
         loadFeatures()
-    if not reqBows: 
+    if not reqBows:
         loadBow()
 
-    if isinstance(keys,str) : #if the param is a single str 
+    if isinstance(keys, str):  # if the param is a single str
         keys = [keys]
     random.shuffle(keys)
     return_seqs = []
-    
+
     for req in keys:
         for wsdl in wsdlFeatures.keys():
             reqBow = reqBows[req]
@@ -75,18 +80,19 @@ def getSeqsFromKeys(keys):
             wsdlBow = wsdlBows[wsdl]
             wsdlF = wsdlFeatures[wsdl]
             rel = 0
-            
-            rel = utils.get_relLevel(relevanceDict,req,wsdl)
-            return_seqs.append((reqBow,reqF,wsdlBow,wsdlF,rel))
+
+            rel = utils.get_relLevel(relevanceDict, req, wsdl)
+            return_seqs.append((reqBow, reqF, wsdlBow, wsdlF, rel))
 
     return return_seqs
 
+
 def getAllBows():
-    if not reqBows: 
+    if not reqBows:
         loadBow()
     return_seqs = []
     for key in reqBows:
-        return_seqs.append(reqBows[key]) 
+        return_seqs.append(reqBows[key])
     for key in wsdlBows:
         return_seqs.append(wsdlBows[key])
     return_tuples = []
@@ -94,46 +100,47 @@ def getAllBows():
         return_tuples.append((seq,)*5)
     return return_tuples
 
+
 class NTMDataSet(Dataset):
-    def __init__(self, seqs,eval = True):
+    def __init__(self, seqs, eval=True):
         if eval:
             self.seqs = seqs
         else:
             self.seqs = seqs + self.__swap_req_wsdl(seqs)
 
-    def __swap_req_wsdl(self,seqs):
+    def __swap_req_wsdl(self, seqs):
         new_seqs = []
-        for reqF,wsdlF,rel in seqs:
-            new_seqs.append((wsdlF,reqF,rel))
+        for reqF, wsdlF, rel in seqs:
+            new_seqs.append((wsdlF, reqF, rel))
         return new_seqs
 
     def __len__(self):
         return len(self.seqs)
 
     def __getitem__(self, index):
-        
-        req_b,req,wsdl_b,wsdl,label = zip(*self.seqs[index])
-        #we do not convert them into the tensor here
+
+        req_b, req, wsdl_b, wsdl, label = zip(*self.seqs[index])
+        # we do not convert them into the tensor here
         # req = torch.from_numpy(reqF)
         # wsdl = torch.from_numpy(wsdlF)
         # label = torch.LongTensor(rel,)
-        return req_b,req,wsdl_b,wsdl,label
+        return req_b, req, wsdl_b, wsdl, label
 
-    
+
 class NTMDataLoader(object):
-    def __init__(self,NTMDataSet,batch_size = 128):
+    def __init__(self, NTMDataSet, batch_size=128):
         self.data = NTMDataSet
         self.len = len(NTMDataSet)
         self.batch_size = batch_size
         self._idx = 0
-    
+
     def __iter__(self):
         return self
 
     def __next__(self):
         idx = self._idx
         batch_size = self.batch_size
-        #when idx == length means it runs out of the dataset
+        # when idx == length means it runs out of the dataset
         if idx >= self.len:
             self._idx = 0
             raise StopIteration
@@ -149,9 +156,6 @@ if __name__ == '__main__':
     test_set = NTMDataSet(getSeqsFromKeys(test_list[0]))
     test_loader = NTMDataLoader(test_set)
 
-    for req_d,req,wsdl_d,wsdl,rel in test_loader:
+    for req_d, req, wsdl_d, wsdl, rel in test_loader:
         print(len(req_d))
         print(len(req_d[0]))
-
-
-

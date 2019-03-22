@@ -3,13 +3,17 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 
-
 _CUDA = torch.cuda.is_available()
 
-mse = nn.MSELoss()
+mse = nn.MSELoss(reduction='sum')
 # def reconstructed_loss(X_bow,predict_x_bow):
 #     deviate = X_bow - predict_x_bow
-    
+# def my_weighted_mse(X_bow,predict_x_bow):
+#     X_bow_weighted = X_bow + 0.1
+#     pow_deviation = (X_bow - predict_x_bow).pow(2)
+#     weighted_difference = X_bow_weighted*(pow_deviation)
+#     return torch.sum(weighted_difference)#/X_bow.shape[0] #take mean as loss
+# mse = my_weighted_mse
 
 
 class NTMModel(nn.Module):
