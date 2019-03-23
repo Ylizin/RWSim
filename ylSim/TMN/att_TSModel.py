@@ -17,12 +17,17 @@ class ATTSModel(nn.Module):
     def forward(self, req_b,wsdl_b):
         _, req_theta, _, _,req_embedding = self.vae(req_b)
         _, wsdl_theta, _, _,wsdl_embedding = self.vae(wsdl_b)
-
+        req_theta = self.softmax(req_theta)
+        wsdl_theta = self.softmax(wsdl_theta)
         #topic embedding is topic_num*Embedding_num
         t_topic_embedding = self.topic_embedding
         req_topic_sim = torch.matmul(req_embedding,t_topic_embedding)
         wsdl_topic_sim = torch.matmul(wsdl_embedding,t_topic_embedding)
-        att_weight = self.softmax(self.att(req_topic_sim,wsdl_topic_sim))
+        att_weight = self.att(req_topic_sim,wsdl_topic_sim)
+
+        # req_theta = req_theta * att_weight
+        # wsdl_theta = wsdl_theta * att_weight
+        # att_dist = self.cosine(req_theta,wsdl_theta)*3
         #req_theta-wsdl_theta -> N,topic_num , att_weight -> N,topic_size 
         att_dist = torch.sum(torch.abs(req_theta-wsdl_theta) * att_weight, dim = 1)
         return att_dist
