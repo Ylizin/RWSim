@@ -33,11 +33,11 @@ class NTMModel(nn.Module):
         self.relu = nn.RReLU()
         self.softmax = nn.Softmax(dim=1)
 
-        self.word_embedding = nn.Linear(args.vocab_size,args.hidden_size1)
-        self.topic_embedding = nn.Linear(args.topic_size,args.hidden_size1)
+        self.word_embedding = nn.Linear(args.vocab_size,args.embedding_size,bias=False)
+        self.topic_embedding = nn.Linear(args.topic_size,args.embedding_size,bias=False)
         self.encoder = self.word_embedding
-        self.f_mu = nn.Linear(args.hidden_size1, args.topic_size)
-        self.f_sigma = nn.Linear(args.hidden_size1, args.topic_size)
+        self.f_mu = nn.Linear(args.embedding_size, args.topic_size)
+        self.f_sigma = nn.Linear(args.embedding_size, args.topic_size)
         self.f_theta = nn.Linear(args.topic_size, args.topic_size)
 
         self.f_phi = nn.Linear(args.topic_size, args.vocab_size)

@@ -107,6 +107,7 @@ def trainOneModel(
     lock,
     doPrint=False,
 ):
+# we need test keys for the evaluation metrics
     if index % 5 == 0:
         doPrint = True
     level = args.level

@@ -11,6 +11,7 @@ import loadRelevance
 import utils
 from LSTM.LoadData import (generateTrainAndTest, loadFeatures, relevanceDict,
                            reqFeatures, wsdlFeatures)
+from LSTM.trainLSTM import calculateLevelsPN
 
 # relevanceDict = {}
 # reqFeatures = {}
@@ -80,7 +81,6 @@ def getSeqsFromKeys(keys):
             wsdlBow = wsdlBows[wsdl]
             wsdlF = wsdlFeatures[wsdl]
             rel = 0
-
             rel = utils.get_relLevel(relevanceDict, req, wsdl)
             return_seqs.append((reqBow, reqF, wsdlBow, wsdlF, rel))
 
