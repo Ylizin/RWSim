@@ -8,8 +8,8 @@ class ATTSModel(nn.Module):
     def __init__(self,args,vae_model):
         super().__init__()
         self.vae = vae_model
-        #att use the result of cos_sim or the raw embedding or the raw theta?
-        self.att = nn.Bilinear(args.topic_size,args.topic_size,args.topic_size,bias=False)
+        #bi use the result of cos_sim or the raw embedding or the raw theta?
+        self.bi = nn.Bilinear(args.topic_size,args.topic_size,args.topic_size,bias=False)
         self.topic_embedding = vae_model.topic_embedding.weight
         self.cosine = cos
         self.softmax = nn.Softmax(dim= 1)
@@ -23,12 +23,12 @@ class ATTSModel(nn.Module):
         t_topic_embedding = self.topic_embedding
         req_topic_sim = torch.matmul(req_embedding,t_topic_embedding)
         wsdl_topic_sim = torch.matmul(wsdl_embedding,t_topic_embedding)
-        att_weight = self.att(req_topic_sim,wsdl_topic_sim)
+        bi_weight = self.bi(req_topic_sim,wsdl_topic_sim)
 
-        # req_theta = req_theta * att_weight
-        # wsdl_theta = wsdl_theta * att_weight
-        # att_dist = self.cosine(req_theta,wsdl_theta)*3
-        #req_theta-wsdl_theta -> N,topic_num , att_weight -> N,topic_size 
-        att_dist = torch.sum(torch.abs(req_theta-wsdl_theta) * att_weight, dim = 1)
-        return att_dist
+        # req_theta = req_theta * bi_weight
+        # wsdl_theta = wsdl_theta * bi_weight
+        # bi_dist = self.cosine(req_theta,wsdl_theta)*3
+        #req_theta-wsdl_theta -> N,topic_num , bi_weight -> N,topic_size 
+        bi_dist = torch.sum(torch.abs(req_theta-wsdl_theta) * bi_weight, dim = 1)
+        return bi_dist
     
