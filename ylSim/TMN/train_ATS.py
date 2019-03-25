@@ -22,7 +22,7 @@ from .trainNTMModel import load_model
 from .att_TSModel import ATTSModel
 
 
-def trainATS(args, model, train_keys, test_keys):
+def trainATS(args, model, train_keys, test_keys,index = 0):
     train_seqs = getSeqsFromKeys(train_keys)
     test_seqs = getSeqsFromKeys(test_keys)
     data_set = NTMDataSet(train_seqs)
