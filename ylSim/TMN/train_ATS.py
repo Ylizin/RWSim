@@ -42,13 +42,14 @@ def trainATS(args, model, train_keys, test_keys,index = 0):
         model.train()
         for req_b, req, wsdl_b, wsdl, rel in data_loader:
             r = torch.tensor(rel)
-            dist = model(req_b, wsdl_b)
+            dist,vae_loss = model(req_b, wsdl_b)
             if _CUDA:
                 r = r.cuda()
             r = r.view(-1)
             r = r.type_as(dist)
 
             l = loss_func(dist, r)
+            l = l + vae_loss
             totalLoss += l.item()
             optimizer.zero_grad()
             l.backward()
@@ -72,7 +73,7 @@ def trainATS(args, model, train_keys, test_keys,index = 0):
                     if _CUDA:
                         r = r.cuda()
                     r = r.view(-1)
-                    pred = model(req_b, wsdl_b)
+                    pred,_ = model(req_b, wsdl_b)
                     # pred = nn.functional.softmax(pred, dim=1)
                     # prob, predIndex_long = torch.max(pred, dim=1)
                     # predIndex = predIndex_long.type_as(prob)
@@ -119,7 +120,7 @@ def trainATS(args, model, train_keys, test_keys,index = 0):
             if _CUDA:
                 r = r.cuda()
             r = r.view(-1)
-            pred = model(req_b, wsdl_b)
+            pred,_ = model(req_b, wsdl_b)
             # pred = nn.functional.softmax(pred, dim=1)
             # prob, predIndex_long = torch.max(pred, dim=1)
             # predIndex = predIndex_long.type_as(prob)
@@ -147,8 +148,8 @@ def trainATS(args, model, train_keys, test_keys,index = 0):
 def main():
     parser = argparse.ArgumentParser("VAE")
     parser.add_argument("--vocab_size", type=int, default=646)
-    parser.add_argument("--embedding_size", type=int, default=300)
-    parser.add_argument("--topic_size", type=int, default=120)
+    parser.add_argument("--embedding_size", type=int, default=200)
+    parser.add_argument("--topic_size", type=int, default=50)
 
     parser.add_argument("--lr", type=float, default=3e-4)
     parser.add_argument("--nepoch", type=int, default=500)
