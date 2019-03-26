@@ -19,8 +19,8 @@ class ATTSModel(nn.Module):
     def forward(self, req_b,wsdl_b):
         req_p_bow, req_theta, req_mu, req_var,req_embedding = self.vae(req_b)
         wsdl_p_bow, wsdl_theta, wsdl_mu, wsdl_var,wsdl_embedding = self.vae(wsdl_b)
-        req_vae_l = self.vae_loss(req_b,req_p_bow,req_mu,req_var)
-        wsdl_vae_l = self.vae_loss(wsdl_b,wsdl_p_bow,wsdl_mu,wsdl_var)
+        req_vae_l = self.vae_loss(req_embedding,req_p_bow,req_mu,req_var)
+        wsdl_vae_l = self.vae_loss(wsdl_embedding,wsdl_p_bow,wsdl_mu,wsdl_var)
         vae_loss = req_vae_l / 1080 + wsdl_vae_l / 42
 
         topic_embedding = self.topic_embedding
