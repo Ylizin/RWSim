@@ -42,12 +42,12 @@ def trainATS(args, model, train_keys, test_keys,index = 0):
         model.train()
         for req_b, req, wsdl_b, wsdl, rel in data_loader:
             r = torch.tensor(rel)
-            dist,vae_loss = model(req_b, wsdl_b)
+            dist,we_dist = model(req_b, wsdl_b)
             if _CUDA:
                 r = r.cuda()
             r = r.view(-1)
             r = r.type_as(dist)
-
+            vae_loss = loss_func(we_dist,r)
             l = loss_func(dist, r)
             l = l + vae_loss
             totalLoss += l.item()
@@ -114,7 +114,7 @@ def trainATS(args, model, train_keys, test_keys,index = 0):
         predicts = []
         evalSeqs = getSeqsFromKeys(key)
         evalDataSet = NTMDataSet(evalSeqs)
-        evalDataloader = NTMDataLoader(evalDataSet,batch_size = args.batch_size)
+        evalDataloader = NTMDataLoader(evalDataSet)
         for req_b, req, wsdl_b, wsdl, rel in evalDataloader:
             r = torch.tensor(rel)
             if _CUDA:
@@ -140,7 +140,7 @@ def trainATS(args, model, train_keys, test_keys,index = 0):
     precision3 = p3 / len(test_keys)
     NDCG = NDCG / len(test_keys)
     NDCG = NDCG.item()
-    print('-p1:{}\n-p2:{}\n-p3:{}\n-NDCG:{}'.format(p1,p2,p3,NDCG))
+    print('-p1:{}\n-p2:{}\n-p3:{}\n-NDCG:{}'.format(precision1,precision2,precision3,NDCG))
                 
 
 
