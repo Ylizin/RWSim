@@ -153,7 +153,7 @@ def main():
 
     parser.add_argument("--lr", type=float, default=3e-4)
     parser.add_argument("--nepoch", type=int, default=500)
-    parser.add_argument("--modelFile", default="./TMN/NTM")
+    parser.add_argument("--modelFile", default="./TMN/NTM_l1")
     args = parser.parse_args()
 
     loadFeatures()
