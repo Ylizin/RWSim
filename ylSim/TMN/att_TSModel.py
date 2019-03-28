@@ -18,14 +18,16 @@ class ATTSModel(nn.Module):
         
         self.vae_loss = NTMModel.loss_function
 
-    def _parameters(self):
-        vae_params_id = map(id,self.vae.parameters())
+    def fine_tune_parameters(self):
+        vae_params_id = list(map(id,self.vae.parameters()))
+        
         all_params = self.parameters()
         ntm_params = filter(lambda x:id(x) not in vae_params_id,all_params)
         vae_params = self.vae.parameters()
+    
         return [{'params':ntm_params},{'params':vae_params,'lr':1e-6}]
 
-        
+
     def forward(self, req_b,wsdl_b):
         #here we do the cosine loss for the word_embedding 
         req_p_bow, req_theta, req_mu, req_var,req_embedding = self.vae(req_b)
