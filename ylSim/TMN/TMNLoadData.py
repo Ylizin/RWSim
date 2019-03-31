@@ -11,7 +11,7 @@ import loadRelevance
 import utils
 from LSTM.LoadData import (generateTrainAndTest, loadFeatures, relevanceDict,
                            reqFeatures, wsdlFeatures)
-from LSTM.trainLSTM import calculateLevelsPN
+from LSTM.trainLSTM import calculateLevelsPN,customizedLoss2
 
 # relevanceDict = {}
 # reqFeatures = {}

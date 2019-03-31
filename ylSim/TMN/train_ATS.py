@@ -15,7 +15,8 @@ from .TMNLoadData import (
     loadFeatures,
     generateTrainAndTest,
     getSeqsFromKeys,
-    calculateLevelsPN
+    calculateLevelsPN,
+    customizedLoss2
 )
 from .NTMModel import _CUDA, cos, mse
 from .trainNTMModel import load_model
@@ -32,7 +33,7 @@ def trainATS(args, model, train_keys, test_keys,index = 0):
         torch.cuda.set_device(0)
         model = model.cuda()
 
-    loss_func = mse
+    loss_func = customizedLoss2
     optimizer = optim.Adam(model.fine_tune_parameters(), args.lr, weight_decay=1e-5)
 
     bestPrecision = 0.0
@@ -47,7 +48,7 @@ def trainATS(args, model, train_keys, test_keys,index = 0):
                 r = r.cuda()
             r = r.view(-1)
             r = r.type_as(dist)
-            vae_loss = loss_func(we_dist,r)
+            vae_loss = loss_func(dist,r)
             l = loss_func(dist, r)
             l = l + vae_loss
             totalLoss += l.item()

@@ -48,12 +48,28 @@ def loadFeatures(relevancePath= utils.RelevancePath, wsdlPath =utils.WSDLPath):
         wsdlFeatures[file] = np.load(fullpath)
     print('features reading complete')
 
-def generateTrainAndTest(cvNum):
+def generateTrainAndTest(cvNum,use_saved_seqs = False):
     '''
      do cvNum fold cross validation
      return train , test seqs
     '''
     seqs_keys = list(reqFeatures.keys())
+    if use_saved_seqs:
+        idx_keys = []
+        with open('./models/test_seqs','r') as f:
+            for line in f:
+                
+                data = line.strip().split(':')
+                index = int(data[0][1]) #get the index num
+                test_keys = eval(data[1])
+                idx_keys.append(test_keys)
+        train_testLists = []
+        for idx,test_keys in enumerate(idx_keys):
+            train_keys = filter(lambda x: x not in test_keys , seqs_keys)
+            train_keys = list(train_keys)
+            train_testLists.append((train_keys,test_keys))
+        return train_testLists
+
 
     # random the seqs for each invoke
     random.shuffle(seqs_keys)

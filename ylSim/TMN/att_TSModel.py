@@ -25,7 +25,7 @@ class ATTSModel(nn.Module):
         ntm_params = filter(lambda x:id(x) not in vae_params_id,all_params)
         vae_params = self.vae.parameters()
     
-        return [{'params':ntm_params},{'params':vae_params,'lr':1e-6}]
+        return [{'params':ntm_params},{'params':vae_params,'lr':1e-4}]
 
 
     def forward(self, req_b,wsdl_b):
