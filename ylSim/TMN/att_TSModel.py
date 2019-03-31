@@ -25,7 +25,7 @@ class ATTSModel(nn.Module):
         ntm_params = filter(lambda x:id(x) not in vae_params_id,all_params)
         vae_params = self.vae.parameters()
     
-        return [{'params':ntm_params},{'params':vae_params,'lr':1e-6}]
+        return [{'params':ntm_params},{'params':vae_params,'lr':1e-4}]
 
 
     def forward(self, req_b,wsdl_b):
@@ -34,10 +34,6 @@ class ATTSModel(nn.Module):
         wsdl_p_bow, wsdl_theta, wsdl_mu, wsdl_var,wsdl_embedding = self.vae(wsdl_b)
         # this loss restricts the vae
         w_e_dist = self.cosine(req_embedding,wsdl_embedding)*3
-
-        # req_vae_l = self.vae_loss(req_embedding,req_p_bow,req_mu,req_var)
-        # wsdl_vae_l = self.vae_loss(wsdl_embedding,wsdl_p_bow,wsdl_mu,wsdl_var)
-        # vae_loss = req_vae_l / 1080 + wsdl_vae_l / 42
 
         topic_embedding = self.topic_embedding
         t_topic_embedding = topic_embedding.t()
