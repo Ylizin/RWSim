@@ -29,7 +29,7 @@ class NTMModel(nn.Module):
     def __init__(self, args):
         super().__init__()
         self.vocab_size = args.vocab_size
-
+        self.pretrained = args.pretrained
         self.relu = nn.RReLU()
         self.softmax = nn.Softmax(dim=1)
 
@@ -42,6 +42,7 @@ class NTMModel(nn.Module):
 
         self.f_phi = nn.Linear(args.topic_size, args.vocab_size)
 
+     
 
     def reparameterize(self, mu, log_var):
         #std is the standard deviation , is the sigma
@@ -56,12 +57,16 @@ class NTMModel(nn.Module):
     def __vectorize_bow(self,bow):
         len_bow = len(bow)
         stacked_bow = []
-        for idx_freq in bow:
-            tensor_bow = torch.zeros(self.vocab_size)
-            for idx,freq in idx_freq:
-                tensor_bow[idx] = freq
-            stacked_bow.append(tensor_bow)
+        if self.pretrained:
+            stacked_bow = bow
+        else:
+            for idx_freq in bow:
+                tensor_bow = torch.zeros(self.vocab_size)
+                for idx,freq in idx_freq:
+                    tensor_bow[idx] = freq
+                stacked_bow.append(tensor_bow)
         stacked_bow = torch.stack(stacked_bow)
+
         if _CUDA:
             stacked_bow = stacked_bow.cuda()
        
@@ -69,17 +74,19 @@ class NTMModel(nn.Module):
 
     def forward(self, X_bow):
         X_bow = self.__vectorize_bow(X_bow)
-        pi = self.relu(self.encoder(X_bow))
+        pi = self.relu(X_bow)
+        word_embedding = pi
+        if not self.pretrained:
+            word_embedding = self.word_embedding(X_bow)
+            X_bow = self.encoder(X_bow)
+            pi = self.relu(X_bow)
+        
         mu = self.relu(self.f_mu(pi))
         log_var = self.relu(self.f_sigma(pi))
         z = self.reparameterize(mu, log_var)
         theta = self.relu(self.f_theta(z))
-        # theta = self.softmax(theta)
-        # out_bow = self.relu(self.f_phi(theta))
-        topic_embedding = self.topic_embedding(theta)
-        word_embedding = self.word_embedding(X_bow)
-
-        
+        theta = self.softmax(theta)
+        topic_embedding = self.relu(self.topic_embedding(theta))
         out_bow = topic_embedding
         X_bow = word_embedding
         return out_bow, theta, mu, log_var, X_bow
@@ -88,8 +95,8 @@ class NTMModel(nn.Module):
     @staticmethod
     def loss_function(X_bow, predict_x_bow, mu, log_var):
         #X_bow & predict_x_bow is batch*vocab_size, mu and log_var is the same
-        mse_loss = torch.sum(1-cos(X_bow,predict_x_bow))
-        # mse_loss = mse(X_bow, predict_x_bow)
+        # mse_loss = torch.sum(1-cos(X_bow,predict_x_bow))
+        mse_loss = mse(X_bow, predict_x_bow)
         KLD_element = mu.pow(2).add(log_var.exp()).mul(-1).add(1).add(log_var)
         KLD = torch.sum(KLD_element).mul(-0.5)
         return mse_loss + KLD

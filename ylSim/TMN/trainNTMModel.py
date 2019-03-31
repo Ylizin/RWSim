@@ -16,7 +16,7 @@ from torch.utils.data import DataLoader
 
 
 from .TMNLoadData import NTMDataLoader, NTMDataSet, loadFeatures, getAllBows
-from .NTMModel import NTMModel, _CUDA
+from .NTMModel import NTMModel, _CUDA,cos
 
 NTMLoss = NTMModel.loss_function
 
@@ -49,9 +49,9 @@ def trainNTM(args, model, seqs):
             optimizer.zero_grad()
             l.backward()
             optimizer.step()
-            if i % 500 == 0:
-                print(req_b[11])
-                print(predict_req_b[11])
+            if i % 50 == 0:
+                print(req_theta[11])
+                print(cos(req_b,predict_req_b))
         print("epoch:{},Training loss :{:.4}".format(i, totalLoss))
 
     torch.save(model.state_dict(), args.modelFile + r".VAE")
@@ -62,7 +62,7 @@ def main():
     parser.add_argument("--vocab_size", type=int, default=646)
     parser.add_argument("--embedding_size", type=int, default=300)
     parser.add_argument("--topic_size", type=int, default=120)
-
+    parser.add_argument("--pretrained",type = bool,default = True)
     parser.add_argument("--lr", type=float, default=3e-4)
     parser.add_argument("--nepoch", type=int, default=500)
     parser.add_argument('--modelFile', default='./TMN/NTM')
@@ -71,7 +71,7 @@ def main():
     loadFeatures()
     # seqs_keys = generateTrainAndTest(5)
     # seqs_keys = seqs_keys[0][0]+seqs_keys[0][1]
-    seqs = getAllBows()
+    seqs = getAllBows(args.pretrained)
 
     model = NTMModel(args)
     trainNTM(args, model, seqs)
@@ -82,6 +82,7 @@ def load_model():
     parser.add_argument("--vocab_size", type=int, default=646)
     parser.add_argument("--embedding_size", type=int, default=300)
     parser.add_argument("--topic_size", type=int, default=120)
+    parser.add_argument("--pretrained",type = bool,default = True)
 
     parser.add_argument('--modelFile', default='./TMN/NTM')
     args = parser.parse_args()

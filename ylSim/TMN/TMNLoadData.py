@@ -21,15 +21,37 @@ wsdlBows = {}
 
 reqFeaturePath = utils.RQPath+r'\raw_vec'
 wsdlFeaturePath = utils.WSDLPath+r'\raw_vec'
+reqAVEPath = utils.RQPath + r'\vec'
+wsdlAVEPath = utils.WSDLPath + r'\vec'
 
+def load_pretrained():
+    global reqBows
+    global wsdlBows
+    RQ_paths = utils.iterate_path(reqAVEPath)
+    wsdl_paths = utils.iterate_path(wsdlAVEPath)
+    for file in RQ_paths:
+        path = os.path.join(reqAVEPath,file)
+        reqNpy = np.load(path).reshape(-1)
+     
+        file,_ = os.path.splitext(file)
+      
+        reqBows[file] = torch.from_numpy(reqNpy)
+    for file in wsdl_paths:
+        path = os.path.join(wsdlAVEPath,file)
+        wsdlNpy = np.load(path).reshape(-1)
+        file,_ = os.path.splitext(file)
+        wsdlBows[file] = torch.from_numpy(wsdlNpy)
+   
 
-def loadBow(rqPath=utils.RQ_TF_path, wsdlPath=utils.WSDL_TF_path):
+def loadBow(rqPath=utils.RQ_TF_path, wsdlPath=utils.WSDL_TF_path, pretrained = False):
     '''load the req and wsdl BoWs 
 
     Keyword Arguments:
         relevancePath {[type]} -- [description] (default: {utils.RQ_TF_path})
         wsdlPath {[type]} -- [description] (default: {utils.WSDL_TF_path})
     '''
+    if pretrained:
+        return load_pretrained()
     global reqBows
     global wsdlBows
     RQ_paths = utils.iterate_path(rqPath)
@@ -59,7 +81,7 @@ def loadBow(rqPath=utils.RQ_TF_path, wsdlPath=utils.WSDL_TF_path):
         wsdlBows[file] = bow
 
 
-def getSeqsFromKeys(keys):
+def getSeqsFromKeys(keys,pretrained = False):
     '''
        careful that for evaluation metrics procedure, requests should be test separately
 
@@ -67,7 +89,7 @@ def getSeqsFromKeys(keys):
     if not reqFeatures:
         loadFeatures()
     if not reqBows:
-        loadBow()
+        loadBow(pretrained = pretrained)
 
     if isinstance(keys, str):  # if the param is a single str
         keys = [keys]
@@ -87,9 +109,9 @@ def getSeqsFromKeys(keys):
     return return_seqs
 
 
-def getAllBows():
+def getAllBows(pretrained = False):
     if not reqBows:
-        loadBow()
+        loadBow(pretrained = pretrained)
     return_seqs = []
     for key in reqBows:
         return_seqs.append(reqBows[key])
@@ -98,8 +120,8 @@ def getAllBows():
     return_tuples = []
     for seq in return_seqs:
         return_tuples.append((seq,)*5)
+   
     return return_tuples
-
 
 class NTMDataSet(Dataset):
     def __init__(self, seqs, eval=True):

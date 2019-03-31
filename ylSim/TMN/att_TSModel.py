@@ -35,10 +35,6 @@ class ATTSModel(nn.Module):
         # this loss restricts the vae
         w_e_dist = self.cosine(req_embedding,wsdl_embedding)*3
 
-        # req_vae_l = self.vae_loss(req_embedding,req_p_bow,req_mu,req_var)
-        # wsdl_vae_l = self.vae_loss(wsdl_embedding,wsdl_p_bow,wsdl_mu,wsdl_var)
-        # vae_loss = req_vae_l / 1080 + wsdl_vae_l / 42
-
         topic_embedding = self.topic_embedding
         t_topic_embedding = topic_embedding.t()
         req_theta = self.softmax(req_theta)

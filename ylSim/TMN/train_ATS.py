@@ -24,8 +24,8 @@ from .att_TSModel import ATTSModel
 
 
 def trainATS(args, model, train_keys, test_keys,index = 0):
-    train_seqs = getSeqsFromKeys(train_keys)
-    test_seqs = getSeqsFromKeys(test_keys)
+    train_seqs = getSeqsFromKeys(train_keys,args.pretrained)
+    test_seqs = getSeqsFromKeys(test_keys,args.pretrained)
     data_set = NTMDataSet(train_seqs)
     data_loader = NTMDataLoader(data_set)
 
@@ -66,7 +66,7 @@ def trainATS(args, model, train_keys, test_keys,index = 0):
             model.eval()
             for key in train_keys:  # do evaluation for every key respectively
                 predicts = []
-                evalSeqs = getSeqsFromKeys(key)
+                evalSeqs = getSeqsFromKeys(key,args.pretrained)
                 evalDataSet = NTMDataSet(evalSeqs)
                 evalDataloader = NTMDataLoader(evalDataSet)
                 for req_b, req, wsdl_b, wsdl, rel in evalDataloader:
@@ -113,7 +113,7 @@ def trainATS(args, model, train_keys, test_keys,index = 0):
 
     for key in test_keys:  # do evaluation for every key respectively
         predicts = []
-        evalSeqs = getSeqsFromKeys(key)
+        evalSeqs = getSeqsFromKeys(key,args.pretrained)
         evalDataSet = NTMDataSet(evalSeqs)
         evalDataloader = NTMDataLoader(evalDataSet)
         for req_b, req, wsdl_b, wsdl, rel in evalDataloader:
@@ -145,13 +145,13 @@ def trainATS(args, model, train_keys, test_keys,index = 0):
                 
 
 
-
 def main():
     parser = argparse.ArgumentParser("VAE")
     parser.add_argument("--vocab_size", type=int, default=646)
     parser.add_argument("--embedding_size", type=int, default=300)
     parser.add_argument("--topic_size", type=int, default=120)
 
+    parser.add_argument("--pretrained",type = bool , default = True)
     parser.add_argument("--lr", type=float, default=3e-4)
     parser.add_argument("--nepoch", type=int, default=500)
     parser.add_argument("--modelFile", default="./TMN/NTM_l1")
