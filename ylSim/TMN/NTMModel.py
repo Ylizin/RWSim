@@ -75,7 +75,7 @@ class NTMModel(nn.Module):
     def forward(self, X_bow):
         X_bow = self.__vectorize_bow(X_bow)
         pi = self.relu(X_bow)
-        word_embedding = pi
+        word_embedding = torch.clone(pi)
         if not self.pretrained:
             word_embedding = self.word_embedding(X_bow)
             X_bow = self.encoder(X_bow)
@@ -95,8 +95,8 @@ class NTMModel(nn.Module):
     @staticmethod
     def loss_function(X_bow, predict_x_bow, mu, log_var):
         #X_bow & predict_x_bow is batch*vocab_size, mu and log_var is the same
-        # mse_loss = torch.sum(1-cos(X_bow,predict_x_bow))
-        mse_loss = mse(X_bow, predict_x_bow)
+        mse_loss = torch.sum(1-cos(X_bow,predict_x_bow))
+        # mse_loss = mse(X_bow, predict_x_bow)
         KLD_element = mu.pow(2).add(log_var.exp()).mul(-1).add(1).add(log_var)
         KLD = torch.sum(KLD_element).mul(-0.5)
         return mse_loss + KLD

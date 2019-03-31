@@ -22,7 +22,7 @@ class CalSim(nn.Module):
         #     p1_dist = torch.dist(in1[i],in2[i],1)
         #     res[i] = torch.exp(-p1_dist)*3
         # return res
-
+    #never use batch norm
     def forward(self,feature1, feature2):
         # feature1 = torch.sum(feature1,1)
         # feature2 = torch.sum(feature2,1)
