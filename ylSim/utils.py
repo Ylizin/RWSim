@@ -2,18 +2,18 @@ import os
 import traceback
 
 rootPath = os.getcwd()
-featurePath = rootPath+r'\WsdlLDA\reqRelevance\features'
-WSDLPath = rootPath+r'\WsdlLDA\originaWSDLsWords'
-RQPath = rootPath+r'\WsdlLDA\originRequestsWords'
-RelevancePath = rootPath+r'\WsdlLDA\reqRelevance'
-registered_path = rootPath+r'\WsdlLDA\originaWSDLsWords\registered'
+featurePath = rootPath+r'/WsdlLDA/reqRelevance/features'
+WSDLPath = rootPath+r'/WsdlLDA/originaWSDLsWords'
+RQPath = rootPath+r'/WsdlLDA/originRequestsWords'
+RelevancePath = rootPath+r'/WsdlLDA/reqRelevance'
+registered_path = rootPath+r'/WsdlLDA/originaWSDLsWords/registered'
 
-RQ_TF_path = rootPath + r'\WsdlLDA\originalRequestsWordsTF'
-WSDL_TF_path = rootPath + r'\WsdlLDA\originalWSDLsWordsTF'
+RQ_TF_path = rootPath + r'/WsdlLDA/originalRequestsWordsTF'
+WSDL_TF_path = rootPath + r'/WsdlLDA/originalWSDLsWordsTF'
 
 
-bertPath = rootPath + r'\bert'
-total_corpus_path = rootPath + r'\trainDocVec\total_corpus.txt'
+bertPath = rootPath + r'/bert'
+total_corpus_path = rootPath + r'/trainDocVec/total_corpus.txt'
 dw = 300
 
 def generateDirs(dirPath):

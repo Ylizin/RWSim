@@ -42,6 +42,7 @@ class NTMModel(nn.Module):
 
         self.f_phi = nn.Linear(args.topic_size, args.vocab_size)
 
+    
      
 
     def reparameterize(self, mu, log_var):
@@ -78,25 +79,31 @@ class NTMModel(nn.Module):
         word_embedding = torch.clone(pi)
         if not self.pretrained:
             word_embedding = self.word_embedding(X_bow)
-            X_bow = self.encoder(X_bow)
-            pi = self.relu(X_bow)
+            _X_bow = self.encoder(X_bow)
+            pi = self.relu(_X_bow)
         
         mu = self.relu(self.f_mu(pi))
         log_var = self.relu(self.f_sigma(pi))
         z = self.reparameterize(mu, log_var)
         theta = self.relu(self.f_theta(z))
         theta = self.softmax(theta)
-        topic_embedding = self.relu(self.topic_embedding(theta))
-        out_bow = topic_embedding
+        out_bow = None
+        out_bow = self.relu(self.topic_embedding(theta))
         X_bow = word_embedding
+        # if not self.pretrained:
+        #     out_bow = self.relu(self.f_phi(theta))
+        # else:
+        #     topic_embedding = self.relu(self.topic_embedding(theta))
+        #     out_bow = topic_embedding
+        #     X_bow = word_embedding
         return out_bow, theta, mu, log_var, X_bow
         # the loss should be calculated by BCELoss and pass the X_bow as weight
 
     @staticmethod
     def loss_function(X_bow, predict_x_bow, mu, log_var):
         #X_bow & predict_x_bow is batch*vocab_size, mu and log_var is the same
-        mse_loss = torch.sum(1-cos(X_bow,predict_x_bow))
-        # mse_loss = mse(X_bow, predict_x_bow)
+        # mse_loss = torch.sum(1-cos(X_bow,predict_x_bow))
+        mse_loss = mse(X_bow, predict_x_bow)
         KLD_element = mu.pow(2).add(log_var.exp()).mul(-1).add(1).add(log_var)
         KLD = torch.sum(KLD_element).mul(-0.5)
         return mse_loss + KLD

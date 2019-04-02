@@ -19,10 +19,10 @@ from LSTM.trainLSTM import calculateLevelsPN,customizedLoss2
 reqBows = {}
 wsdlBows = {}
 
-reqFeaturePath = utils.RQPath+r'\raw_vec'
-wsdlFeaturePath = utils.WSDLPath+r'\raw_vec'
-reqAVEPath = utils.RQPath + r'\vec'
-wsdlAVEPath = utils.WSDLPath + r'\vec'
+reqFeaturePath = utils.RQPath+r'/raw_vec'
+wsdlFeaturePath = utils.WSDLPath+r'/raw_vec'
+reqAVEPath = utils.RQPath + r'/vec'
+wsdlAVEPath = utils.WSDLPath + r'/vec'
 
 def load_pretrained():
     global reqBows

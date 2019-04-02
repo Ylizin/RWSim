@@ -17,8 +17,8 @@ relevanceDict = {}
 reqFeatures = {}
 wsdlFeatures = {}
 
-reqFeaturePath = utils.RQPath+r'\raw_vec'
-wsdlFeaturePath = utils.WSDLPath+r'\raw_vec'
+reqFeaturePath = utils.RQPath+r'/raw_vec'
+wsdlFeaturePath = utils.WSDLPath+r'/raw_vec'
 
 def loadFeatures(relevancePath= utils.RelevancePath, wsdlPath =utils.WSDLPath):
     '''for every req in rel_path, we load it 

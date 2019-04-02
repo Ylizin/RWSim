@@ -19,7 +19,7 @@ from .TMNLoadData import (
     customizedLoss2
 )
 from .NTMModel import _CUDA, cos, mse
-from .trainNTMModel import load_model
+from .trainNTMModel import load_model,_pretrained
 from .att_TSModel import ATTSModel
 
 
@@ -151,7 +151,7 @@ def main():
     parser.add_argument("--embedding_size", type=int, default=300)
     parser.add_argument("--topic_size", type=int, default=120)
 
-    parser.add_argument("--pretrained",type = bool , default = True)
+    parser.add_argument("--pretrained",type = bool , default = _pretrained)
     parser.add_argument("--lr", type=float, default=3e-4)
     parser.add_argument("--nepoch", type=int, default=500)
     parser.add_argument("--modelFile", default="./TMN/NTM_l1")
