@@ -7,16 +7,14 @@
 import argparse
 import os
 
-
 import numpy as np
 import torch
 import torch.nn.functional as F
 from torch import nn, optim
 from torch.utils.data import DataLoader
 
-
-from .TMNLoadData import NTMDataLoader, NTMDataSet, loadFeatures, getAllBows
-from .NTMModel import NTMModel, _CUDA,cos
+from .NTMModel import _CUDA, NTMModel, cos
+from .TMNLoadData import NTMDataLoader, NTMDataSet, getAllBows, loadFeatures
 
 NTMLoss = NTMModel.loss_function
 
@@ -74,7 +72,7 @@ def main():
     # seqs_keys = generateTrainAndTest(5)
     # seqs_keys = seqs_keys[0][0]+seqs_keys[0][1]
     seqs = getAllBows(args.pretrained)
-
+    
     model = NTMModel(args)
     trainNTM(args, model, seqs)
 

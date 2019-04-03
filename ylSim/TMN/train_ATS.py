@@ -1,14 +1,14 @@
 import argparse
 import os
 
-
+from multiprocessing import Manager, Pool
 import numpy as np
 import torch
 import torch.nn.functional as F
 from torch import nn, optim
 from torch.utils.data import DataLoader
 
-
+import utils
 from .TMNLoadData import (
     NTMDataLoader,
     NTMDataSet,
@@ -16,16 +16,32 @@ from .TMNLoadData import (
     generateTrainAndTest,
     getSeqsFromKeys,
     calculateLevelsPN,
-    customizedLoss2
+    customizedLoss2,
 )
 from .NTMModel import _CUDA, cos, mse
-from .trainNTMModel import load_model,_pretrained
+from .trainNTMModel import load_model, _pretrained
 from .att_TSModel import ATTSModel
 
 
-def trainATS(args, model, train_keys, test_keys,index = 0):
-    train_seqs = getSeqsFromKeys(train_keys,args.pretrained)
-    test_seqs = getSeqsFromKeys(test_keys,args.pretrained)
+def trainATS(
+    args,
+    model,
+    train_keys,
+    test_keys,
+    index,
+    sync_count,
+    sync_precision1,
+    sync_precision2,
+    sync_precision3,
+    sync_NDCG,
+    lock,
+):
+    doPrint = False
+    if index % 5 == 0:
+        doPrint = True
+
+    train_seqs = getSeqsFromKeys(train_keys, args.pretrained)
+    test_seqs = getSeqsFromKeys(test_keys, args.pretrained)
     data_set = NTMDataSet(train_seqs)
     data_loader = NTMDataLoader(data_set)
 
@@ -48,17 +64,17 @@ def trainATS(args, model, train_keys, test_keys,index = 0):
                 r = r.cuda()
             r = r.view(-1)
             r = r.type_as(dist)
-            vae_loss = loss_func(dist,r)
+            vae_loss = loss_func(dist, r)
             l = loss_func(dist, r)
             l = l + vae_loss
             totalLoss += l.item()
             optimizer.zero_grad()
             l.backward()
             optimizer.step()
+        if doPrint:
+            print("epoch:{},Training loss :{:.4}".format(i, totalLoss))
 
-        print("epoch:{},Training loss :{:.4}".format(i, totalLoss))
-
-        if i % 20 == 20-1:
+        if i % 20 == 20 - 1:
             precision1 = 0.0
             precision2 = 0.0
             precision3 = 0.0
@@ -66,7 +82,7 @@ def trainATS(args, model, train_keys, test_keys,index = 0):
             model.eval()
             for key in train_keys:  # do evaluation for every key respectively
                 predicts = []
-                evalSeqs = getSeqsFromKeys(key,args.pretrained)
+                evalSeqs = getSeqsFromKeys(key, args.pretrained)
                 evalDataSet = NTMDataSet(evalSeqs)
                 evalDataloader = NTMDataLoader(evalDataSet)
                 for req_b, req, wsdl_b, wsdl, rel in evalDataloader:
@@ -94,13 +110,14 @@ def trainATS(args, model, train_keys, test_keys,index = 0):
             precision3 = precision3 / len(train_keys)
             NDCG = NDCG / len(train_keys)
             NDCG = NDCG.item()
-            print(
-                "epoch:{},Precision1:{:.4},Precision2:{:.4},Precision3:{:.4},NDCG:{:.4}".format(
-                    i, precision1, precision2, precision3, NDCG
+            if doPrint:
+                print(
+                    "epoch:{},Precision1:{:.4},Precision2:{:.4},Precision3:{:.4},NDCG:{:.4}".format(
+                        i, precision1, precision2, precision3, NDCG
+                    )
                 )
-            )
             if NDCG > bestNDCG or bestNDCG == 0.0:
-                torch.save(model.state_dict(), args.modelFile + r'.ATS')
+                torch.save(model.state_dict(), args.modelFile + r".ATS")
                 bestPrecision = precision1
                 bestNDCG = NDCG
                 if bestNDCG > 0.920:
@@ -113,7 +130,7 @@ def trainATS(args, model, train_keys, test_keys,index = 0):
 
     for key in test_keys:  # do evaluation for every key respectively
         predicts = []
-        evalSeqs = getSeqsFromKeys(key,args.pretrained)
+        evalSeqs = getSeqsFromKeys(key, args.pretrained)
         evalDataSet = NTMDataSet(evalSeqs)
         evalDataloader = NTMDataLoader(evalDataSet)
         for req_b, req, wsdl_b, wsdl, rel in evalDataloader:
@@ -141,8 +158,16 @@ def trainATS(args, model, train_keys, test_keys,index = 0):
     precision3 = p3 / len(test_keys)
     NDCG = NDCG / len(test_keys)
     NDCG = NDCG.item()
-    print('-p1:{}\n-p2:{}\n-p3:{}\n-NDCG:{}'.format(precision1,precision2,precision3,NDCG))
-                
+    with open(args.modelFile + "testSeqs", "a") as f:
+        f.write(str(index) + ":")
+        f.write(str(test_keys) + "\n")
+
+    with lock:
+        sync_count.value += 1
+        sync_precision1.value += precision1
+        sync_precision2.value += precision2
+        sync_precision3.value += precision3
+        sync_NDCG += NDCG
 
 
 def main():
@@ -151,8 +176,10 @@ def main():
     parser.add_argument("--embedding_size", type=int, default=300)
     parser.add_argument("--topic_size", type=int, default=120)
 
-    parser.add_argument("--pretrained",type = bool , default = _pretrained)
+    parser.add_argument("--pretrained", type=bool, default=_pretrained)
     parser.add_argument("--lr", type=float, default=3e-4)
+    parser.add_argument("--foldNum", type=int, default=5)
+
     parser.add_argument("--nepoch", type=int, default=500)
     parser.add_argument("--modelFile", default="./TMN/NTM_l1")
     args = parser.parse_args()
@@ -160,11 +187,51 @@ def main():
     loadFeatures()
     # train_seqs_keys = generateTrainAndTest(5)
     # train_seqs_keys = train_seqs_keys[0][0]+train_seqs_keys[0][1]
-    train_keys, test_keys = generateTrainAndTest(5)[0]
+    train_test_Seqs = generateTrainAndTest(args.foldNum)
     vae_model = load_model()
+    ATS_models = [ATTSModel(args, vae_model=vae_model) for i in range(args.foldNum)]
 
-    model = ATTSModel(args, vae_model=vae_model)
-    trainATS(args, model, train_keys, test_keys)
+    manager = Manager()
+    p = Pool(int(os.cpu_count() / 2))
+    lock = manager.Lock()
+    precision1 = manager.Value("d", 0.0)
+    precision2 = manager.Value("d", 0.0)
+    precision3 = manager.Value("d", 0.0)
+    NDCG = manager.Value("d", 0.0)
+    count = manager.Value("i", 0)
+
+    for index, model in enumerate(ATS_models):
+        ttSeq = train_test_Seqs[index]
+        train_keys, test_keys = ttSeq
+        p.apply_async(
+            trainATS(
+                args,
+                model,
+                train_keys,
+                test_keys,
+                index,
+                count,
+                precision1,
+                precision2,
+                precision3,
+                NDCG,
+                lock,
+            ),
+            error_callback = utils.errorCallBack,
+        )
+    p.close()
+    p.join()
+    count = count.value
+    precision1 = precision1.value / count
+    precision2 = precision2.value / count
+    precision3 = precision3.value / count
+    NDCG = NDCG.value / count
+    print(
+        str(args.foldNum) + "foldCV precision1:" + str(precision1)
+    )  # +str(np.mean(testSetPrecision)))
+    print("precision2 :{}".format(precision2))
+    print("precision3 :{}".format(precision3))
+    print("NDCG : {}".format(NDCG))
 
 
 if __name__ == "__main__":

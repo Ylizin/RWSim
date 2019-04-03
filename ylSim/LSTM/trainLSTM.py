@@ -290,7 +290,7 @@ def main():
 
     LoadData.loadFeatures()
 
-    train_test_Seqs = LoadData.generateTrainAndTest(args.foldNum,True)
+    train_test_Seqs = LoadData.generateTrainAndTest(args.foldNum)
     # level has 1,2,3 each level we train foldNum models
     LSTMModels = [RWLSTMModel(args) for i in range(args.foldNum)]
     level = args.level
