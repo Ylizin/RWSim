@@ -167,7 +167,7 @@ def trainATS(
         sync_precision1.value += precision1
         sync_precision2.value += precision2
         sync_precision3.value += precision3
-        sync_NDCG += NDCG
+        sync_NDCG.value += NDCG
 
 
 def main():
