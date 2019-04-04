@@ -204,7 +204,8 @@ def main():
         ttSeq = train_test_Seqs[index]
         train_keys, test_keys = ttSeq
         p.apply_async(
-            trainATS(
+            trainATS,
+            args=(
                 args,
                 model,
                 train_keys,
