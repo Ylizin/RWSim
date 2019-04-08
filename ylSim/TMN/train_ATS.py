@@ -117,7 +117,7 @@ def trainATS(
                     )
                 )
             if NDCG > bestNDCG or bestNDCG == 0.0:
-                torch.save(model.state_dict(), args.modelFile + r".ATS")
+                torch.save(model.state_dict(), args.modelFile +str(index) + r".ATS")
                 bestPrecision = precision1
                 bestNDCG = NDCG
                 if bestPrecision > 0.990:
