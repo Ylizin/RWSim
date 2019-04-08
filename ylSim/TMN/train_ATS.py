@@ -120,7 +120,7 @@ def trainATS(
                 torch.save(model.state_dict(), args.modelFile + r".ATS")
                 bestPrecision = precision1
                 bestNDCG = NDCG
-                if bestNDCG > 0.920:
+                if bestPrecision > 0.990:
                     break
     p1 = 0.0
     p2 = 0.0

@@ -206,7 +206,7 @@ def trainOneModel(
                 torch.save(model.state_dict(), args.modelFile + str(level) + str(index))
                 bestPrecision = precision1
                 bestNDCG = NDCG
-                if bestNDCG > 0.920:
+                if bestPrecision > 0.970:
                     break
 
     if doPrint:
