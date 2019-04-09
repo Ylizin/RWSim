@@ -156,7 +156,8 @@ def trainOneModel(
 
         if doPrint:
             print("epoch:{},Training loss :{:.4}".format(i, totalLoss))
-
+        if totalLoss < 1.1e+3:
+            break
         if i % args.testEvery == (args.testEvery - 1):
             precision1 = 0.0
             precision2 = 0.0
@@ -206,8 +207,8 @@ def trainOneModel(
                 torch.save(model.state_dict(), args.modelFile + str(level) + str(index))
                 bestPrecision = precision1
                 bestNDCG = NDCG
-                if bestPrecision > 0.970:
-                    break
+                # if bestPrecision > 0.970:
+                    # break
 
     if doPrint:
         print("bestPrecision:{}".format(bestPrecision))
@@ -273,7 +274,7 @@ def main():
     
     # parser.add_argument('--hiddenDim2', type=int, default=60)
     # parser.add_argument('--hiddenDim3', type=int, default=20)
-    parser.add_argument("--dropout", type=float, default=0.4)
+    parser.add_argument("--dropout", type=float, default=0.0)
     parser.add_argument("--bidirectional", type=bool, default=True)
     
     # parser.add_argument('--numWorkers', type=int, default=0)

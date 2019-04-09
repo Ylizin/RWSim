@@ -73,7 +73,8 @@ def trainATS(
             optimizer.step()
         if doPrint:
             print("epoch:{},Training loss :{:.4}".format(i, totalLoss))
-
+        if totalLoss <1.0e+3:
+            break
         if i % 20 == 20 - 1:
             precision1 = 0.0
             precision2 = 0.0
@@ -120,8 +121,8 @@ def trainATS(
                 torch.save(model.state_dict(), args.modelFile +str(index) + r".ATS")
                 bestPrecision = precision1
                 bestNDCG = NDCG
-                if bestPrecision > 0.990:
-                    break
+                # if bestPrecision > 0.990:
+                    # break
     p1 = 0.0
     p2 = 0.0
     p3 = 0.0
