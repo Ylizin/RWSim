@@ -35,7 +35,9 @@ def calculateLevelsPN(key, sortedResult):
     p41, ndcg4 = simplePrecisionNDCG(key, sortedResult, 20, 1, doDCG=True)
     p42, _ = simplePrecisionNDCG(key, sortedResult, 20, 2, doDCG=True)
     p43, _ = simplePrecisionNDCG(key, sortedResult, 20, 3, doDCG=True)
-
+    
+    if p11>1.0 or p12>1.0 or p13>1.0:
+        print("error precision")
     return (
         (ndcg1 + ndcg2 + ndcg3 + ndcg4) / 4,
         (p11 + p21 + p31 + p41) / 4,

@@ -75,7 +75,7 @@ def trainATS(
             print("epoch:{},Training loss :{:.4}".format(i, totalLoss))
         if totalLoss <1.0e+3:
             break
-        if i % 20 == 20 - 1:
+        if i % args.testEvery == args.testEvery - 1:
             precision1 = 0.0
             precision2 = 0.0
             precision3 = 0.0
@@ -181,6 +181,7 @@ def main():
     parser.add_argument("--lr", type=float, default=3e-4)
     parser.add_argument("--foldNum", type=int, default=5)
 
+    parser.add_argument("--testEvery", type=int, default=20)
     parser.add_argument("--nepoch", type=int, default=500)
     parser.add_argument("--modelFile", default="./TMN/NTM_l1")
     args = parser.parse_args()
