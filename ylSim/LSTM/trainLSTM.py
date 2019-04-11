@@ -16,10 +16,8 @@ import LSTM.LoadData as LoadData
 import LSTM.totalmodel as totalmodel
 import utils
 from calculatePrecision import getLen
-from LSTM.totalmodel import RWLSTMModel
+from LSTM.totalmodel import RWLSTMModel,_CUDA
 
-
-_CUDA = torch.cuda.is_available()
 
 
 def calculateLevelsPN(key, sortedResult):

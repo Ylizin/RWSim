@@ -2,7 +2,7 @@ import torch
 from torch import nn
 import LSTM.RWLSTM as RWLSTM
 import LSTM.CalSim as Sim
-
+from LSTM.RWLSTM import _CUDA
 
 class RWLSTMModel(nn.Module):
     def __init__(self,args):
