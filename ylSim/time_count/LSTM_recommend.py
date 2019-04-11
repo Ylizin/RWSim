@@ -35,14 +35,17 @@ def __init_args():
 def __init_model(model_path = None):
     args = __init_args()
     model = RWLSTMModel(args)
+    if _CUDA:
+        model = model.cuda()    
     if not model_path:
         model_path = args.modelFile
-    model.load_state_dict(torch.load(model_path)) #load function load an state_dict object
+    if not _CUDA:
+        model.load_state_dict(torch.load(model_path),map_location=torch.device('cpu')) #load function load an state_dict object
+    else:
+        model.load_state_dict(torch.load(model_path))
     for param in model.parameters():
         param.requires_grad_(False)
     model = model.lstm
-    if _CUDA:
-        model = model.cuda()
     return model
 
 def __init_registered_vecs(registered_path):
@@ -88,7 +91,8 @@ def get_recommend_by_seqs(w2vmodel,model,seqs):
     registered = torch.from_numpy(registered)
     if _CUDA : 
         registered = registered.cuda()
-    ret_seqs = LSTM_count(w2vmodel,model,seqs,registered,names,ret_topk = 20)
+    for i in range(30):
+        ret_seqs = LSTM_count(w2vmodel,model,seqs,registered,names,ret_topk = 20)
 
 def test_runtime():
     model = __init_model()
