@@ -40,7 +40,7 @@ def __init_model(model_path = None):
     if not model_path:
         model_path = args.modelFile
     if not _CUDA:
-        model.load_state_dict(torch.load(model_path),map_location=torch.device('cpu')) #load function load an state_dict object
+        model.load_state_dict(torch.load(model_path,map_location=torch.device('cpu'))) #load function load an state_dict object
     else:
         model.load_state_dict(torch.load(model_path))
     for param in model.parameters():
