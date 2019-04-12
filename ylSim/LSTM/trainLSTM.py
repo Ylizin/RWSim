@@ -2,7 +2,7 @@ import argparse
 import os
 
 import traceback
-from multiprocessing import Manager, Pool
+from multiprocessing import Manager, Pool,set_start_method
 
 import numpy as np
 import torch
@@ -294,6 +294,7 @@ def main():
     LSTMModels = [RWLSTMModel(args) for i in range(args.foldNum)]
     level = args.level
 
+    set_start_method('spawn')
     manager = Manager()
     p = Pool(int(os.cpu_count() / 2))
     lock = manager.Lock()

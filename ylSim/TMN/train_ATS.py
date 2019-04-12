@@ -1,7 +1,7 @@
 import argparse
 import os
 
-from multiprocessing import Manager, Pool
+from multiprocessing import Manager, Pool,set_start_method
 import numpy as np
 import torch
 import torch.nn.functional as F
@@ -192,6 +192,7 @@ def main():
     train_test_Seqs = generateTrainAndTest(args.foldNum)
     vae_model = load_model()
     ATS_models = [ATTSModel(args, vae_model=vae_model) for i in range(args.foldNum)]
+    set_start_method('spawn')
 
     manager = Manager()
     p = Pool(int(os.cpu_count() / 2))
