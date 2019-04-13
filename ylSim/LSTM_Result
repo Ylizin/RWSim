@@ -195,3 +195,61 @@ bestNDCG:0.9336507606969413
 precision2 :0.8045741161412117
 precision3 :0.7756661016679399
 NDCG : 0.7856210474928353
+features reading complete
+epoch:0,Training loss :7.909e+03
+epoch:1,Training loss :4.472e+03
+epoch:2,Training loss :3.9e+03
+epoch:3,Training loss :3.486e+03
+epoch:4,Training loss :3.214e+03
+epoch:5,Training loss :2.882e+03
+epoch:6,Training loss :2.629e+03
+epoch:7,Training loss :2.407e+03
+epoch:8,Training loss :2.217e+03
+epoch:9,Training loss :2.034e+03
+epoch:9,Precision1:0.9434,Precision2:0.9186,Precision3:0.8539,NDCG:0.8711
+epoch:10,Training loss :1.838e+03
+epoch:11,Training loss :1.692e+03
+epoch:12,Training loss :1.588e+03
+epoch:13,Training loss :1.476e+03
+epoch:14,Training loss :1.392e+03
+epoch:15,Training loss :1.437e+03
+epoch:16,Training loss :1.249e+03
+epoch:17,Training loss :1.13e+03
+epoch:18,Training loss :1.109e+03
+epoch:19,Training loss :1.019e+03
+epoch:19,Precision1:0.9795,Precision2:0.9707,Precision3:0.9253,NDCG:0.9347
+epoch:20,Training loss :994.1
+bestPrecision:0.9795241013071897
+bestNDCG:0.9347212271406505
+5foldCV precision1:0.8611979166666668
+precision2 :0.7983073880776088
+precision3 :0.7572760827815974
+NDCG : 0.7764245307634374
+features reading complete
+epoch:0,Training loss :8.197e+03
+epoch:1,Training loss :4.119e+03
+epoch:2,Training loss :3.596e+03
+epoch:3,Training loss :3.343e+03
+epoch:4,Training loss :3.027e+03
+epoch:5,Training loss :2.78e+03
+epoch:6,Training loss :2.522e+03
+epoch:7,Training loss :2.294e+03
+epoch:8,Training loss :2.095e+03
+epoch:9,Training loss :1.941e+03
+epoch:9,Precision1:0.9523,Precision2:0.9134,Precision3:0.8492,NDCG:0.8767
+epoch:10,Training loss :1.731e+03
+epoch:11,Training loss :1.605e+03
+epoch:12,Training loss :1.483e+03
+epoch:13,Training loss :1.396e+03
+epoch:14,Training loss :1.318e+03
+epoch:15,Training loss :1.245e+03
+epoch:16,Training loss :1.152e+03
+epoch:17,Training loss :1.172e+03
+epoch:18,Training loss :1.117e+03
+epoch:19,Training loss :1.009e+03
+bestPrecision:0.9523284313725491
+bestNDCG:0.8766747899593463
+5foldCV precision1:0.8311458333333335
+precision2 :0.7759086670070127
+precision3 :0.763390668767507
+NDCG : 0.7466596598286777
