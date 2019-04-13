@@ -132,8 +132,8 @@ class NTMDataSet(Dataset):
 
     def __swap_req_wsdl(self, seqs):
         new_seqs = []
-        for reqF, wsdlF, rel in seqs:
-            new_seqs.append((wsdlF, reqF, rel))
+        for reqB,reqF,wsdlB, wsdlF, rel in seqs:
+            new_seqs.append((wsdlB,wsdlF, reqB,reqF, rel))
         return new_seqs
 
     def __len__(self):

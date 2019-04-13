@@ -42,7 +42,7 @@ def trainATS(
 
     train_seqs = getSeqsFromKeys(train_keys, args.pretrained)
     test_seqs = getSeqsFromKeys(test_keys, args.pretrained)
-    data_set = NTMDataSet(train_seqs)
+    data_set = NTMDataSet(train_seqs,eval = False)
     data_loader = NTMDataLoader(data_set)
 
     if _CUDA:
@@ -121,7 +121,7 @@ def trainATS(
                 torch.save(model.state_dict(), args.modelFile +str(index) + r".ATS")
                 bestPrecision = precision1
                 bestNDCG = NDCG
-                if bestPrecision > 0.985:
+                if bestPrecision > 0.990:
                     break
     p1 = 0.0
     p2 = 0.0
