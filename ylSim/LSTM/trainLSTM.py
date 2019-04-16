@@ -154,8 +154,8 @@ def trainOneModel(
 
         if doPrint:
             print("epoch:{},Training loss :{:.4}".format(i, totalLoss))
-        if totalLoss < 1.05e+3:
-            break
+        # if totalLoss < 1.05e+3:
+        #     break
         if i % args.testEvery == (args.testEvery - 1):
             precision1 = 0.0
             precision2 = 0.0
@@ -205,8 +205,8 @@ def trainOneModel(
                 torch.save(model.state_dict(), args.modelFile + str(level) + str(index))
                 bestPrecision = precision1
                 bestNDCG = NDCG
-                # if bestPrecision > 0.970:
-                    # break
+                if bestNDCG > 0.920:
+                    break
 
     if doPrint:
         print("bestPrecision:{}".format(bestPrecision))

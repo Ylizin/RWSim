@@ -154,21 +154,21 @@ def trainATS(
         p2 += p2s
         p3 += p3s
 
-    precision1 = p1 / len(test_keys)
-    precision2 = p2 / len(test_keys)
-    precision3 = p3 / len(test_keys)
-    NDCG = NDCG / len(test_keys)
-    NDCG = NDCG.item()
+    eval_precision1 = p1 / len(test_keys)
+    eval_precision2 = p2 / len(test_keys)
+    eval_precision3 = p3 / len(test_keys)
+    eval_NDCG = NDCG / len(test_keys)
+    eval_NDCG = eval_NDCG.item()
     with open(args.modelFile + "testSeqs", "a") as f:
         f.write(str(index) + ":")
         f.write(str(test_keys) + "\n")
 
     with lock:
         sync_count.value += 1
-        sync_precision1.value += precision1
-        sync_precision2.value += precision2
-        sync_precision3.value += precision3
-        sync_NDCG.value += NDCG
+        sync_precision1.value += eval_precision1
+        sync_precision2.value += eval_precision2
+        sync_precision3.value += eval_precision3
+        sync_NDCG.value += eval_NDCG
 
 
 def main():
