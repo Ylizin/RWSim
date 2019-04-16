@@ -1,0 +1,1 @@
+from . import save_w2v,word2id
