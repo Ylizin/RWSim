@@ -27,7 +27,6 @@ def loadFeatures(relevancePath= utils.RelevancePath, wsdlPath =utils.WSDLPath):
         relevancePath {[type]} -- [description] (default: {utils.RelevancePath})
         wsdlPath {[type]} -- [description] (default: {utils.WSDLPath})
     '''
-
     loadRelevance.loadRelevance()
    
     global relevanceDict
@@ -58,7 +57,6 @@ def generateTrainAndTest(cvNum,use_saved_seqs = False):
         idx_keys = []
         with open('./models/test_seqs','r') as f:
             for line in f:
-                
                 data = line.strip().split(':')
                 index = int(data[0][1]) #get the index num
                 test_keys = eval(data[1])
@@ -96,7 +94,7 @@ def getSeqsFromKeys(keys):
     return_seqs = []
     
     for req in keys:
-        for wsdl in wsdlFeatures.keys():
+        for wsdl in wsdlFeatures:
             reqF = reqFeatures[req]
             wsdlF = wsdlFeatures[wsdl]
             rel = 0

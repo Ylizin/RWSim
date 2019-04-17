@@ -15,9 +15,9 @@ def load_w2v(path):
 #     model_vocab = model.vocab
 #     return model_vocab
 
-# def __extrac_word2index(vocab,word_list):
+# def __extrac_word2index(vocab,word_dict):
 #     w2i = []
-#     for word in word_list:
+#     for word in word_dict:
 #         w2i.append((word,vocab[word].index))
 #     return w2i
 
@@ -27,11 +27,21 @@ def w2v(model,word):
     except KeyError:
         return None
 
-def save_w2v_w2i(pret_path,save_path,word_list):
+def save_w2v_w2i(word_dict,pret_path = utils.google_pretrained_path,save_path = utils.extract_w2v_path):
+    '''here we generate an numpy array for the input word_dict
+    
+    Arguments:
+        word_dict {dict} -- a dict containing the {word(str):index(int)}
+    
+    Keyword Arguments:
+        pret_path {str} -- [description] (default: {utils.google_pretrained_path})
+        save_path {[type]} -- [description] (default: {utils.extract_w2v_path})
+    '''
+
     global __saved_path
     model = load_w2v(pret_path)
     vec_list = []
-    for word in word_list:
+    for word in word_dict:
         w_v = w2v(model,word)
         if w_v is None:
             continue
@@ -42,9 +52,9 @@ def save_w2v_w2i(pret_path,save_path,word_list):
     np.save(save_path,pret_np)
     
     with open(save_path+'w2i.txt', 'w') as f:
-        for word in word_list:
-            f.write(word+'\n')
-
+        for word in word_dict:
+            f.write(word+'\t'+str(word_dict[word])+'\n')
+    return pret_np
 
 
         
