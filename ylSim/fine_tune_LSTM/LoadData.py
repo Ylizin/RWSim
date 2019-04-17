@@ -79,7 +79,7 @@ def get_words_from_keys(keys):
             return_seqs.append((rq_word,wsdl_word,rel))
     
     return return_seqs
-
+#the word out of vocab is a serious defect for such a tiny dataset
 class LSTMDataSet(Dataset):
     def __init__(self,seqs,eval = True):
         if eval:
@@ -126,7 +126,7 @@ class LSTMDataSet(Dataset):
                 rq_index.append(self.word2index[word])
             for word in wsdl_word:
                 wsdl_index.append(self.word2index[word])
-            index_seqs.append(rq_index,wsdl_index,rel)
+            index_seqs.append((rq_index,wsdl_index,rel))
         return index_seqs
 
 
