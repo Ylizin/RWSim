@@ -79,7 +79,9 @@ def get_words_from_keys(keys):
             return_seqs.append((rq_word,wsdl_word,rel))
     
     return return_seqs
+
 #the word out of vocab is a serious defect for such a tiny dataset
+#here the startegy should be modified for those oovs 
 class LSTMDataSet(Dataset):
     def __init__(self,seqs,eval = True):
         if eval:

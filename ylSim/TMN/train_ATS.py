@@ -182,7 +182,7 @@ def main():
     parser.add_argument("--foldNum", type=int, default=5)
 
     parser.add_argument("--testEvery", type=int, default=20)
-    parser.add_argument("--nepoch", type=int, default=500)
+    parser.add_argument("--nepoch", type=int, default=150)
     parser.add_argument("--modelFile", default="./TMN/NTM_l1")
     args = parser.parse_args()
 
