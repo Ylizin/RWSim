@@ -81,6 +81,8 @@ def get_words_from_keys(keys):
     return return_seqs
 
 #the word out of vocab is a serious defect for such a tiny dataset
+#during training we have no information about what word will come in evalution procedure
+#so that even the word is in the embedding layer, it keeps the initialized value
 #here the startegy should be modified for those oovs 
 class LSTMDataSet(Dataset):
     def __init__(self,seqs,eval = True):
