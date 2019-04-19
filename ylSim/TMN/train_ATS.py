@@ -64,9 +64,9 @@ def trainATS(
                 r = r.cuda()
             r = r.view(-1)
             r = r.type_as(dist)
-            vae_loss = loss_func(dist, r)
-            l = loss_func(dist, r) *
-            l = l + vae_loss
+            
+            l = loss_func(dist, r)
+            l = l + loss_func(dist, r)
             totalLoss += l.item()
             optimizer.zero_grad()
             l.backward()
