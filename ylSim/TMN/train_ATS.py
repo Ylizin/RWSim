@@ -50,7 +50,7 @@ def trainATS(
         model = model.cuda()
 
     loss_func = customizedLoss2
-    optimizer = optim.Adam(model.fine_tune_parameters(), args.lr, weight_decay=1e-5)
+    optimizer = optim.Adam(model.parameters(), args.lr, weight_decay=1e-5)
 
     bestPrecision = 0.0
     bestNDCG = 0.0
@@ -178,7 +178,7 @@ def main():
     parser.add_argument("--topic_size", type=int, default=120)
 
     parser.add_argument("--pretrained", type=bool, default=_pretrained)
-    parser.add_argument("--lr", type=float, default=3e-4)
+    parser.add_argument("--lr", type=float, default=3e-5)
     parser.add_argument("--foldNum", type=int, default=5)
 
     parser.add_argument("--testEvery", type=int, default=20)
