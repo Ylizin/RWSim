@@ -18,7 +18,7 @@ from .TMNLoadData import (
     calculateLevelsPN,
     customizedLoss2,
 )
-from .NTMModel import _CUDA, cos, mse
+from .NTMModel import _CUDA, cos, mse,NTMModel
 from .trainNTMModel import load_model, _pretrained
 from .att_TSModel import ATTSModel
 

@@ -77,7 +77,7 @@ def main():
     trainNTM(args, model, seqs)
 
 
-def load_model():
+def load_model(new_model = False):
     parser = argparse.ArgumentParser("VAE")
     parser.add_argument("--vocab_size", type=int, default=646)
     parser.add_argument("--embedding_size", type=int, default=300)
@@ -93,7 +93,10 @@ def load_model():
     # seqs = getAllBows()
 
     model = NTMModel(args)
+    if new_model:
+        return model
 
+    
     pre_trained_path = args.modelFile + r'.VAE'
 
     if not _CUDA:
