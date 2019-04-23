@@ -55,7 +55,7 @@ class NTMModel(nn.Module):
             eps = torch.normal(mu,std)
         return eps
 
-    def __vectorize_bow(self,bow):
+    def vectorize_bow(self,bow):
         len_bow = len(bow)
         stacked_bow = []
         if self.pretrained:
@@ -74,7 +74,7 @@ class NTMModel(nn.Module):
         return stacked_bow
 
     def forward(self, X_bow):
-        X_bow = self.__vectorize_bow(X_bow)
+        X_bow = self.vectorize_bow(X_bow)
         pi = self.relu(X_bow)
         word_embedding = torch.clone(pi)
         if not self.pretrained:

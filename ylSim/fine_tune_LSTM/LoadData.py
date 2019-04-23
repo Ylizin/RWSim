@@ -6,8 +6,8 @@ import torch
 from torch import Tensor
 from torch.utils.data import Dataset
 
-import utils
 import loadRelevance
+import utils
 from load_pretrained_wv.word2id import load_w2vi
 
 relevanceDict = {}
@@ -45,7 +45,6 @@ def load_words(relevancePath= utils.RelevancePath, wsdlPath =utils.WSDLPath):
                 line = line.strip().split()
                 words.extend(line)
         wsdl_words[file] = words
-
     print('words load complete.')
 
 def generateTrainAndTest(cvNum):
@@ -154,12 +153,3 @@ class LSTMDataLoader(object):
         upper_bound = self.len if self.len <= idx + batch_size else idx + batch_size
         self._idx += self.batch_size
         return self.data[idx:upper_bound]
-        
-
-
-
-
-
-
-
-
