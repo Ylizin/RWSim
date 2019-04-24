@@ -46,7 +46,7 @@ def trainATS(
     data_loader = NTMDataLoader(data_set)
 
     if _CUDA:
-        torch.cuda.set_device(0)
+        # torch.cuda.set_device(0)
         model = model.cuda()
 
     loss_func = customizedLoss2
@@ -178,7 +178,7 @@ def main():
     parser.add_argument("--topic_size", type=int, default=120)
 
     parser.add_argument("--pretrained", type=bool, default=_pretrained)
-    parser.add_argument("--lr", type=float, default=3e-4)
+    parser.add_argument("--lr", type=float, default=3e-5)
     parser.add_argument("--foldNum", type=int, default=5)
 
     parser.add_argument("--testEvery", type=int, default=20)

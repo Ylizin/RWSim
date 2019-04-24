@@ -67,10 +67,10 @@ class NTMModel(nn.Module):
                     tensor_bow[idx] = freq
                 stacked_bow.append(tensor_bow)
         stacked_bow = torch.stack(stacked_bow)
-
+        
         if _CUDA:
             stacked_bow = stacked_bow.cuda()
-       
+        
         return stacked_bow
 
     def forward(self, X_bow):

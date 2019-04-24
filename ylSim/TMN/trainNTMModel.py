@@ -24,7 +24,7 @@ def trainNTM(args, model, seqs):
     data_loader = NTMDataLoader(data_set)
 
     if _CUDA:
-        torch.cuda.set_device(0)
+        # torch.cuda.set_device(0)
         model = model.cuda()
 
     loss_func = NTMLoss
@@ -102,7 +102,7 @@ def load_model(new_model = False):
     if not _CUDA:
         model.load_state_dict(torch.load(pre_trained_path,map_location=torch.device('cpu')))
     else:
-        model.load_state_dict(torch.load(pre_trained_path))
+        model.load_state_dict(torch.load(pre_trained_path,map_location=torch.device('cpu')))
        
         
 
