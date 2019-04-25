@@ -40,8 +40,8 @@ class ATTSModel(nn.Module):
         # if not self.pretrained:
         #     req_embedding = self.word_embedding(req_p_bow)
         #     wsdl_embedding = self.word_embedding(wsdl_p_bow)
-        # topic_embedding = self.topic_embedding
-        # t_topic_embedding = topic_embedding.t()
+        topic_embedding = self.topic_embedding
+        t_topic_embedding = topic_embedding.t()
 
         # #topic embedding is topic_num*Embedding_num
         req_topic_sim = torch.matmul(req_embedding, topic_embedding)
