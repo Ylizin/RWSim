@@ -42,7 +42,7 @@ def trainATS(
 
     train_seqs = getSeqsFromKeys(train_keys, args.pretrained)
     test_seqs = getSeqsFromKeys(test_keys, args.pretrained)
-    data_set = NTMDataSet(train_seqs,eval = False)
+    data_set = NTMDataSet(train_seqs)
     data_loader = NTMDataLoader(data_set)
 
     if _CUDA:
