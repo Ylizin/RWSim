@@ -102,7 +102,7 @@ def load_model(new_model = False):
     if not _CUDA:
         model.load_state_dict(torch.load(pre_trained_path,map_location=torch.device('cpu')))
     else:
-        model.load_state_dict(torch.load(pre_trained_path,map_location=torch.device('cpu')))
+        model.load_state_dict(torch.load(pre_trained_path))
        
         
 
