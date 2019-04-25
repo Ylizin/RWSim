@@ -190,8 +190,9 @@ def main():
     # train_seqs_keys = generateTrainAndTest(5)
     # train_seqs_keys = train_seqs_keys[0][0]+train_seqs_keys[0][1]
     train_test_Seqs = generateTrainAndTest(args.foldNum)
-    vae_model = load_model()
-    ATS_models = [ATTSModel(args, vae_model=vae_model) for i in range(args.foldNum)]
+    vae_model = [load_model() for i in range(args.foldNum)]
+    
+    ATS_models = [ATTSModel(args, vae_model=vae_model[i]) for i in range(args.foldNum)]
     set_start_method('spawn')
 
     manager = Manager()
