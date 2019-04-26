@@ -64,7 +64,7 @@ def main():
     parser.add_argument("--topic_size", type=int, default=120)
     parser.add_argument("--pretrained",type = bool,default = _pretrained)
     parser.add_argument("--lr", type=float, default=3e-3)
-    parser.add_argument("--nepoch", type=int, default=150)
+    parser.add_argument("--nepoch", type=int, default=500)
     parser.add_argument('--modelFile', default='./TMN/NTM')
     args = parser.parse_args()
 
