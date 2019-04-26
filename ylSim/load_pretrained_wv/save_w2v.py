@@ -25,7 +25,7 @@ def w2v(model,word):
     try:
         return model[word] #return shape (1,dw)
     except KeyError:
-        return None
+        return np.zeros(utils.dw)
 
 def save_w2v_w2i(word_dict,pret_path = utils.google_pretrained_path,save_path = utils.extract_w2v_path):
     '''here we generate an numpy array for the input word_dict
@@ -53,7 +53,7 @@ def save_w2v_w2i(word_dict,pret_path = utils.google_pretrained_path,save_path = 
     
     with open(save_path+'w2i.txt', 'w') as f:
         for word in word_dict:
-            f.write(word+'\t'+str(word_dict[word])+'\n')
+            f.write(str(word_dict[word])+','+word+'\n')
     return pret_np
 
 

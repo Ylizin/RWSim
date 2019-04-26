@@ -6,13 +6,13 @@
 
 import argparse
 import os
-
+import utils
 import numpy as np
 import torch
 import torch.nn.functional as F
 from torch import nn, optim
 from torch.utils.data import DataLoader
-
+import load_pretrained_wv.word2id as wv
 from .NTMModel import _CUDA, NTMModel, cos
 from .TMNLoadData import NTMDataLoader, NTMDataSet, getAllBows, loadFeatures
 
@@ -28,7 +28,7 @@ def trainNTM(args, model, seqs):
         model = model.cuda()
 
     loss_func = NTMLoss
-    optimizer = optim.Adam(model.parameters(), args.lr, weight_decay=1e-5)
+    optimizer = optim.Adam(model.fine_tune_parameters(), args.lr, weight_decay=1e-5)
 
     for i in range(args.nepoch):
         totalLoss = 0.0
@@ -63,7 +63,7 @@ def main():
     parser.add_argument("--embedding_size", type=int, default=300)
     parser.add_argument("--topic_size", type=int, default=120)
     parser.add_argument("--pretrained",type = bool,default = _pretrained)
-    parser.add_argument("--lr", type=float, default=3e-4)
+    parser.add_argument("--lr", type=float, default=3e-3)
     parser.add_argument("--nepoch", type=int, default=150)
     parser.add_argument('--modelFile', default='./TMN/NTM')
     args = parser.parse_args()
@@ -72,8 +72,9 @@ def main():
     # seqs_keys = generateTrainAndTest(5)
     # seqs_keys = seqs_keys[0][0]+seqs_keys[0][1]
     seqs = getAllBows(args.pretrained)
-    
-    model = NTMModel(args)
+    pret,_ = wv.load_w2vi()
+    pret = torch.from_numpy(pret).type(torch.float).t()
+    model = NTMModel(args,pret)
     trainNTM(args, model, seqs)
 
 

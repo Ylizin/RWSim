@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+from torch.nn.parameter import Parameter
 import torch.nn.functional as F
 from torch import nn
 
@@ -26,7 +27,7 @@ class NTMModel(nn.Module):
     args.topic_size corresponds to k
     """
 
-    def __init__(self, args):
+    def __init__(self, args,pret = None):
         super().__init__()
         self.vocab_size = args.vocab_size
         self.pretrained = args.pretrained
@@ -42,7 +43,8 @@ class NTMModel(nn.Module):
 
         self.f_phi = nn.Linear(args.topic_size, args.vocab_size)
 
-    
+        if not pret is None:
+            self.word_embedding.weight=Parameter(pret)
      
 
     def reparameterize(self, mu, log_var):
@@ -73,6 +75,15 @@ class NTMModel(nn.Module):
         
         return stacked_bow
 
+    def fine_tune_parameters(self):
+        w_e_id = list(map(id,self.word_embedding.parameters()))
+        
+        all_params = self.parameters()
+        other_params = filter(lambda x: id(x) not in w_e_id, all_params)
+        w_e = self.word_embedding.parameters()
+
+        return [{'params':other_params},{'params':list(w_e),'lr':3e-4}]
+
     def forward(self, X_bow):
         X_bow = self.vectorize_bow(X_bow)
         pi = self.relu(X_bow)
@@ -102,8 +113,8 @@ class NTMModel(nn.Module):
     @staticmethod
     def loss_function(X_bow, predict_x_bow, mu, log_var):
         #X_bow & predict_x_bow is batch*vocab_size, mu and log_var is the same
-        # mse_loss = torch.sum(1-cos(X_bow,predict_x_bow))
-        mse_loss = mse(X_bow, predict_x_bow)
+        mse_loss = torch.sum(1-cos(X_bow,predict_x_bow))
+        # mse_loss = mse(X_bow, predict_x_bow)
         KLD_element = mu.pow(2).add(log_var.exp()).mul(-1).add(1).add(log_var)
         KLD = torch.sum(KLD_element).mul(-0.5)
         return mse_loss + KLD
