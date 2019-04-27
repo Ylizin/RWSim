@@ -7,7 +7,7 @@ import os
 import utils
 
 rootPath = utils.rootPath
-modelPath = rootPath + r'./pretrained_word2vec/wvmodel'
+modelPath = utils.google_pretrained_path
 corpusPath = r'./WMD/total_corpus.txt'
 FileNamePath = r'./WMD/RQFileNameIndex'
 model = None
@@ -16,7 +16,7 @@ serviceSentences = {}
 
 def loadModel():
     global model 
-    model = KeyedVectors.load(modelPath)
+    model = KeyedVectors.load_word2vec_format(path, binary=True)
 
 def getWMD(doc1,doc2):
     
