@@ -16,7 +16,7 @@ serviceSentences = {}
 
 def loadModel():
     global model 
-    model = KeyedVectors.load_word2vec_format(path, binary=True)
+    model = KeyedVectors.load_word2vec_format(modelPath, binary=True)
 
 def getWMD(doc1,doc2):
     

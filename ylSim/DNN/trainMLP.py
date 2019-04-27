@@ -121,7 +121,7 @@ def trainOneModel(
     level = args.level
     topK = 5
 
-    trainDataset = LoadData.MLPDataSet(trainSeqs,eval=False)
+    trainDataset = LoadData.MLPDataSet(trainSeqs)
     testDataset = LoadData.MLPDataSet(testSeqs)
 
     trainDataLoader = LoadData.MLPDataLoader(trainDataset)
@@ -140,7 +140,7 @@ def trainOneModel(
 
     lossFunc = customizedLoss
     optimizer = optim.Adam(model.parameters(), args.lr)
-    scheduler = StepLR(optimizer, step_size=50, gamma=0.3)
+    scheduler = StepLR(optimizer, step_size=50, gamma=1.0)
 
     bestPrecision = 0.0
     bestNDCG = 0.0
@@ -294,14 +294,14 @@ def main():
     parser.add_argument('--hiddenDim1', type=int, default=250)
     parser.add_argument('--hiddenDim2', type=int, default=200)
     parser.add_argument('--hiddenDim3', type=int, default=150)
-    parser.add_argument('--drop', type=float, default=0.5)
+    parser.add_argument('--drop', type=float, default=0.4)
 
     parser.add_argument('--numWorkers', type=int, default=0)
-    parser.add_argument('--lr', type=float, default=3e-5)
+    parser.add_argument('--lr', type=float, default=3e-4)
     parser.add_argument('--foldNum', type=int, default=5)
     parser.add_argument('--level', type=int, default=3)
 
-    parser.add_argument('--nepoch', type=int, default=300)
+    parser.add_argument('--nepoch', type=int, default=150)
     parser.add_argument('--testEvery', type=int, default=10)
     parser.add_argument('--batchSize', type=int, default=128)
     parser.add_argument('--modelFile', default='./models/dnn')
