@@ -205,7 +205,7 @@ def trainOneModel(
                 torch.save(model.state_dict(), args.modelFile + str(level) + str(index))
                 bestPrecision = precision1
                 bestNDCG = NDCG
-                if bestNDCG > 0.920:
+                if bestNDCG > 0.930:
                     break
 
     if doPrint:
@@ -272,7 +272,7 @@ def main():
     
     # parser.add_argument('--hiddenDim2', type=int, default=60)
     # parser.add_argument('--hiddenDim3', type=int, default=20)
-    parser.add_argument("--dropout", type=float, default=0.4)
+    parser.add_argument("--dropout", type=float, default=0.0)
     parser.add_argument("--bidirectional", type=bool, default=True)
     
     # parser.add_argument('--numWorkers', type=int, default=0)
