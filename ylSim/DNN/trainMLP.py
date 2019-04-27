@@ -121,7 +121,7 @@ def trainOneModel(
     level = args.level
     topK = 5
 
-    trainDataset = LoadData.MLPDataSet(trainSeqs)
+    trainDataset = LoadData.MLPDataSet(trainSeqs,eval = False)
     testDataset = LoadData.MLPDataSet(testSeqs)
 
     trainDataLoader = LoadData.MLPDataLoader(trainDataset)
@@ -139,7 +139,7 @@ def trainOneModel(
     # lossFunc = nn.MSELoss()
 
     lossFunc = customizedLoss
-    optimizer = optim.Adam(model.parameters(), args.lr)
+    optimizer = optim.Adam(model.parameters(), args.lr,weight_decay = 1e-5)
     scheduler = StepLR(optimizer, step_size=50, gamma=1.0)
 
     bestPrecision = 0.0
