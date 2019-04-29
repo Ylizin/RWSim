@@ -280,7 +280,7 @@ def main():
     parser.add_argument("--foldNum", type=int, default=5)
     parser.add_argument("--level", type=int, default=3)
 
-    parser.add_argument("--nepoch", type=int, default=300)
+    parser.add_argument("--nepoch", type=int, default=20)
     parser.add_argument("--testEvery", type=int, default=10)
     parser.add_argument("--batch_size", type=int, default=128)
     parser.add_argument("--modelFile", default="./models/LSTM")
