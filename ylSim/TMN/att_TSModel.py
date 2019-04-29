@@ -18,9 +18,10 @@ class ATTSModel(nn.Module):
         self.word_embedding = vae_model.word_embedding
         self.cosine = cos
         self.softmax = nn.Softmax(dim=1)
-        self.f_att1 = nn.Linear(args.embedding_size, args.topic_size)
-        self.f_att2 = nn.Linear(args.embedding_size, args.topic_size)
-
+        self.f_att = nn.Linear(2*args.embedding_size, 1)
+        self.embedding_size = args.embedding_size
+        # self.bzs = 128
+        self.topic_size = args.topic_size
         self.vae_loss = NTMModel.loss_function
 
     def fine_tune_parameters(self):
@@ -33,6 +34,7 @@ class ATTSModel(nn.Module):
         return [{"params": ntm_params}, {"params": vae_params, "lr": 3e-5}]
 
     def forward(self, req_b, wsdl_b):
+        self.bzs = len(req_b)
         # here we do the cosine loss for the word_embedding
         req_p_bow, req_theta, req_mu, req_var, req_embedding = self.vae(req_b)
         wsdl_p_bow, wsdl_theta, wsdl_mu, wsdl_var, wsdl_embedding = self.vae(wsdl_b)
@@ -42,16 +44,25 @@ class ATTSModel(nn.Module):
         #     wsdl_embedding = self.word_embedding(wsdl_p_bow)
         topic_embedding = self.topic_embedding
         t_topic_embedding = topic_embedding.t()
+        t_topic_embedding = t_topic_embedding.expand(self.bzs,-1,-1)
+        #region of topic-dw att
+        _req_embedding = req_embedding.expand(self.topic_size,-1,-1).permute(1,0,2) #expand do not alloc memory
+        _wsdl_embedding = wsdl_embedding.expand(self.topic_size,-1,-1).permute(1,0,2) 
+        _req_t = torch.cat([_req_embedding,t_topic_embedding],dim=-1)
+        _wsdl_t = torch.cat([_wsdl_embedding,t_topic_embedding],dim=-1)
+        _req_att = self.f_att(_req_t).squeeze() #bzs,topic_num
+        _wsdl_att = self.f_att(_wsdl_t).squeeze() #bzs,topic_num
+
 
         # #topic embedding is topic_num*Embedding_num
-        req_topic_sim = torch.matmul(req_embedding, topic_embedding)
-        wsdl_topic_sim = torch.matmul(wsdl_embedding, topic_embedding)
-        bi_weight = self.bi(req_topic_sim, wsdl_topic_sim)
+        # req_topic_sim = torch.matmul(req_embedding, topic_embedding)
+        # wsdl_topic_sim = torch.matmul(wsdl_embedding, topic_embedding)
+        # bi_weight = self.bi(req_topic_sim, wsdl_topic_sim)
         # bi_weight = self.softmax(bi_weight)
         # req_theta = req_theta * att_matrix
         # wsdl_theta = wsdl_theta * att_matrix
-        req_theta = req_theta * bi_weight
-        wsdl_theta = wsdl_theta * bi_weight
+        req_theta = req_theta * _req_att
+        wsdl_theta = wsdl_theta * _wsdl_att
         bi_dist = self.cosine(req_theta,wsdl_theta)*3
         #req_theta-wsdl_theta -> N,topic_num , bi_weight -> N,topic_size
         # bi_dist = torch.sum(torch.abs(req_theta - wsdl_theta) * bi_weight, dim=1)

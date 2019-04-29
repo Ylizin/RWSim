@@ -41,7 +41,7 @@ class NTMModel(nn.Module):
         self.f_sigma = nn.Linear(args.embedding_size, args.topic_size)
         self.f_theta = nn.Linear(args.topic_size, args.topic_size)
 
-        # self.f_phi = nn.Linear(args.topic_size, args.vocab_size)
+        self.f_phi = nn.Linear(args.topic_size, args.vocab_size)
 
         if not pret is None:
             self.word_embedding.weight=Parameter(pret)
