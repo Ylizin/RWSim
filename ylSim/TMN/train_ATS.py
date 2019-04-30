@@ -62,9 +62,9 @@ def trainATS(
             dist = model(req_b, wsdl_b)
             if _CUDA:
                 r = r.cuda()
+            
             r = r.view(-1)
             r = r.type_as(dist)
-            
             l = loss_func(dist, r)
             # l = l + loss_func(dist, r)
             totalLoss += l.item()
@@ -182,7 +182,7 @@ def main():
     parser.add_argument("--foldNum", type=int, default=5)
 
     parser.add_argument("--testEvery", type=int, default=20)
-    parser.add_argument("--nepoch", type=int, default=40)
+    parser.add_argument("--nepoch", type=int, default=50)
     parser.add_argument("--modelFile", default="./TMN/NTM_l1")
     args = parser.parse_args()
 
