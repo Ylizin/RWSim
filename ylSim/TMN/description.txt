@@ -1,0 +1,2 @@
+this part and this method called att_TSModel should be regarded as a pretrained word-vector through NTM as well as an approach that utilize the word-vector 
+to reveal the relationship between web service and user query
