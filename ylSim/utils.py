@@ -8,6 +8,8 @@ RQPath = rootPath+r'/WsdlLDA/originRequestsWords'
 RelevancePath = rootPath+r'/WsdlLDA/reqRelevance'
 registered_path = rootPath+r'/WsdlLDA/originaWSDLsWords/registered'
 
+RQ_IDX_Path = rootPath + r'/WsdlLDA/originaRQsIDXs'
+WSDL_IDX_Path = rootPath + r'/WsdlLDA/originalWSDLsIDXs'
 RQ_TF_path = rootPath + r'/WsdlLDA/originalRequestsWordsTF'
 WSDL_TF_path = rootPath + r'/WsdlLDA/originalWSDLsWordsTF'
 

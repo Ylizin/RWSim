@@ -62,4 +62,32 @@ if __name__ == '__main__':
                     word = line[1]
                     index = line[0]
                     w2i[word] = int(index)  
-    load_w2vi(w2i)  
+    _,dic = load_w2vi(w2i)  
+    wsdl_path = utils.WSDLPath
+    rq_path = utils.RQPath
+    utils.generateDirs(utils.RQ_IDX_Path)
+    utils.generateDirs(utils.WSDL_IDX_Path)
+    rq_paths = utils.iterate_path(rq_path)
+    wsdl_paths = utils.iterate_path(wsdl_path)
+    for file in rq_paths:
+        full_path = os.path.join(rq_path,file)
+        data = []
+        with open(full_path,'r') as f:
+            for line in f:
+                data = line.strip().split()
+        _out_path = os.path.join(utils.RQ_IDX_Path,file)
+        with open(_out_path,'w') as f:
+            for word in data:
+                f.write(str(dic[word])+'\t')
+                    
+    for file in wsdl_paths:
+        full_path = os.path.join(wsdl_path,file)
+        data = []
+        with open(full_path,'r') as f:
+            for line in f:
+                data = line.strip().split()
+        _out_path = os.path.join(utils.WSDL_IDX_Path,file)
+        with open(_out_path,'w') as f:
+            for word in data:
+                f.write(str(dic[word])+'\t')
+    
