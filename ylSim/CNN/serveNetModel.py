@@ -20,7 +20,7 @@ class serveNet(nn.Module):
         feature2 = self.feature_extract(inf2)
         
 
-        sum_f1 = torch.sum(feature1.squeeze(),dim=1)
-        sum_f2 = torch.sum(feature2.squeeze(),dim=1)
+        sum_f1 = torch.sum(feature1,dim=1)
+        sum_f2 = torch.sum(feature2,dim=1)
 
         return self.cos(sum_f1,sum_f2)

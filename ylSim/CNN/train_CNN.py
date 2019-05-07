@@ -84,7 +84,7 @@ def trainATS(
             model.eval()
             for key in train_keys:  # do evaluation for every key respectively
                 predicts = []
-                evalSeqs = getSeqsFromKeys(key, args.pretrained)
+                evalSeqs = getSeqsFromKeys(key,args.max_length)
                 evalDataSet = CNNDataSet(evalSeqs)
                 evalDataloader = CNNDataLoader(evalDataSet)
                 for req_F, req, wsdl_F, wsdl, rel in evalDataloader:
@@ -134,7 +134,7 @@ def trainATS(
 
     for key in test_keys:  # do evaluation for every key respectively
         predicts = []
-        evalSeqs = getSeqsFromKeys(key, args.pretrained)
+        evalSeqs = getSeqsFromKeys(key,args.max_length)
         evalDataSet = CNNDataSet(evalSeqs)
         evalDataloader = CNNDataLoader(evalDataSet)
         for req_F, wsdl_F, rel in evalDataloader:
@@ -189,7 +189,7 @@ def main():
     parser.add_argument("--foldNum", type=int, default=5)
 
     parser.add_argument("--testEvery", type=int, default=20)
-    parser.add_argument("--nepoch", type=int, default=20)
+    parser.add_argument("--nepoch", type=int, default=60)
     parser.add_argument("--modelFile", default="./CNN/cnn")
     args = parser.parse_args()
 
@@ -198,7 +198,7 @@ def main():
     # train_seqs_keys = train_seqs_keys[0][0]+train_seqs_keys[0][1]
     train_test_Seqs = generateTrainAndTest(args.foldNum)
     sn_models = [serveNet(args) for i in range(args.foldNum)]
-    set_start_method('spawn')
+    set_start_method('spawn',force=True)
 
     manager = Manager()
     p = Pool(int(os.cpu_count() / 2))

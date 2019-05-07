@@ -4,7 +4,7 @@ from torch import nn
 from torch.nn.utils.rnn import *
 
 class biLSTM(nn.Module):
-    def __init__(self):
+    def __init__(self,args):
         super().__init__()
         self.input_size = 300
         self.hidden_size = args.hidden_size

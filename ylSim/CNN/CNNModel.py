@@ -44,4 +44,4 @@ class CNNModel(nn.Module):
         if not self.pret:
             #add channel dimension 
             in_feature = in_feature.unsqueeze(1)
-            return self.convs(in_feature)
+            return self.convs(in_feature).squeeze()
