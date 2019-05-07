@@ -145,9 +145,9 @@ class CNNDataSet(Dataset):
     def __getitem__(self, index):
         #torch tensor can convert a list of numpy array into tensor
         req,wsdl,label = zip(*self.seqs[index])
-        req = torch.tensor(req[index],dtype = torch.float)
-        wsdl = torch.tensor(wsdl[index],dtype = torch.float)
-        label = torch.tensor(label[index])
+        req = torch.tensor(req,dtype = torch.float)
+        wsdl = torch.tensor(wsdl,dtype = torch.float)
+        label = torch.tensor(label)
         #we do not convert them into the tensor here
         # req = torch.from_numpy(reqF)
         # wsdl = torch.from_numpy(wsdlF)

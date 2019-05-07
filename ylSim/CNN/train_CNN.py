@@ -42,7 +42,7 @@ def trainATS(
     train_seqs = getSeqsFromKeys(train_keys,args.max_length)
     test_seqs = getSeqsFromKeys(test_keys,args.max_length)
     data_set = CNNDataSet(train_seqs)
-    data_loader = CNNDataLoader(data_set)
+    data_loader = CNNDataLoader(data_set,64)
 
     if _CUDA:
         # torch.cuda.set_device(0)
@@ -57,10 +57,12 @@ def trainATS(
         totalLoss = 0.0
         model.train()
         for req_F, wsdl_F, rel in data_loader:
-            # r = torch.tensor(rel)
-            dist = model(req_F, wsdl_F)
+            r = rel
             if _CUDA:
+                req_F = req_F.cuda()
+                wsdl_F = wsdl_F.cuda()
                 r = r.cuda()
+            dist = model(req_F, wsdl_F)
             
             r = r.view(-1)
             r = r.type_as(dist)
@@ -86,8 +88,10 @@ def trainATS(
                 evalDataSet = CNNDataSet(evalSeqs)
                 evalDataloader = CNNDataLoader(evalDataSet)
                 for req_F, req, wsdl_F, wsdl, rel in evalDataloader:
-                    # r = torch.tensor(rel)
+                    r = rel
                     if _CUDA:
+                        req_F = req_F.cuda()
+                        wsdl_F = wsdl_F.cuda()
                         r = r.cuda()
                     r = r.view(-1)
                     pred = model(req_F, wsdl_F)
@@ -134,8 +138,10 @@ def trainATS(
         evalDataSet = CNNDataSet(evalSeqs)
         evalDataloader = CNNDataLoader(evalDataSet)
         for req_F, wsdl_F, rel in evalDataloader:
-            # r = torch.tensor(rel)
+            r = rel
             if _CUDA:
+                req_F = req_F.cuda()
+                wsdl_F = wsdl_F.cuda()
                 r = r.cuda()
             r = r.view(-1)
             pred = model(req_F, wsdl_F)
@@ -176,6 +182,7 @@ def main():
     parser.add_argument("--mid_channel", type=int, default=64)
     parser.add_argument("--max_length", type=int, default=50)
     parser.add_argument("--kernel_size", type = int, default = 3)
+    parser.add_argument("--hidden_size",type = int ,default = 1024)
 
     parser.add_argument("--pret", type=bool, default=False)
     parser.add_argument("--lr", type=float, default=3e-4)
