@@ -15,12 +15,12 @@ class ATTSModel(nn.Module):
         self.bi = nn.Bilinear(
             args.topic_size, args.topic_size, args.topic_size, bias=False
         )
-        self.topic_embedding = vae_model.topic_embedding.weight
+        self.topic_embedding = vae_model.f_phi.weight
         self.word_embedding = vae_model.word_embedding
         self.cosine = cos
         self.softmax = nn.Softmax(dim=1)
         self.sig = nn.Sigmoid()
-        self.f_att = nn.Linear(2*args.embedding_size, 1)
+        self.f_att = nn.Linear(args.embedding_size+args.vocab_size, 1)
         # self.f_out = nn.Linear(2*args.topic_size,1)
         # self.we_out = nn.Linear(2*args.embedding_size,1) 
         self.embedding_size = args.embedding_size
@@ -76,6 +76,6 @@ class ATTSModel(nn.Module):
    
         #req_theta-wsdl_theta -> N,topic_num , bi_weight -> N,topic_size
         w_e_dist = (self.cosine(req_embedding, wsdl_embedding)) * 3
-        return (self.alpha*bi_dist + (1-self.alpha)*w_e_dist) 
+        return (self.alpha*bi_dist + w_e_dist) 
         # return bi_dist
 

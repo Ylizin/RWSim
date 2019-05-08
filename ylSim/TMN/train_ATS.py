@@ -81,6 +81,7 @@ def trainATS(
             precision3 = 0.0
             NDCG = 0.0
             model.eval()
+            torch.autograd.set_grad_enabled(False)
             for key in train_keys:  # do evaluation for every key respectively
                 predicts = []
                 evalSeqs = getSeqsFromKeys(key, args.pretrained)
@@ -123,6 +124,8 @@ def trainATS(
                 bestNDCG = NDCG
                 if bestNDCG > 0.920:
                     break
+            torch.autograd.set_grad_enabled(True)
+            
     p1 = 0.0
     p2 = 0.0
     p3 = 0.0
