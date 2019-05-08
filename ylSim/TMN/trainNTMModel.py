@@ -28,7 +28,7 @@ def trainNTM(args, model, seqs):
         model = model.cuda()
 
     loss_func = NTMLoss
-    optimizer = optim.Adam(model.fine_tune_parameters(), args.lr, weight_decay=1e-5)
+    optimizer = optim.Adagrad(model.parameters(), args.lr, weight_decay=1e-5)
 
     for i in range(args.nepoch):
         totalLoss = 0.0
@@ -42,7 +42,7 @@ def trainNTM(args, model, seqs):
             l = loss_func(req_b, predict_req_b, req_mu, req_sigma) + loss_func(
                 wsdl_b, predict_wsdl_b, wsdl_mu, wsdl_sigma
             )
-
+         
             totalLoss += l.item()
             optimizer.zero_grad()
             l.backward()
@@ -63,8 +63,8 @@ def main():
     parser.add_argument("--embedding_size", type=int, default=300)
     parser.add_argument("--topic_size", type=int, default=120)
     parser.add_argument("--pretrained",type = bool,default = _pretrained)
-    parser.add_argument("--lr", type=float, default=3e-3)
-    parser.add_argument("--nepoch", type=int, default=150)
+    parser.add_argument("--lr", type=float, default=3e-2)
+    parser.add_argument("--nepoch", type=int, default=550)
     parser.add_argument('--modelFile', default='./TMN/NTM')
     args = parser.parse_args()
 

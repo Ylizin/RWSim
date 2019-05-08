@@ -17,6 +17,9 @@ mse = nn.MSELoss(reduction='sum')
 # mse = my_weighted_mse
 cos = nn.CosineSimilarity()
 
+def nnl(x_bow,predict_x_bow):
+    return - torch.sum(x_bow * torch.log(predict_x_bow/(x_bow+1e-4)+1e-32))
+
 class NTMModel(nn.Module):
     """
     the NTM model
@@ -26,12 +29,12 @@ class NTMModel(nn.Module):
     
     args.topic_size corresponds to k
     """
-
+    kl_strength = torch.tensor(1.0)
     def __init__(self, args,pret = None):
         super().__init__()
         self.vocab_size = args.vocab_size
         self.pretrained = args.pretrained
-        self.relu = nn.RReLU()
+        self.relu = nn.ReLU()
         self.softmax = nn.Softmax(dim=1)
 
         self.word_embedding = nn.Linear(args.vocab_size,args.embedding_size,bias=False)
@@ -43,6 +46,8 @@ class NTMModel(nn.Module):
 
         self.f_phi = nn.Linear(args.topic_size, args.vocab_size)
 
+        if _CUDA:
+            NTMModel.kl_strength = NTMModel.kl_strength.cuda()
         if not pret is None:
             self.word_embedding.weight=Parameter(pret)
      
@@ -98,9 +103,9 @@ class NTMModel(nn.Module):
         z = self.reparameterize(mu, log_var)
         theta = self.relu(self.f_theta(z))
         theta = self.softmax(theta)
-        out_bow = None
-        out_bow = self.relu(self.topic_embedding(theta))
-        X_bow = word_embedding
+        # out_bow = None
+        out_bow = self.relu(self.f_phi(theta))
+        # X_bow = word_embedding
         # if not self.pretrained:
         #     out_bow = self.relu(self.f_phi(theta))
         # else:
@@ -114,7 +119,8 @@ class NTMModel(nn.Module):
     def loss_function(X_bow, predict_x_bow, mu, log_var):
         #X_bow & predict_x_bow is batch*vocab_size, mu and log_var is the same
         # mse_loss = torch.sum(1-cos(X_bow,predict_x_bow))
-        mse_loss = mse(X_bow, predict_x_bow)
+        mse_loss = nnl(X_bow, predict_x_bow)
         KLD_element = mu.pow(2).add(log_var.exp()).mul(-1).add(1).add(log_var)
         KLD = torch.sum(KLD_element).mul(-0.5)
-        return mse_loss + KLD
+        
+        return mse_loss + KLD * NTMModel.kl_strength
