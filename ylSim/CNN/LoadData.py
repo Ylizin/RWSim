@@ -155,7 +155,7 @@ class CNNDataSet(Dataset):
         return req,wsdl,label
 
 class CNNDataLoader(object):
-    def __init__(self, CNNDataSet,batch_size = 128):
+    def __init__(self, CNNDataSet,batch_size = 64):
         self.data = CNNDataSet
         self.len = len(CNNDataSet) 
         self.batch_size = batch_size

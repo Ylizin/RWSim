@@ -87,7 +87,7 @@ def trainATS(
                 evalSeqs = getSeqsFromKeys(key,args.max_length)
                 evalDataSet = CNNDataSet(evalSeqs)
                 evalDataloader = CNNDataLoader(evalDataSet)
-                for req_F, req, wsdl_F, wsdl, rel in evalDataloader:
+                for req_F, wsdl_F, rel in evalDataloader:
                     r = rel
                     if _CUDA:
                         req_F = req_F.cuda()
