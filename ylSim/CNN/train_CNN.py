@@ -82,6 +82,7 @@ def trainATS(
             precision3 = 0.0
             NDCG = 0.0
             model.eval()
+            torch.autograd.set_grad_enabled(False)
             for key in train_keys:  # do evaluation for every key respectively
                 predicts = []
                 evalSeqs = getSeqsFromKeys(key,args.max_length)
@@ -126,11 +127,14 @@ def trainATS(
                 bestNDCG = NDCG
                 if bestNDCG > 0.920:
                     break
+            torch.autograd.set_grad_enabled(True)
+            
     p1 = 0.0
     p2 = 0.0
     p3 = 0.0
     NDCG = 0.0
     model.eval()
+    torch.autograd.set_grad_enabled(False)
 
     for key in test_keys:  # do evaluation for every key respectively
         predicts = []
@@ -187,6 +191,7 @@ def main():
     parser.add_argument("--pret", type=bool, default=False)
     parser.add_argument("--lr", type=float, default=3e-4)
     parser.add_argument("--foldNum", type=int, default=5)
+    parser.add_argument("--with_LSTM",type = bool,default = True)
 
     parser.add_argument("--testEvery", type=int, default=20)
     parser.add_argument("--nepoch", type=int, default=60)

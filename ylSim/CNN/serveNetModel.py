@@ -11,11 +11,14 @@ class serveNet(nn.Module):
         self.CNN = CNNModel(args)
         self.LSTM = biLSTM(args)
         self.cos = nn.CosineSimilarity()
-        self.feature_extract = nn.Sequential(self.CNN,self.LSTM)
+
+        if args.with_LSTM:
+            self.feature_extract = nn.Sequential(self.CNN,self.LSTM)
+        else : 
+            self.feature_extract = self.CNN
 
     def forward(self,inf1,inf2):
 
-        
         feature1 = self.feature_extract(inf1)
         feature2 = self.feature_extract(inf2)
         

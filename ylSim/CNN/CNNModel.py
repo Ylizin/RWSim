@@ -39,8 +39,6 @@ class CNNModel(nn.Module):
         )
         
     def forward(self,in_feature):
-
-        
         if not self.pret:
             #add channel dimension 
             in_feature = in_feature.unsqueeze(1)
