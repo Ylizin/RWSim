@@ -110,6 +110,7 @@ def trainATS(
                 precision3 += p3s
                 NDCG += NDCGs
 
+            torch.autograd.set_grad_enabled(True)
             precision1 = precision1 / len(train_keys)
             precision2 = precision2 / len(train_keys)
             precision3 = precision3 / len(train_keys)
@@ -127,7 +128,6 @@ def trainATS(
                 bestNDCG = NDCG
                 if bestNDCG > 0.920:
                     break
-            torch.autograd.set_grad_enabled(True)
             
     p1 = 0.0
     p2 = 0.0
