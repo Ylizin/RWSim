@@ -27,7 +27,7 @@ class ATTSModel(nn.Module):
     
         self.topic_size = args.topic_size
         self.vae_loss = NTMModel.loss_function
-        self.alpha = Parameter(torch.tensor(0.5))
+        self.alpha = Parameter(torch.tensor(1.0))
 
     def fine_tune_parameters(self):
         vae_params_id = list(map(id, self.vae.parameters()))
@@ -71,11 +71,11 @@ class ATTSModel(nn.Module):
         # bi_dist = self.f_out(torch.cat([req_theta,wsdl_theta],dim=1)).squeeze()
         # req_topic = torch.matmul(req_theta,t_topic_embedding)
         # wsdl_topic = torch.matmul(wsdl_theta,t_topic_embedding)
-        # bi_dist = self.cosine(req_topic,wsdl_topic)*3
-        bi_dist = torch.sum(torch.abs(req_theta - wsdl_theta), dim=1)
+        bi_dist = self.cosine(req_theta,wsdl_theta)
+        # bi_dist = torch.sum(torch.abs(req_theta - wsdl_theta), dim=1)
    
         #req_theta-wsdl_theta -> N,topic_num , bi_weight -> N,topic_size
-        w_e_dist = (self.cosine(req_embedding, wsdl_embedding)) * 3
+        w_e_dist = (self.cosine(req_embedding, wsdl_embedding))
         return (self.alpha*bi_dist + w_e_dist) 
         # return bi_dist
 
