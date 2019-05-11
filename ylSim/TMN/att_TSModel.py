@@ -65,17 +65,17 @@ class ATTSModel(nn.Module):
         # bi_weight = self.softmax(bi_weight)
         # req_theta = req_theta * att_matrix
         # wsdl_theta = wsdl_theta * att_matrix
-        req_theta = req_theta * _req_att
-        wsdl_theta = wsdl_theta * _wsdl_att
+        req_theta = req_theta + _req_att
+        wsdl_theta = wsdl_theta + _wsdl_att
     
         # bi_dist = self.f_out(torch.cat([req_theta,wsdl_theta],dim=1)).squeeze()
         # req_topic = torch.matmul(req_theta,t_topic_embedding)
         # wsdl_topic = torch.matmul(wsdl_theta,t_topic_embedding)
-        bi_dist = self.cosine(req_theta,wsdl_theta)
+        bi_dist = self.cosine(req_theta,wsdl_theta)*3
         # bi_dist = torch.sum(torch.abs(req_theta - wsdl_theta), dim=1)
    
         #req_theta-wsdl_theta -> N,topic_num , bi_weight -> N,topic_size
-        w_e_dist = (self.cosine(req_embedding, wsdl_embedding))
+        w_e_dist = (self.cosine(req_embedding, wsdl_embedding))*3
         return (self.alpha*bi_dist + w_e_dist) 
         # return bi_dist
 

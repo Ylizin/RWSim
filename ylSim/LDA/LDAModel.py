@@ -51,8 +51,9 @@ if __name__ == '__main__':
     model,dic,co = __make_lda_model()
     co = co[0]
     
-    # _,vec = zip(*model[co])
-    
+    _,vec = zip(*model[co])
+    print(vec)
     print(model.get_topics().shape)
     print(model.get_term_topics(dic.token2id['car']))
+    # the whole possibility vec should be exracted in this way, but there are a lot of zero-equaled value
     print(model.get_document_topics(co,minimum_probability= 1e-6))
