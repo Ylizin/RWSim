@@ -19,6 +19,8 @@ cos = nn.CosineSimilarity()
 
 def nnl(x_bow,predict_x_bow):
     # x_bow = x_bow + 1e-1
+    #its loss is very reasonable, even it apply sfm but when making a ce like loss---truth*log(pred), its possible 
+    # to learn the distribution  
     return -(torch.sum(x_bow * torch.log(predict_x_bow+1e-32)))
 
 class NTMModel(nn.Module):
@@ -105,11 +107,14 @@ class NTMModel(nn.Module):
         z = self.reparameterize(mu, log_var)
 
         theta = z
+        theta_mu = mu
         for i,model in enumerate(self.tmp):
             if i != 3:
                 theta = self.tanh(model(theta))
+                theta_mu = self.tanh(model(theta_mu))
             else:
                 theta = model(theta)
+                theta_mu = model(theta_mu)
             
         theta = self.softmax(theta)
         # out_bow = None
@@ -121,7 +126,7 @@ class NTMModel(nn.Module):
         #     topic_embedding = self.relu(self.topic_embedding(theta))
         #     out_bow = topic_embedding
         #     X_bow = word_embedding
-        return out_bow, theta, mu, log_var, X_bow
+        return out_bow, theta_mu, mu, log_var, X_bow
         # the loss should be calculated by BCELoss and pass the X_bow as weight
 
     @staticmethod
