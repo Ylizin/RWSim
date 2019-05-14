@@ -17,12 +17,6 @@ mse = nn.MSELoss(reduction='sum')
 # mse = my_weighted_mse
 cos = nn.CosineSimilarity()
 
-def nnl(x_bow,predict_x_bow):
-    # x_bow = x_bow + 1e-1
-    #its loss is very reasonable, even it apply sfm but when making a ce like loss---truth*log(pred), its possible 
-    # to learn the distribution  
-    return -(torch.sum(x_bow * torch.log(predict_x_bow+1e-32)))
-
 class NTMModel(nn.Module):
     """
     the NTM model
@@ -42,8 +36,8 @@ class NTMModel(nn.Module):
 
         self.word_embedding = nn.Linear(args.vocab_size,args.embedding_size,bias=False)
         self.topic_embedding = nn.Linear(args.topic_size,args.embedding_size,bias=False)
-        self.e1 = nn.Linear(args.vocab_size,args.vocab_size)
-        self.encoder = nn.Sequential(self.e1,self.relu,self.word_embedding)
+        self.e1 = nn.Linear(args.embedding_size,args.embedding_size)
+        self.encoder = nn.Sequential(self.word_embedding,self.relu,self.e1)
         self.f_mu = nn.Linear(args.embedding_size, args.topic_size)
         self.f_sigma = nn.Linear(args.embedding_size, args.topic_size)
         self.f_theta = nn.Linear(args.topic_size, args.topic_size)
@@ -95,6 +89,7 @@ class NTMModel(nn.Module):
 
     def forward(self, X_bow):
         X_bow = self.vectorize_bow(X_bow)
+        X_bow = self.softmax(X_bow)
         pi = self.relu(X_bow)
         # word_embedding = torch.clone(pi)
         if not self.pretrained:
@@ -106,34 +101,24 @@ class NTMModel(nn.Module):
         log_var = self.f_sigma(pi)
         z = self.reparameterize(mu, log_var)
 
-        theta = z
-        theta_mu = mu
-        for i,model in enumerate(self.tmp):
-            if i != 3:
-                theta = self.tanh(model(theta))
-                theta_mu = self.tanh(model(theta_mu))
-            else:
-                theta = model(theta)
-                theta_mu = model(theta_mu)
+        theta = self.relu(self.f_theta(z))
             
         theta = self.softmax(theta)
-        # out_bow = None
         out_bow = self.softmax(self.f_phi(theta))
-        X_bow = word_embedding
+        # X_bow = word_embedding
         # if not self.pretrained:
         #     out_bow = self.relu(self.f_phi(theta))
         # else:
         #     topic_embedding = self.relu(self.topic_embedding(theta))
         #     out_bow = topic_embedding
         #     X_bow = word_embedding
-        return out_bow, theta_mu, mu, log_var, X_bow
+        return out_bow, theta, mu, log_var, X_bow
         # the loss should be calculated by BCELoss and pass the X_bow as weight
 
     @staticmethod
     def loss_function(X_bow, predict_x_bow, mu, log_var,kl_strength):
         #X_bow & predict_x_bow is batch*vocab_size, mu and log_var is the same
-        # mse_loss = torch.sum(1-cos(X_bow,predict_x_bow))
-        mse_loss = nnl(X_bow, predict_x_bow)
+        mse_loss = torch.sum(1-cos(X_bow,predict_x_bow))
         KLD_element = mu.pow(2).add(log_var.exp()).mul(-1).add(1).add(log_var)
         KLD = torch.sum(KLD_element).mul(-0.5)
       
