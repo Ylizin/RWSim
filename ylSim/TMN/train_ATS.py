@@ -21,6 +21,7 @@ from .TMNLoadData import (
 from .NTMModel import _CUDA, cos, mse,NTMModel
 from .trainNTMModel import load_model, _pretrained
 from .att_TSModel import ATTSModel
+from .TMN import TMN
 
 
 def trainATS(
@@ -50,7 +51,7 @@ def trainATS(
         model = model.cuda()
 
     loss_func = customizedLoss2
-    optimizer = optim.Adam(model.fine_tune_parameters(), args.lr, weight_decay=1e-5)
+    optimizer = optim.Adam(model.parameters(), args.lr, weight_decay=1e-5)
 
     bestPrecision = 0.0
     bestNDCG = 0.0
@@ -59,7 +60,7 @@ def trainATS(
         model.train()
         for req_b, req, wsdl_b, wsdl, rel in data_loader:
             r = torch.tensor(rel)
-            dist = model(req_b, wsdl_b)
+            dist = model(req_b, wsdl_b,req,wsdl)
             if _CUDA:
                 r = r.cuda()
             
@@ -92,7 +93,7 @@ def trainATS(
                     if _CUDA:
                         r = r.cuda()
                     r = r.view(-1)
-                    pred = model(req_b, wsdl_b)
+                    pred = model(req_b, wsdl_b,req,wsdl)
                     # pred = nn.functional.softmax(pred, dim=1)
                     # prob, predIndex_long = torch.max(pred, dim=1)
                     # predIndex = predIndex_long.type_as(prob)
@@ -142,7 +143,7 @@ def trainATS(
             if _CUDA:
                 r = r.cuda()
             r = r.view(-1)
-            pred = model(req_b, wsdl_b)
+            pred = model(req_b, wsdl_b,req,wsdl)
             # pred = nn.functional.softmax(pred, dim=1)
             # prob, predIndex_long = torch.max(pred, dim=1)
             # predIndex = predIndex_long.type_as(prob)
@@ -176,8 +177,13 @@ def trainATS(
 
 def main():
     parser = argparse.ArgumentParser("VAE")
+    parser.add_argument("--batch_size", type=int, default=128)
     parser.add_argument("--vocab_size", type=int, default=646)
     parser.add_argument("--embedding_size", type=int, default=300)
+    parser.add_argument("--topic_embedding_size", type=int, default=300)
+    parser.add_argument("--max_length", type=int, default=50)
+    parser.add_argument("--dropout", type=float, default=0.4)
+    
     parser.add_argument("--topic_size", type=int, default=120)
 
     parser.add_argument("--pretrained", type=bool, default=_pretrained)
@@ -194,7 +200,7 @@ def main():
     # train_seqs_keys = train_seqs_keys[0][0]+train_seqs_keys[0][1]
     train_test_Seqs = generateTrainAndTest(args.foldNum)
     vae_model = [load_model() for i in range(args.foldNum)]
-    ATS_models = [ATTSModel(args, vae_model=vae_model[i]) for i in range(args.foldNum)]
+    ATS_models = [TMN(args, vae_model=vae_model[i]) for i in range(args.foldNum)]
     set_start_method('spawn')
 
     manager = Manager()
