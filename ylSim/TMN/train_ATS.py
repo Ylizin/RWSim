@@ -51,7 +51,7 @@ def trainATS(
         model = model.cuda()
 
     loss_func = customizedLoss2
-    optimizer = optim.Adam(model.parameters(), args.lr, weight_decay=1e-5)
+    optimizer = optim.Adam(model.fine_tune_parameters(), args.lr, weight_decay=1e-5)
 
     bestPrecision = 0.0
     bestNDCG = 0.0

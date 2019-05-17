@@ -38,6 +38,14 @@ class TMNModel(nn.Module):
         #process the total result??
         self.o1 = nn.Linear(self.topic_embedding_size,self.topic_embedding_size)
 
+    def fine_tune_parameters(self):
+        vae_params_id = list(map(id, self.vae.parameters()))
+        all_params = self.parameters()
+        ntm_params = filter(lambda x: id(x) not in vae_params_id, all_params)
+        vae_params = self.vae.parameters()
+
+        return [{"params": ntm_params}, {"params": vae_params, "lr": 3e-5}]
+
 
     def __tensorize_and_pad(self,input_vectors):
         max_length = self.max_length
@@ -46,9 +54,13 @@ class TMNModel(nn.Module):
             vec = concate_narr(vec,max_length)
             paded.append(vec)
         
-        return torch.tensor(paded).to(torch.float)
+        ret = torch.tensor(paded).to(torch.float)
+        if _CUDA: 
+            ret = ret.cuda()
+        return ret
     
     def forward(self, bow_input,feature_input):
+        self.batch_size = len(bow_input)
         # the bow will be pass directly into vae
         feature_input = self.relu(self.c1(self.__tensorize_and_pad(feature_input)))
         out_bow,theta,*_ = self.vae(bow_input)
