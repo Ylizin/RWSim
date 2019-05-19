@@ -49,11 +49,11 @@ def __get_similarity(model,co1,co2):
 
 if __name__ == '__main__':
     model,dic,co = __make_lda_model()
-    co = co[1]
-    print(co)
-    idx,vec = zip(*model[co])
-    print(idx)
-    print(vec)
+    
+    for c in co:
+        idx,vec = zip(*model[c])
+        print(idx)
+        print(vec)
     print(model.get_topics().shape)
     print(model.get_term_topics(dic.token2id['car']))
     # the whole possibility vec should be exracted in this way, but there are a lot of zero-equaled value

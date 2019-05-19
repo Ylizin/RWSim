@@ -48,7 +48,7 @@ def trainNTM(args, model, seqs):
             l.backward()
             optimizer.step()
             if i % 50 == 0:
-                print(req_theta[11])
+                print(req_theta[41])
                 print(cos(req_b,predict_req_b))
         print("epoch:{},Training loss :{:.4}".format(i, totalLoss))
 
