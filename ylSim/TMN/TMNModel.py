@@ -75,7 +75,7 @@ class TMNModel(nn.Module):
         
         joint_match = self.softmax(torch.add(theta,match)).unsqueeze(1) # this will be the sum topic of theta and word in doc,(bzs,k)
 
-        print(joint_match[11])
+       
         # joint_match = torch.add(theta.expand(self.max_length,-1,-1).transpose(0,1),match)
         joint_match = self.relu(torch.bmm(joint_match,wt_embedding))# (bz,topic_embedding_size)
         _feature_strengthed = torch.add(feature_input,joint_match)
