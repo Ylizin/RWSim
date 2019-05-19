@@ -26,7 +26,7 @@ class TMNModel(nn.Module):
         self.topic_embedding = self.vae.f_phi.weight
         self.topic_embedding.requires_grad = False
 
-        self.relu = nn.ReLU()
+        self.relu = nn.RReLU()
         self.dropout = nn.Dropout(args.dropout)
 
         #convert the len*word_embeddings to len*topic_embedding_size
