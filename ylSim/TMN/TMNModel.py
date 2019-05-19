@@ -66,10 +66,24 @@ class TMNModel(nn.Module):
         out_bow,theta,*_ = self.vae(bow_input)
 
         wt_embedding = self.relu(self.t1(self.topic_embedding.t().expand(self.batch_size,-1,-1)))
+
+
         match = torch.bmm(feature_input,wt_embedding.transpose(1,2))# match will be (bz,L,K)
         joint_match = torch.add(theta.expand(self.max_length,-1,-1).transpose(0,1),match)
         joint_match = self.relu(self.f1(joint_match))# (bz,L,topic_embedding_size)
         _feature_strengthed = torch.add(feature_input,joint_match)
+        feature_input = _feature_strengthed
+        match = torch.bmm(feature_input,wt_embedding.transpose(1,2))# match will be (bz,L,K)
+        joint_match = torch.add(theta.expand(self.max_length,-1,-1).transpose(0,1),match)
+        joint_match = self.relu(self.f1(joint_match))# (bz,L,topic_embedding_size)
+        _feature_strengthed = torch.add(feature_input,joint_match)
+        feature_input = _feature_strengthed
+        match = torch.bmm(feature_input,wt_embedding.transpose(1,2))# match will be (bz,L,K)
+        joint_match = torch.add(theta.expand(self.max_length,-1,-1).transpose(0,1),match)
+        joint_match = self.relu(self.f1(joint_match))# (bz,L,topic_embedding_size)
+        _feature_strengthed = torch.add(feature_input,joint_match)
+        feature_input = _feature_strengthed
+
 
         _feature_strengthed=self.relu(self.o1(_feature_strengthed))
         return _feature_strengthed
