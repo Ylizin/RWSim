@@ -25,8 +25,8 @@ class TMNModel(nn.Module):
         #f_phi is a topic_size*vocab_size and itcorresponds to the topic-word matrix
         self.topic_embedding = self.vae.f_phi.weight
         self.topic_embedding.requires_grad = False
-
-        self.relu = nn.RReLU()
+        self.softmax = nn.Softmax(dim=1)
+        self.relu = nn.ReLU()
         self.dropout = nn.Dropout(args.dropout)
 
         #convert the len*word_embeddings to len*topic_embedding_size
@@ -71,13 +71,13 @@ class TMNModel(nn.Module):
                                                                                             
         
         match = torch.bmm(feature_input,wt_embedding.transpose(1,2))# match will be (bz,L,K), this is the interact matrix of  word-topic
-        match = torch.sum(match,dim=1) #this is the sum for every word in each doc
+        match = torch.sum(match,dim=1) #this is the sum for every word in each doc 
         
-        joint_match = torch.add(theta,match).unsqueeze(1) # this will be the sum topic of theta and word in doc,(bzs,k)
+        joint_match = self.softmax(torch.add(theta,match)).unsqueeze(1) # this will be the sum topic of theta and word in doc,(bzs,k)
 
+        print(joint_match[11])
         # joint_match = torch.add(theta.expand(self.max_length,-1,-1).transpose(0,1),match)
         joint_match = self.relu(torch.bmm(joint_match,wt_embedding))# (bz,topic_embedding_size)
-        
         _feature_strengthed = torch.add(feature_input,joint_match)
         feature_input = _feature_strengthed
         # match = torch.bmm(feature_input,wt_embedding.transpose(1,2))# match will be (bz,L,K)
