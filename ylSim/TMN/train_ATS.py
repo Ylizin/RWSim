@@ -83,7 +83,7 @@ def trainATS(
             NDCG = 0.0
             model.eval()
             torch.autograd.set_grad_enabled(False)
-            for key in train_keys:  # do evaluation for every key respectively
+            for key in test_keys:  # do evaluation for every key respectively
                 predicts = []
                 evalSeqs = getSeqsFromKeys(key, args.pretrained)
                 evalDataSet = NTMDataSet(evalSeqs)
@@ -108,10 +108,10 @@ def trainATS(
                 precision3 += p3s
                 NDCG += NDCGs
 
-            precision1 = precision1 / len(train_keys)
-            precision2 = precision2 / len(train_keys)
-            precision3 = precision3 / len(train_keys)
-            NDCG = NDCG / len(train_keys)
+            precision1 = precision1 / len(test_keys)
+            precision2 = precision2 / len(test_keys)
+            precision3 = precision3 / len(test_keys)
+            NDCG = NDCG / len(test_keys)
             NDCG = NDCG.item()
             if doPrint:
                 print(
@@ -190,8 +190,8 @@ def main():
     parser.add_argument("--lr", type=float, default=3e-4)
     parser.add_argument("--foldNum", type=int, default=5)
 
-    parser.add_argument("--testEvery", type=int, default=20)
-    parser.add_argument("--nepoch", type=int, default=20)
+    parser.add_argument("--testEvery", type=int, default=10)
+    parser.add_argument("--nepoch", type=int, default=60)
     parser.add_argument("--modelFile", default="./TMN/NTM_l1")
     args = parser.parse_args()
 
