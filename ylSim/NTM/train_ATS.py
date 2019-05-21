@@ -192,7 +192,7 @@ def main():
 
     parser.add_argument("--testEvery", type=int, default=10)
     parser.add_argument("--nepoch", type=int, default=60)
-    parser.add_argument("--modelFile", default="./TMN/NTM_l1")
+    parser.add_argument("--modelFile", default="./NTM/NTM_l1")
     args = parser.parse_args()
 
     loadFeatures()
