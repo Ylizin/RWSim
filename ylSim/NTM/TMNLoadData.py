@@ -110,16 +110,21 @@ def getSeqsFromKeys(keys,pretrained = False):
 
 
 def getAllBows(pretrained = False):
+    if not reqFeatures:
+        loadFeatures()
     if not reqBows:
         loadBow(pretrained = pretrained)
+   
     return_seqs = []
     for key in reqBows:
-        return_seqs.append(reqBows[key])
+        return_seqs.append((reqBows[key],reqFeatures[key]))
     for key in wsdlBows:
-        return_seqs.append(wsdlBows[key])
+        return_seqs.append((wsdlBows[key],wsdlFeatures[key]))
     return_tuples = []
-    for seq in return_seqs:
-        return_tuples.append((seq,)*5)
+    for seq,feature in return_seqs:
+        # return_tuples.append((seq,)*5)
+        return_tuples.append((seq, feature, seq, feature, 1))
+
    
     return return_tuples
 
