@@ -25,18 +25,15 @@ class TMNModel(nn.Module):
         #f_phi is a topic_size*vocab_size and itcorresponds to the topic-word matrix
         self.topic_embedding = self.vae.f_phi.weight
         self.topic_embedding.requires_grad = False
-        self.softmax = nn.Softmax(dim=2)
+        self.softmax = nn.Softmax(dim=1)
         self.relu = nn.ReLU()
         self.dropout = nn.Dropout(args.dropout)
 
-        #convert the len*word_embeddings to len*topic_embedding_size
-        self.c1 = nn.Linear(self.embedding_size,self.topic_embedding_size)
-        #conver topic*vocab to topic*topic_embedding_size
-        self.t1 = nn.Linear(self.vocab_size,self.embedding_size)
-        #convert the length_of_sen*topic_size to length_of_sen*topic_embedding_size
-        self.f1 = nn.Linear(self.topic_size,self.topic_embedding_size)
-        #process the total result??
-        self.o1 = nn.Linear(self.topic_embedding_size,self.topic_embedding_size)
+        self.rnn = nn.LSTM(self.embedding_size,int(self.embedding_size/2),1,bidirectional = True,batch_first=True)
+        self.w = nn.Linear(self.topic_size,self.embedding_size)
+        self.u = nn.Linear(self.embedding_size,self.embedding_size)
+        self.tanh = nn.Tanh()
+        self.v = nn.Linear(self.embedding_size,1)
 
     def fine_tune_parameters(self):
         vae_params_id = list(map(id, self.vae.parameters()))
@@ -64,32 +61,14 @@ class TMNModel(nn.Module):
         # the bow will be pass directly into vae
         feature_input = self.relu(self.__tensorize_and_pad(feature_input))
         out_bow,theta,*_ = self.vae(bow_input)
+        #theta is (bzs,k), out is (bzs,L,embedding_size)
+        out,_ = self.rnn(feature_input)
+        _w_theta = self.w(theta)
+        _u_h = self.u(out)
+        _g = self.softmax(self.v(self.tanh(_w_theta+_u_h)).squeeze()) #this would be (bzs,L,1)
 
-        # convert t-w matrix from (bzs,k,v) -> (bzs,k,e) for the 
-        # subsequent interact with  (l,e)
-        wt_embedding = self.relu(self.t1(self.topic_embedding.t().expand(self.batch_size,-1,-1)))
-                                                                                            
-        
-        # match = torch.bmm(feature_input,wt_embedding.transpose(1,2))# match will be (bz,L,K), this is the interact matrix of  word-topic
-        # match = torch.sum(match,dim=1) #this is the sum for every word in each doc 
-        
-        # joint_match = torch.add(theta,match).unsqueeze(1) # this will be the sum topic of theta and word in doc,(bzs,k)
-        # # joint_match = torch.add(theta.expand(self.max_length,-1,-1).transpose(0,1),match)
-        # joint_match = self.relu(torch.bmm(joint_match,wt_embedding))# (bz,topic_embedding_size)
-        # _feature_strengthed = torch.add(torch.sum(feature_input,dim=1).unsqueeze(1),joint_match)
-        # feature_input = _feature_strengthed
-        match = torch.bmm(feature_input,wt_embedding.transpose(1,2))# match will be (bz,L,K)
-        joint_match = torch.add(theta.expand(self.max_length,-1,-1).transpose(0,1),match)
-        joint_match = self.relu(self.f1(joint_match))# (bz,L,topic_embedding_size)
-        _feature_strengthed = torch.add(feature_input,joint_match)
-        feature_input = _feature_strengthed
-        # match = torch.bmm(feature_input,wt_embedding.transpose(1,2))# match will be (bz,L,K)
-        # joint_match = torch.add(theta.expand(self.max_length,-1,-1).transpose(0,1),match)
-        # joint_match = self.relu(self.f1(joint_match))# (bz,L,topic_embedding_size)
-        # _feature_strengthed = torch.add(feature_input,joint_match)
-        # feature_input = _feature_strengthed
-        _feature_strengthed=self.relu(self.o1(_feature_strengthed))
-        return _feature_strengthed
+        out = torch.sum(out*_g,dim=1) #(bzs,embedding_size)
+        return out
         
         
 
