@@ -43,6 +43,23 @@ class TMNModel(nn.Module):
 
         return [{"params": ntm_params}, {"params": vae_params, "lr": 3e-5}]
 
+    def vectorize_bow(self,bow):
+        len_bow = len(bow)
+        stacked_bow = []
+        if self.pretrained:
+            stacked_bow = bow
+        else:
+            for idx_freq in bow:
+                tensor_bow = torch.zeros(self.vocab_size)
+                for idx,freq in idx_freq:
+                    tensor_bow[idx] = freq
+                stacked_bow.append(tensor_bow)
+        stacked_bow = torch.stack(stacked_bow)
+        
+        if _CUDA:
+            stacked_bow = stacked_bow.cuda()
+        
+        return stacked_bow
 
     def __tensorize_and_pad(self,input_vectors):
         max_length = self.max_length
@@ -59,8 +76,10 @@ class TMNModel(nn.Module):
     def forward(self, bow_input,feature_input):
         self.batch_size = len(bow_input)
         # the bow will be pass directly into vae
-        feature_input = self.relu(self.__tensorize_and_pad(feature_input))
+        feature_input = self.__tensorize_and_pad(feature_input)
         out_bow,theta,*_ = self.vae(bow_input)
+        bow_input = self.vectorize_bow(bow_input)
+        div = torch.sum(bow_input,dim=1).unsqueeze(1).unsqueeze(1)
         #theta is (bzs,k), out is (bzs,L,embedding_size)
         out,_ = self.rnn(feature_input)
         _w_theta = self.w(theta).expand(self.max_length,-1,-1).transpose(0,1)
@@ -68,7 +87,7 @@ class TMNModel(nn.Module):
         _g = self.softmax(self.v(self.tanh(_w_theta+_u_h)).squeeze()).unsqueeze(2) #this would be (bzs,L,1)
         out = out*_g #(bzs,max_length,embedding_size) * (bzs,max,1) this do broadcast
         
-        return out
+        return self.dropout(out/div)
         
         
 
