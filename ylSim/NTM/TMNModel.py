@@ -5,6 +5,7 @@ import torch.nn.functional as F
 from torch import nn
 from .NTMModel import _CUDA, cos, NTMModel
 from CNN.LoadData import concate_narr
+from LSTM.RWLSTM import RWLSTM as lstm
 
 
 #code for TMN actually is an attention mechanism, 
@@ -28,7 +29,9 @@ class TMNModel(nn.Module):
         self.relu = nn.ReLU()
         self.dropout = nn.Dropout(args.dropout)
 
-        self.rnn = nn.LSTM(self.embedding_size,int(self.embedding_size/2),1,bidirectional = True,batch_first=True)
+        # self.rnn = nn.LSTM(self.embedding_size,int(self.embedding_size/2),1,bidirectional = True,batch_first=True)
+        self.rnn = lstm(args)
+
         self.w = nn.Linear(self.topic_size,self.embedding_size)
         self.u = nn.Linear(self.embedding_size,self.embedding_size)
         self.tanh = nn.Tanh()
@@ -66,41 +69,21 @@ class TMNModel(nn.Module):
     
     def forward(self, bow_input,feature_input):
         self.batch_size = len(bow_input)
-        _,theta = self.vae(feature_input,bow_input)
         # the bow will be pass directly into vae
-        feature_input = self.__tensorize_and_pad(feature_input)
-
-        out,_ = self.rnn(feature_input)
-        _w_theta = self.w(theta).expand(self.max_length,-1,-1).transpose(0,1)
+        # feature_input = self.__tensorize_and_pad(feature_input)
+        out_bow,theta,*_ = self.vae(bow_input)
+        *_,out = self.rnn(feature_input)
+        
+        # h0,c0 = self.__init_hidden(self.batch_size)
+        #theta is (bzs,k), out is (bzs,L,embedding_size)
+        div = torch.sum(self.vectorize_bow(bow_input),dim = 1).unsqueeze(1).unsqueeze(1)
+        # return self.dropout(out/div)
+        _w_theta = self.w(theta).expand(out.shape[1],-1,-1).transpose(0,1)
         _u_h = self.u(out)
-        _g = self.softmax(self.v(self.tanh(_w_theta+_u_h)).squeeze()).unsqueeze(2) #this would be (bzs,L,1)
-        out = out*_g #(bzs,max_length,embedding_size) * (bzs,L,1) this do broadcast
+        _g = self.tanh(self.v(self.tanh(_w_theta+_u_h)).squeeze()).unsqueeze(2) #this would be (bzs,L,1)
+        out = self.dropout(out*_g/div) #(bzs,max_length,embedding_size) * (bzs,max,1) this do broadcast
+        return out   
         
-        return out
-        # # convert t-w matrix from (bzs,k,v) -> (bzs,k,e) for the 
-        # # subsequent interact with  (l,e)
-        # wt_embedding = self.relu(self.t1(self.topic_embedding.expand(self.batch_size,-1,-1)))
-    
-        # # match = torch.bmm(feature_input,wt_embedding.transpose(1,2))# match will be (bz,L,K), this is the interact matrix of  word-topic
-        # # match = torch.sum(match,dim=1) #this is the sum for every word in each doc 
-        
-        # # joint_match = torch.add(theta,match).unsqueeze(1) # this will be the sum topic of theta and word in doc,(bzs,k)
-        # # # joint_match = torch.add(theta.expand(self.max_length,-1,-1).transpose(0,1),match)
-        # # joint_match = self.relu(torch.bmm(joint_match,wt_embedding))# (bz,topic_embedding_size)
-        # # _feature_strengthed = torch.add(torch.sum(feature_input,dim=1).unsqueeze(1),joint_match)
-        # # feature_input = _feature_strengthed
-        # match = torch.bmm(feature_input,wt_embedding.transpose(1,2))# match will be (bz,L,K)
-        # joint_match = torch.add(theta.expand(self.max_length,-1,-1).transpose(0,1),match)
-        # joint_match = self.relu(self.f1(joint_match))# (bz,L,topic_embedding_size)
-        # _feature_strengthed = torch.add(feature_input,joint_match)
-        # feature_input = _feature_strengthed
-        # # match = torch.bmm(feature_input,wt_embedding.transpose(1,2))# match will be (bz,L,K)
-        # # joint_match = torch.add(theta.expand(self.max_length,-1,-1).transpose(0,1),match)
-        # # joint_match = self.relu(self.f1(joint_match))# (bz,L,topic_embedding_size)
-        # # _feature_strengthed = torch.add(feature_input,joint_match)
-        # # feature_input = _feature_strengthed
-        # _feature_strengthed=self.relu(self.o1(_feature_strengthed))
-        # return _feature_strengthed
         
         
 
