@@ -26,6 +26,7 @@ class TMNModel(nn.Module):
         #f_phi is a topic_size*vocab_size and itcorresponds to the topic-word matrix
         self.topic_embedding = self.vae.b_t.weight
         self.softmax = nn.Softmax(dim=1)
+        self.sigmoid = nn.Sigmoid()
         self.relu = nn.ReLU()
         self.dropout = nn.Dropout(args.dropout)
 
@@ -89,19 +90,13 @@ class TMNModel(nn.Module):
         # feature_input = self.__tensorize_and_pad(feature_input)
         out_bow,theta,*_ = self.vae(feature_input,bow_input)
         *_,out = self.rnn(feature_input)
+        out = self.dropout(out)
         # h0,c0 = self.__init_hidden(self.batch_size)
         #theta is (bzs,k), out is (bzs,L,embedding_size)
         div = torch.sum(self.vectorize_bow(bow_input),dim = 1).unsqueeze(1).unsqueeze(1)
         # return self.dropout(out/div)
         _w_theta = self.w(theta).expand(out.shape[1],-1,-1).transpose(0,1)
         _u_h = self.u(out)
-        _g = self.tanh(self.v(self.tanh(_w_theta+_u_h)).squeeze()).unsqueeze(2) #this would be (bzs,L,1)
-        out = self.dropout(out*_g/div) #(bzs,max_length,embedding_size) * (bzs,max,1) this do broadcast
+        _g = self.sigmoid(self.v(self.tanh(_w_theta+_u_h)).squeeze()).unsqueeze(2) #this would be (bzs,L,1)
+        out = out*_g/div #(bzs,max_length,embedding_size) * (bzs,max,1) this do broadcast
         return out   
-        
-        
-        
-
-
-
-        
