@@ -80,7 +80,7 @@ class  RWLSTM(nn.Module):
         # hn : (num_layers * num_directions, batch, hidden_size)
         # cn : (num_layers * num_directions, batch, hidden_size)
         output = output.index_select(0,idx_unsort) #dim,index
-
+        raw_output = output
         sum_output = torch.sum(output,1)
         #here we take the output as the ave of words, lengths been viewed as 128,1 for broadcastable calculation
         lengths = lengths.type_as(sum_output)
@@ -95,4 +95,4 @@ class  RWLSTM(nn.Module):
         hn = self.dropout(hn)
         cn = self.dropout(cn)
         
-        return output,hn,cn,ave_input
+        return output,hn,cn,raw_output
