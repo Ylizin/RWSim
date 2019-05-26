@@ -184,16 +184,19 @@ def main():
     parser.add_argument("--topic_embedding_size", type=int, default=300)
     parser.add_argument("--max_length", type=int, default=50)
     parser.add_argument("--dropout", type=float, default=0.4)
-    
+    parser.add_argument("--hidden_size", type=int, default=150)
+    parser.add_argument("--input_size", type=int, default=300)
+
     parser.add_argument("--topic_size", type=int, default=120)
 
     parser.add_argument("--pretrained", type=bool, default=_pretrained)
     parser.add_argument("--lr", type=float, default=3e-4)
     parser.add_argument("--foldNum", type=int, default=5)
+    parser.add_argument("--bidirectional", type=bool, default=True)
 
     parser.add_argument("--testEvery", type=int, default=10)
     parser.add_argument("--nepoch", type=int, default=30)
-    parser.add_argument("--modelFile", default="./TMN/NTM_l1")
+    parser.add_argument("--modelFile", default="./NTM/NTM_l1")
     args = parser.parse_args()
 
     loadFeatures()
@@ -205,7 +208,9 @@ def main():
     set_start_method('spawn')
 
     manager = Manager()
+    # p = Pool(int(os.cpu_count() / 2))
     p = Pool(int(os.cpu_count() / 2))
+
     lock = manager.Lock()
     precision1 = manager.Value("d", 0.0)
     precision2 = manager.Value("d", 0.0)
