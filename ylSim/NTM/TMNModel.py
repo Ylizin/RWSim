@@ -91,6 +91,7 @@ class TMNModel(nn.Module):
         out_bow,theta,*_ = self.vae(feature_input,bow_input)
         *_,out = self.rnn(feature_input)
         out = self.dropout(out)
+
         # h0,c0 = self.__init_hidden(self.batch_size)
         #theta is (bzs,k), out is (bzs,L,embedding_size)
         div = torch.sum(self.vectorize_bow(bow_input),dim = 1).unsqueeze(1).unsqueeze(1)
@@ -100,3 +101,10 @@ class TMNModel(nn.Module):
         _g = self.sigmoid(self.v(self.tanh(_w_theta+_u_h)).squeeze()).unsqueeze(2) #this would be (bzs,L,1)
         out = out*_g/div #(bzs,max_length,embedding_size) * (bzs,max,1) this do broadcast
         return out   
+        
+        
+        
+
+
+
+        
