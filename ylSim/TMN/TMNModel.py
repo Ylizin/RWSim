@@ -25,7 +25,7 @@ class TMNModel(nn.Module):
         self.batch_size = args.batch_size
         #f_phi is a topic_size*vocab_size and itcorresponds to the topic-word matrix
         self.topic_embedding = self.vae.f_phi.weight
-        self.topic_embedding.requires_grad = False
+        # self.topic_embedding.requires_grad = False
         self.softmax = nn.Softmax(dim=1)
         self.sigmoid = nn.Sigmoid()
         self.relu = nn.ReLU()

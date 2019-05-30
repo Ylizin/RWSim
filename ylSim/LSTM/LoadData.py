@@ -88,7 +88,11 @@ def generateTrainAndTest(cvNum,use_saved_seqs = False):
     for s_k in seqs_keys:
         random.shuffle(s_k)
         total_len = len(s_k)
-        
+        if len(s_k)<cvNum:
+            for i in range(cvNum):
+                train_testLists[i][0] += s_k[:int(len(s_k)/2)]
+                train_testLists[i][1] += s_k[int(len(s_k)/2):]
+                break
         total_len = len(s_k)        
         fold_len = int(total_len/cvNum)
         for i in range(1, cvNum+1):
