@@ -25,7 +25,7 @@ class TMNModel(nn.Module):
         self.batch_size = args.batch_size
         #f_phi is a topic_size*vocab_size and itcorresponds to the topic-word matrix
         self.topic_embedding = self.vae.f_phi.weight
-        # self.topic_embedding.requires_grad = False
+        #self.topic_embedding.requires_grad = False
         self.softmax = nn.Softmax(dim=1)
         self.sigmoid = nn.Sigmoid()
         self.relu = nn.ReLU()
@@ -100,7 +100,7 @@ class TMNModel(nn.Module):
         # feature_input = self.__tensorize_and_pad(feature_input)
         out_bow,theta,*_ = self.vae(bow_input)
         *_,out = self.rnn(feature_input)
-        out = self.dropout(out)
+        
         # h0,c0 = self.__init_hidden(self.batch_size)
         #theta is (bzs,k), out is (bzs,L,embedding_size)
         div = torch.sum(self.vectorize_bow(bow_input),dim = 1).unsqueeze(1).unsqueeze(1)

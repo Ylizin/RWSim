@@ -183,7 +183,7 @@ def main():
     parser.add_argument("--embedding_size", type=int, default=300)
     parser.add_argument("--topic_embedding_size", type=int, default=300)
     parser.add_argument("--max_length", type=int, default=50)
-    parser.add_argument("--dropout", type=float, default=0.4)
+    parser.add_argument("--dropout", type=float, default=0.64)
     parser.add_argument("--hidden_size", type=int, default=150)
     parser.add_argument("--input_size", type=int, default=300)
 
@@ -209,7 +209,7 @@ def main():
 
     manager = Manager()
     # p = Pool(int(os.cpu_count() / 2))
-    p = Pool(int(os.cpu_count() / 2))
+    p = Pool(5)
 
     lock = manager.Lock()
     precision1 = manager.Value("d", 0.0)

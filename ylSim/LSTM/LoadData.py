@@ -53,20 +53,7 @@ def generateTrainAndTest(cvNum,use_saved_seqs = False):
      do cvNum fold cross validation
      return train , test seqs
     '''
-    seqs_keys=[[] for i in range(3)]
-    seqs_lens = [] # according to the image, we separate three layers, 0-25,25-45,45-
-    for rq in reqFeatures:
-        len_ = reqFeatures[rq].shape[0]
-        if len_<25:
-            seqs_keys[0].append(rq)
-        elif len_<45:
-            seqs_keys[1].append(rq)
-        else:
-            seqs_keys[2].append(rq)
-        # seqs_keys.append(rq)
-        # seqs_lens.append(len_)
-    # plt.hist(seqs_lens)
-    # plt.savefig('img.png',format='png')
+    seqs_keys = list(reqFeatures.keys())
     if use_saved_seqs:
         idx_keys = []
         with open('./models/test_seqs','r') as f:
@@ -84,22 +71,14 @@ def generateTrainAndTest(cvNum,use_saved_seqs = False):
 
 
     # random the seqs for each invoke
-    train_testLists = [[[],[]] for i in range(cvNum)]
-    for s_k in seqs_keys:
-        random.shuffle(s_k)
-        total_len = len(s_k)
-        if len(s_k)<cvNum:
-            for i in range(cvNum):
-                train_testLists[i][0] += s_k[:int(len(s_k)/2)]
-                train_testLists[i][1] += s_k[int(len(s_k)/2):]
-                break
-        total_len = len(s_k)        
-        fold_len = int(total_len/cvNum)
-        for i in range(1, cvNum+1):
-            train_keys = s_k[:(i-1)*fold_len] + s_k[i*fold_len:]
-            test_keys = s_k[(i-1)*fold_len:i*fold_len]
-            train_testLists[i-1][0]+=train_keys
-            train_testLists[i-1][1] += test_keys
+    random.shuffle(seqs_keys)
+    total_len = len(seqs_keys)
+    fold_len = int(total_len/cvNum)
+    train_testLists = []
+    for i in range(1, cvNum+1):
+        train_keys = seqs_keys[:(i-1)*fold_len] + seqs_keys[i*fold_len:]
+        test_keys = seqs_keys[(i-1)*fold_len:i*fold_len]
+        train_testLists.append((train_keys,test_keys))
     return train_testLists
 
 def getSeqsFromKeys(keys):

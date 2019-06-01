@@ -12,7 +12,7 @@ import torch
 import torch.nn.functional as F
 from torch import nn, optim
 from torch.utils.data import DataLoader
-import load_pretrained_wv.word2id as wv
+#import load_pretrained_wv.word2id as wv
 from .NTMModel import _CUDA, NTMModel, cos
 from .TMNLoadData import NTMDataLoader, NTMDataSet, getAllBows, loadFeatures
 
@@ -72,8 +72,8 @@ def main():
     # seqs_keys = generateTrainAndTest(5)
     # seqs_keys = seqs_keys[0][0]+seqs_keys[0][1]
     seqs = getAllBows(args.pretrained)
-    pret,_ = wv.load_w2vi()
-    pret = torch.from_numpy(pret).type(torch.float).t()
+#   pret,_ = wv.load_w2vi()
+#   pret = torch.from_numpy(pret).type(torch.float).t()
     model = NTMModel(args)
     trainNTM(args, model, seqs)
 
