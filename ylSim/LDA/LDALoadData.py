@@ -12,6 +12,8 @@ def load_LDA_data(reqPath = reqWordsPath,wsdlPath = wsdlWordsPath):
     '''
 
     fileWords = []
+    rq_fileNames = []
+    wsdl_fileNames = []
     for file in os.listdir(reqPath):
         full_path = os.path.join(reqPath,file)
         if not os.path.isfile(full_path):
@@ -22,6 +24,7 @@ def load_LDA_data(reqPath = reqWordsPath,wsdlPath = wsdlWordsPath):
                 line = line.strip().split()
                 file_word+= line
             fileWords.append(file_word)  
+            rq_fileNames.append(file)
 
     for file in os.listdir(wsdlPath):
         full_path = os.path.join(wsdlPath,file)
@@ -32,6 +35,7 @@ def load_LDA_data(reqPath = reqWordsPath,wsdlPath = wsdlWordsPath):
             for line in f:
                 line = line.strip().split()
                 file_word+= line
-            fileWords.append(file_word)    
+            fileWords.append(file_word) 
+            wsdl_fileNames.append(file)   
     
-    return fileWords
+    return fileWords,rq_fileNames,wsdl_fileNames

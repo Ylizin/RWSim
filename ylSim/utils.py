@@ -18,6 +18,8 @@ extract_w2v_path = r'./load_pretrained_wv/pret'
 
 bertPath = rootPath + r'/bert'
 total_corpus_path = rootPath + r'/trainDocVec/total_corpus.txt'
+rq_LDA_path = rootPath + r'/WsdlLDA/rq_LDA'
+wsdl_LDA_path = rootPath + r'/WsdlLDA/wsdl_LDA'
 dw = 300
 
 def generateDirs(dirPath):

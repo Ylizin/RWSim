@@ -1,5 +1,6 @@
 import argparse
 import os
+import datetime
 
 from multiprocessing import Manager, Pool,set_start_method
 import numpy as np
@@ -177,6 +178,7 @@ def trainATS(
 
 
 def main():
+    print(datetime.datetime.now())
     parser = argparse.ArgumentParser("VAE")
     parser.add_argument("--batch_size", type=int, default=128)
     parser.add_argument("--vocab_size", type=int, default=646)
