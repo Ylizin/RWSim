@@ -1,0 +1,287 @@
+2019-06-05 12:13:41.761376
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+epoch:0,Training loss :6.711e+03
+epoch:1,Training loss :3.16e+03
+epoch:2,Training loss :2.355e+03
+epoch:3,Training loss :2.018e+03
+epoch:4,Training loss :1.873e+03
+epoch:5,Training loss :1.756e+03
+epoch:6,Training loss :1.643e+03
+epoch:7,Training loss :1.553e+03
+epoch:8,Training loss :1.494e+03
+epoch:9,Training loss :1.391e+03
+epoch:9,Precision1:0.8064,Precision2:0.8239,Precision3:0.8315,NDCG:0.8101
+epoch:10,Training loss :1.31e+03
+epoch:11,Training loss :1.224e+03
+epoch:12,Training loss :1.148e+03
+epoch:13,Training loss :1.073e+03
+epoch:14,Training loss :1.053e+03
+epoch:15,Training loss :972.0
+epoch:16,Training loss :915.8
+epoch:17,Training loss :945.1
+epoch:18,Training loss :892.3
+epoch:19,Training loss :846.2
+epoch:19,Precision1:0.8262,Precision2:0.8359,Precision3:0.8252,NDCG:0.8138
+epoch:20,Training loss :829.2
+epoch:21,Training loss :813.8
+epoch:22,Training loss :745.8
+epoch:23,Training loss :708.9
+5foldCV precision1:0.8706423611111112
+precision2 :0.8173766261312216
+precision3 :0.7893421876326289
+NDCG : 0.7930112168162397
+2019-06-05 17:40:25.790612
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+epoch:0,Training loss :4.778e+03
+epoch:1,Training loss :2.709e+03
+epoch:2,Training loss :2.319e+03
+epoch:3,Training loss :2.145e+03
+epoch:4,Training loss :2.026e+03
+epoch:5,Training loss :1.963e+03
+epoch:6,Training loss :1.901e+03
+epoch:7,Training loss :1.879e+03
+epoch:8,Training loss :1.802e+03
+epoch:9,Training loss :1.75e+03
+epoch:9,Precision1:0.9227,Precision2:0.8518,Precision3:0.8001,NDCG:0.8614
+epoch:10,Training loss :1.687e+03
+epoch:11,Training loss :1.613e+03
+epoch:12,Training loss :1.57e+03
+epoch:13,Training loss :1.488e+03
+epoch:14,Training loss :1.45e+03
+epoch:15,Training loss :1.401e+03
+epoch:16,Training loss :1.347e+03
+epoch:17,Training loss :1.294e+03
+epoch:18,Training loss :1.242e+03
+epoch:19,Training loss :1.203e+03
+epoch:19,Precision1:0.924,Precision2:0.8498,Precision3:0.8168,NDCG:0.8644
+epoch:20,Training loss :1.145e+03
+epoch:21,Training loss :1.119e+03
+epoch:22,Training loss :1.068e+03
+epoch:23,Training loss :1.055e+03
+epoch:24,Training loss :976.5
+epoch:25,Training loss :971.7
+epoch:26,Training loss :951.0
+epoch:27,Training loss :892.5
+epoch:28,Training loss :867.6
+epoch:29,Training loss :838.8
+epoch:29,Precision1:0.9321,Precision2:0.8908,Precision3:0.8363,NDCG:0.8856
+5foldCV precision1:0.850407986111111
+precision2 :0.7803248054029304
+precision3 :0.7299264307995925
+NDCG : 0.7656234462209601
+2019-06-05 19:18:28.500130
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+epoch:0,Training loss :4.534e+03
+epoch:1,Training loss :2.593e+03
+epoch:2,Training loss :2.246e+03
+epoch:3,Training loss :2.13e+03
+epoch:4,Training loss :1.989e+03
+epoch:5,Training loss :1.888e+03
+epoch:6,Training loss :1.805e+03
+epoch:7,Training loss :1.785e+03
+epoch:8,Training loss :1.682e+03
+epoch:9,Training loss :1.678e+03
+epoch:9,Precision1:0.8736,Precision2:0.765,Precision3:0.7062,NDCG:0.7033
+epoch:10,Training loss :1.637e+03
+epoch:11,Training loss :1.576e+03
+epoch:12,Training loss :1.498e+03
+epoch:13,Training loss :1.409e+03
+epoch:14,Training loss :1.379e+03
+epoch:15,Training loss :1.257e+03
+epoch:16,Training loss :1.232e+03
+epoch:17,Training loss :1.153e+03
+epoch:18,Training loss :1.112e+03
+epoch:19,Training loss :1.088e+03
+epoch:19,Precision1:0.872,Precision2:0.8285,Precision3:0.7519,NDCG:0.8064
+epoch:20,Training loss :1.061e+03
+epoch:21,Training loss :1.017e+03
+epoch:22,Training loss :995.2
+epoch:23,Training loss :958.4
+epoch:24,Training loss :925.8
+epoch:25,Training loss :892.5
+epoch:26,Training loss :881.9
+epoch:27,Training loss :849.0
+epoch:28,Training loss :836.2
+epoch:29,Training loss :808.3
+epoch:29,Precision1:0.8519,Precision2:0.8045,Precision3:0.7708,NDCG:0.7734
+5foldCV precision1:0.857065972222222
+precision2 :0.7914497726538168
+precision3 :0.7650302393684747
+NDCG : 0.7740435197913643
+2019-06-05 21:01:38.277711
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+epoch:0,Training loss :5.14e+03
+epoch:1,Training loss :2.763e+03
+epoch:2,Training loss :2.352e+03
+epoch:3,Training loss :2.184e+03
+epoch:4,Training loss :2.05e+03
+epoch:5,Training loss :1.99e+03
+epoch:6,Training loss :1.936e+03
+epoch:7,Training loss :1.852e+03
+epoch:8,Training loss :1.845e+03
+epoch:9,Training loss :1.773e+03
+epoch:9,Precision1:0.9151,Precision2:0.8025,Precision3:0.8083,NDCG:0.7875
+epoch:10,Training loss :1.671e+03
+epoch:11,Training loss :1.618e+03
+epoch:12,Training loss :1.58e+03
+epoch:13,Training loss :1.509e+03
+epoch:14,Training loss :1.478e+03
+epoch:15,Training loss :1.405e+03
+epoch:16,Training loss :1.281e+03
+epoch:17,Training loss :1.263e+03
+epoch:18,Training loss :1.218e+03
+epoch:19,Training loss :1.148e+03
+epoch:19,Precision1:0.912,Precision2:0.7931,Precision3:0.8343,NDCG:0.8012
+epoch:20,Training loss :1.135e+03
+epoch:21,Training loss :1.102e+03
+epoch:22,Training loss :1.032e+03
+epoch:23,Training loss :1.012e+03
+epoch:24,Training loss :977.7
+epoch:25,Training loss :945.7
+epoch:26,Training loss :899.4
+epoch:27,Training loss :876.3
+epoch:28,Training loss :877.7
+epoch:29,Training loss :864.0
+epoch:29,Precision1:0.9016,Precision2:0.7999,Precision3:0.8353,NDCG:0.8303
+5foldCV precision1:0.8603298611111111
+precision2 :0.7643404772311022
+precision3 :0.734251151218063
+NDCG : 0.771580327485523
+2019-06-05 22:47:03.507580
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+epoch:0,Training loss :4.402e+03
+epoch:1,Training loss :2.546e+03
+epoch:2,Training loss :2.167e+03
+epoch:3,Training loss :2.05e+03
+epoch:4,Training loss :1.916e+03
+epoch:5,Training loss :1.859e+03
+epoch:6,Training loss :1.831e+03
+epoch:7,Training loss :1.787e+03
+epoch:8,Training loss :1.637e+03
+epoch:9,Training loss :1.576e+03
+epoch:9,Precision1:0.6257,Precision2:0.6179,Precision3:0.6693,NDCG:0.635
+epoch:10,Training loss :1.485e+03
+epoch:11,Training loss :1.443e+03
+epoch:12,Training loss :1.399e+03
+epoch:13,Training loss :1.33e+03
+epoch:14,Training loss :1.312e+03
+epoch:15,Training loss :1.265e+03
+epoch:16,Training loss :1.231e+03
+epoch:17,Training loss :1.196e+03
+epoch:18,Training loss :1.153e+03
+epoch:19,Training loss :1.111e+03
+epoch:19,Precision1:0.6576,Precision2:0.6406,Precision3:0.6562,NDCG:0.644
+epoch:20,Training loss :1.045e+03
+epoch:21,Training loss :1.028e+03
+epoch:22,Training loss :968.6
+epoch:23,Training loss :926.4
+epoch:24,Training loss :906.7
+epoch:25,Training loss :883.2
+epoch:26,Training loss :829.8
+epoch:27,Training loss :818.1
+epoch:28,Training loss :799.9
+epoch:29,Training loss :779.6
+epoch:29,Precision1:0.6823,Precision2:0.6744,Precision3:0.6645,NDCG:0.6552
+5foldCV precision1:0.8519618055555556
+precision2 :0.7709367455461205
+precision3 :0.7317513766870384
+NDCG : 0.7538574845083928
+features reading complete
+2019-06-07 11:53:57.862538
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+features reading complete
+epoch:0,Training loss :5.507e+03
+epoch:1,Training loss :2.546e+03
+epoch:2,Training loss :2.17e+03
+epoch:3,Training loss :2.004e+03
+epoch:4,Training loss :1.885e+03
+epoch:5,Training loss :1.764e+03
+epoch:6,Training loss :1.682e+03
+epoch:7,Training loss :1.625e+03
+epoch:8,Training loss :1.535e+03
+epoch:9,Training loss :1.49e+03
+epoch:9,Precision1:0.7878,Precision2:0.7245,Precision3:0.6844,NDCG:0.6316
+epoch:10,Training loss :1.403e+03
+epoch:11,Training loss :1.343e+03
+epoch:12,Training loss :1.279e+03
+epoch:13,Training loss :1.197e+03
+epoch:14,Training loss :1.123e+03
+epoch:15,Training loss :1.04e+03
+epoch:16,Training loss :995.6
+epoch:17,Training loss :928.4
+epoch:18,Training loss :858.4
+epoch:19,Training loss :827.3
+epoch:19,Precision1:0.823,Precision2:0.7833,Precision3:0.7495,NDCG:0.6819
+epoch:20,Training loss :794.4
+epoch:21,Training loss :760.8
+epoch:22,Training loss :717.4
+epoch:23,Training loss :670.0
+epoch:24,Training loss :653.9
+epoch:25,Training loss :624.3
+epoch:26,Training loss :612.6
+epoch:27,Training loss :596.5
+epoch:28,Training loss :580.0
+epoch:29,Training loss :541.2
+epoch:29,Precision1:0.8134,Precision2:0.7807,Precision3:0.7398,NDCG:0.7198
+features reading complete
+5foldCV precision1:0.8754253472222222
+precision2 :0.8178238734304912
+precision3 :0.7755453033486123
+NDCG : 0.7929082788892312

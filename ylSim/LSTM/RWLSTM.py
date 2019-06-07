@@ -67,7 +67,9 @@ class  RWLSTM(nn.Module):
         # lstm_input = PackedSequence(self.dropout(lstm_input.data),lstm_input.batch_sizes)
 
         h0,c0 = self.__init_hidden(curren_batchsize)
-        lstm_output,(hn,cn) = self.rnn(lstm_input,(h0,c0))
+        # lstm_output,(hn,cn) = self.rnn(lstm_input,(h0,c0))
+        lstm_output,(hn,cn) = self.rnn(lstm_input)
+
         lstm_output = PackedSequence(self.dropout(lstm_output.data),lstm_output.batch_sizes)# regenerate the packed sequence fron the .data
 
         #here the output is packedsequence and after padding, it's b X len X 2*hidden

@@ -23,6 +23,14 @@ reqFeaturePath = utils.RQPath+r'/raw_vec'
 wsdlFeaturePath = utils.WSDLPath+r'/raw_vec'
 reqAVEPath = utils.RQPath + r'/vec'
 wsdlAVEPath = utils.WSDLPath + r'/vec'
+rq_lda_path = utils.rq_LDA_path
+wsdl_lda_path = utils.wsdl_LDA_path
+    
+def load_lda_vec(file_name,is_rq = True):
+    prefix = rq_lda_path if is_rq else wsdl_lda_path
+    path = os.path.join(prefix,file_name+'.npy')
+    return np.load(path)
+
 
 def load_pretrained():
     global reqBows
@@ -65,7 +73,8 @@ def loadBow(rqPath=utils.RQ_TF_path, wsdlPath=utils.WSDL_TF_path, pretrained = F
                     idx = int(idx)
                     freq = int(freq)
                     bow.append((idx, freq))
-        reqBows[file] = bow
+        lda = load_lda_vec(file)
+        reqBows[file] = (bow,lda)
 
     WSDL_paths = utils.iterate_path(wsdlPath)
     for file in WSDL_paths:
@@ -78,7 +87,8 @@ def loadBow(rqPath=utils.RQ_TF_path, wsdlPath=utils.WSDL_TF_path, pretrained = F
                     idx = int(idx)
                     freq = int(freq)
                     bow.append((idx, freq))
-        wsdlBows[file] = bow
+        lda = load_lda_vec(file,False)
+        wsdlBows[file] = (bow,lda)
 
 
 def getSeqsFromKeys(keys,pretrained = False):

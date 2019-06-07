@@ -5,21 +5,21 @@ from torch import nn
 from TMN.TMNModel import TMNModel
 from TMN.NTMModel import NTMModel
 
-class TMN(nn.Module): 
-    def __init__(self,args,vae_model):
+
+class TMN(nn.Module):
+    def __init__(self, args, vae_model):
         super().__init__()
-        self.TMN = TMNModel(args,vae_model)
+        self.TMN = TMNModel(args, vae_model)
         self.cos = nn.CosineSimilarity()
-    
+
     def fine_tune_parameters(self):
         return self.TMN.fine_tune_parameters()
 
-    def forward(self, bow1,bow2,f1,f2):
-        strengthened_f1 = self.TMN(bow1,f1)
-        strengthened_f2 = self.TMN(bow2,f2)
-        r1 = torch.sum(strengthened_f1,dim=1)
-        r2 = torch.sum(strengthened_f2,dim=1)
+    def forward(self, bow1, bow2, f1, f2, lda_f1=None, lda_f2=None):
+        strengthened_f1 = self.TMN(bow1, f1, lda_f1)
+        strengthened_f2 = self.TMN(bow2, f2, lda_f2)
+        r1 = torch.sum(strengthened_f1, dim=1)
+        r2 = torch.sum(strengthened_f2, dim=1)
 
-        return self.cos(r1,r2)*3
-    
-    
+        return self.cos(r1, r2) * 3
+
