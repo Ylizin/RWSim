@@ -66,7 +66,7 @@ class NTMModel(nn.Module):
         if self.pretrained:
             stacked_bow = bow
         else:
-            for idx_freq in bow:
+            for idx_freq,_ in bow:
                 tensor_bow = torch.zeros(self.vocab_size)
                 for idx,freq in idx_freq:
                     tensor_bow[idx] = freq
