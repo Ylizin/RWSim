@@ -22,6 +22,9 @@ rq_LDA_path = rootPath + r'/WsdlLDA/rq_LDA'
 wsdl_LDA_path = rootPath + r'/WsdlLDA/wsdl_LDA'
 dw = 300
 
+OWLS_path = rootPath + r'/WsdlLDA/originaOWLSsWords'
+OWLS_query_path = rootPath + r'/WsdlLDA/originOWLSqueryWords'
+
 def generateDirs(dirPath):
     if os.path.exists(dirPath):
         return
