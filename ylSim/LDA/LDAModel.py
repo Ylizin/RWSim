@@ -7,8 +7,8 @@ import utils
 
 import LDA.LDALoadData as load_data
 
-__default_model_path = r'./LDA/LDA.model'
-__default_dict_path = r'./LDA/LDA.dict'
+__default_model_path = r'./LDA/OWLSLDA.model'
+__default_dict_path = r'./LDA/OWLSLDA.dict'
 
 def __make_lda_model(model_path = __default_model_path,dict_path = __default_dict_path):
 
@@ -53,7 +53,7 @@ if __name__ == '__main__':
     model,dic,co,rq_fileNames,wsdl_fileNames  = __make_lda_model()
     utils.generateDirs(utils.rq_LDA_path)
     utils.generateDirs(utils.wsdl_LDA_path)
-
+    print(len(dic))
     # for c in co:
     #     idx,vec = zip(*model[c])
     #     print(idx)
@@ -68,16 +68,16 @@ if __name__ == '__main__':
     #     ids,vec = zip(*vec)
     #     array = np.array(vec)
 
-    #     if i<1080: # rq
+    #     if i<42: # rq
     #         np.save(os.path.join(utils.rq_LDA_path,rq_fileNames[i]),array)
     #     else : #wsdl
-    #         i = i-1080
-    #         np.save(os.path.join(utils.wsdl_LDA_path,rq_fileNames[i]),array)
+    #         i = i-42
+    #         np.save(os.path.join(utils.wsdl_LDA_path,wsdl_fileNames[i]),array)
 
 
 
     # ids,vec = zip(*vec)
     # vec = [item[1] for item in vec]
     # array = np.array(vec)
-    array = np.load(os.path.join(utils.rq_LDA_path,rq_fileNames[0])+'.npy')
-    print(array)
+    # array = np.load(os.path.join(utils.rq_LDA_path,rq_fileNames[0])+'.npy')
+    # print(array)

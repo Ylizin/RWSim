@@ -2,7 +2,7 @@ import os
 import utils
 
 rootPath = utils.rootPath
-relevanceDir = rootPath+r"/WsdlLDA/reqRelevance"
+relevanceDir = utils.RelevancePath
 
 relevanceDict = {}
 

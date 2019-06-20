@@ -31,7 +31,8 @@ def make_bow():
                 f.write('{},{} '.format(idx,freq))
     
     wsdl_paths = utils.iterate_path(WSDLPath) 
-    for path in rq_paths:
+   
+    for path in wsdl_paths:
         bow = None
         with open(os.path.join(WSDLPath,path),'r') as f:
             line = None
@@ -43,10 +44,11 @@ def make_bow():
                 f.write('{},{} '.format(idx,freq))
 
 if __name__ == '__main__':
-    model,dic,corpus = make_LDA()
-    with open(utils.extract_w2v_path+'w2.txt','w') as f:
-        for k,v in dic.items():
-            f.write('{},{}\n'.format(k,v))
+    make_bow()
+    # model,dic,corpus = make_LDA()
+    # with open(utils.extract_w2v_path+'w2.txt','w') as f:
+    #     for k,v in dic.items():
+    #         f.write('{},{}\n'.format(k,v))
     # print(dir(dic))
     
     

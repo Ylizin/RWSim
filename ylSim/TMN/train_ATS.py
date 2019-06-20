@@ -190,7 +190,7 @@ def main():
     print(datetime.datetime.now())
     parser = argparse.ArgumentParser("VAE")
     parser.add_argument("--batch_size", type=int, default=128)
-    parser.add_argument("--vocab_size", type=int, default=646)
+    parser.add_argument("--vocab_size", type=int, default=1195)
     parser.add_argument("--embedding_size", type=int, default=300)
     parser.add_argument("--topic_embedding_size", type=int, default=300)
     parser.add_argument("--max_length", type=int, default=50)
