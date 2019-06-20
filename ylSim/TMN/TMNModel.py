@@ -111,7 +111,6 @@ class TMNModel(nn.Module):
         self.batch_size = len(bow_input)
         # the bow will be pass directly into vae
         # feature_input = self.__tensorize_and_pad(feature_input)
-        
         theta = None
         if not lda_theta:
             out_bow, theta, *_ = self.vae(bow_input)
@@ -132,5 +131,5 @@ class TMNModel(nn.Module):
         out = (
             out * _g/div
         )  # (bzs,max_length,embedding_size) * (bzs,max,1) this do broadcast
-       
+        
         return out

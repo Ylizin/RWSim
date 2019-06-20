@@ -62,13 +62,16 @@ class NTMModel(nn.Module):
 
     def vectorize_bow(self,bow):
         len_bow = len(bow)
+        
         stacked_bow = []
         if self.pretrained:
             stacked_bow = bow
         else:
             
             for idx_freq in bow:
-                if isinstance(idx_freq[1],np.ndarray):
+                if len(idx_freq)==1:
+                    pass
+                elif isinstance(idx_freq[1],np.ndarray):
                     idx_freq = idx_freq[0]
                 tensor_bow = torch.zeros(self.vocab_size)
                 for idx,freq in idx_freq:

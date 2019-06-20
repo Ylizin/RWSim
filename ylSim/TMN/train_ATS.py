@@ -63,7 +63,6 @@ def trainATS(
       
             req_b,rq_lda = zip(*req_b)
             wsdl_b,wsdl_lda = zip(*wsdl_b)
-    
             r = torch.tensor(rel)
             dist = model(req_b, wsdl_b,req,wsdl)
             if _CUDA:
@@ -220,7 +219,7 @@ def main():
 
     manager = Manager()
     # p = Pool(int(os.cpu_count() / 2))
-    p = Pool(5)
+    p = Pool(1)
 
     lock = manager.Lock()
     precision1 = manager.Value("d", 0.0)
