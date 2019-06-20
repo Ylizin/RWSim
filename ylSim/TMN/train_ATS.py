@@ -60,10 +60,10 @@ def trainATS(
         totalLoss = 0.0
         model.train()
         for req_b, req, wsdl_b, wsdl, rel in data_loader:
-            
+      
             req_b,rq_lda = zip(*req_b)
             wsdl_b,wsdl_lda = zip(*wsdl_b)
-
+    
             r = torch.tensor(rel)
             dist = model(req_b, wsdl_b,req,wsdl)
             if _CUDA:
