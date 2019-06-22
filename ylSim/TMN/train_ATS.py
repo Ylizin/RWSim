@@ -219,7 +219,7 @@ def main():
 
     manager = Manager()
     # p = Pool(int(os.cpu_count() / 2))
-    p = Pool(1)
+    p = Pool(5)
 
     lock = manager.Lock()
     precision1 = manager.Value("d", 0.0)
