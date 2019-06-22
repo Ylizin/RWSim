@@ -64,6 +64,12 @@ class TMNModel(nn.Module):
 
         return stacked_bow
 
+    def vectorize_lda(self,lda):
+        lda = torch.tensor(lda)
+        if _CUDA:
+            lda = lda.cuda()
+        return lda
+
     def __tensorize_and_pad(self, input_vectors):
         max_length = self.max_length
         paded = []
@@ -109,7 +115,8 @@ class TMNModel(nn.Module):
         if not lda_theta:
             out_bow, theta, *_ = self.vae(bow_input)
         else:
-            theta = lda_theta
+            theta = self.vectorize_lda(lda_theta)
+        
         *_, out = self.rnn(feature_input)
 
         # h0,c0 = self.__init_hidden(self.batch_size)
@@ -122,6 +129,7 @@ class TMNModel(nn.Module):
             2
         )  # this would be (bzs,L,1)
         out = (
-            out * _g / div
+            out * _g/div
         )  # (bzs,max_length,embedding_size) * (bzs,max,1) this do broadcast
+        
         return out

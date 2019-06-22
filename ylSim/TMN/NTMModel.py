@@ -62,11 +62,17 @@ class NTMModel(nn.Module):
 
     def vectorize_bow(self,bow):
         len_bow = len(bow)
+        
         stacked_bow = []
         if self.pretrained:
             stacked_bow = bow
         else:
-            for idx_freq,_ in bow:
+            
+            for idx_freq in bow:
+                if len(idx_freq)==1:
+                    pass
+                elif isinstance(idx_freq[1],np.ndarray):
+                    idx_freq = idx_freq[0]
                 tensor_bow = torch.zeros(self.vocab_size)
                 for idx,freq in idx_freq:
                     tensor_bow[idx] = freq
@@ -102,7 +108,7 @@ class NTMModel(nn.Module):
         z = self.reparameterize(mu, log_var)
 
         theta = self.relu(self.f_theta(z))
-            
+        
         theta = self.softmax(theta)
         out_bow = self.softmax(self.f_phi(theta))
         # X_bow = word_embedding
@@ -112,6 +118,7 @@ class NTMModel(nn.Module):
         #     topic_embedding = self.relu(self.topic_embedding(theta))
         #     out_bow = topic_embedding
         #     X_bow = word_embedding
+   
         return out_bow, theta, mu, log_var, X_bow
         # the loss should be calculated by BCELoss and pass the X_bow as weight
 

@@ -1,0 +1,16 @@
+lock_door.owls	3
+close_door.owls	2
+agent_movement.owls	0
+fall_down_pill.owls	0
+fill_pills.owls	0
+flip_down_slider.owls	0
+flip_slider.owls	0
+flip_up_slider.owls	0
+greenLight_to_off.owls	0
+greenLight_to_on.owls	0
+open_door.owls	0
+redLight_to_off.owls	0
+redLight_to_on.owls	0
+switch_off_messemodul.owls	0
+switch_on_messemodul.owls	0
+unlock_door.owls	0

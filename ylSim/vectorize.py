@@ -118,6 +118,6 @@ def dir2Vec(dirPath):
 
 
 if __name__ == "__main__":
-    loadWordVector("./Google.bin.gz")
-    dir2Vec("C:\\Users\\dell\\Desktop\\WsdlLDA\\originRequestsWords")
-    dir2Vec("C:\\Users\\dell\\Desktop\\WsdlLDA\\originaWSDLsWords")
+    loadWordVector("../Google.bin.gz")
+    dir2Vec("./WsdlLDA/originOWLSqueryWords")
+    dir2Vec("./WsdlLDA/originaOWLSsWords")

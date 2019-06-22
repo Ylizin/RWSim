@@ -60,10 +60,9 @@ def trainATS(
         totalLoss = 0.0
         model.train()
         for req_b, req, wsdl_b, wsdl, rel in data_loader:
-            
+      
             req_b,rq_lda = zip(*req_b)
             wsdl_b,wsdl_lda = zip(*wsdl_b)
-
             r = torch.tensor(rel)
             dist = model(req_b, wsdl_b,req,wsdl)
             if _CUDA:
@@ -190,7 +189,7 @@ def main():
     print(datetime.datetime.now())
     parser = argparse.ArgumentParser("VAE")
     parser.add_argument("--batch_size", type=int, default=128)
-    parser.add_argument("--vocab_size", type=int, default=646)
+    parser.add_argument("--vocab_size", type=int, default=1195)
     parser.add_argument("--embedding_size", type=int, default=300)
     parser.add_argument("--topic_embedding_size", type=int, default=300)
     parser.add_argument("--max_length", type=int, default=50)
@@ -220,7 +219,7 @@ def main():
 
     manager = Manager()
     # p = Pool(int(os.cpu_count() / 2))
-    p = Pool(5)
+    p = Pool(1)
 
     lock = manager.Lock()
     precision1 = manager.Value("d", 0.0)
