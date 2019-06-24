@@ -20,23 +20,69 @@ from LSTM.totalmodel import RWLSTMModel,_CUDA
 
 
 
-def calculateLevelsPN(key, sortedResult):
-    p11, ndcg1 = simplePrecisionNDCG(key, sortedResult, 5, 1, doDCG=True)
-    p12, _ = simplePrecisionNDCG(key, sortedResult, 5, 2, doDCG=True)
-    p13, _ = simplePrecisionNDCG(key, sortedResult, 5, 3, doDCG=True)
-    p21, ndcg2 = simplePrecisionNDCG(key, sortedResult, 10, 1, doDCG=True)
-    p22, _ = simplePrecisionNDCG(key, sortedResult, 10, 2, doDCG=True)
-    p23, _ = simplePrecisionNDCG(key, sortedResult, 10, 3, doDCG=True)
-    p31, ndcg3 = simplePrecisionNDCG(key, sortedResult, 15, 1, doDCG=True)
-    p32, _ = simplePrecisionNDCG(key, sortedResult, 15, 2, doDCG=True)
-    p33, _ = simplePrecisionNDCG(key, sortedResult, 15, 3, doDCG=True)
-    p41, ndcg4 = simplePrecisionNDCG(key, sortedResult, 20, 1, doDCG=True)
-    p42, _ = simplePrecisionNDCG(key, sortedResult, 20, 2, doDCG=True)
-    p43, _ = simplePrecisionNDCG(key, sortedResult, 20, 3, doDCG=True)
+def calculateLevelsPN(key, sortedResult,model_str=None):
+    '''[summary]
+    
+        p11 means top5 in level 1
+
+    '''
+    p11, ndcg1,r11 = simplePrecisionNDCG(key, sortedResult, 5, 1, doDCG=True)
+    p12, _,r12 = simplePrecisionNDCG(key, sortedResult, 5, 2, doDCG=True)
+    p13, _,r13 = simplePrecisionNDCG(key, sortedResult, 5, 3, doDCG=True)
+    p21, ndcg2,r21 = simplePrecisionNDCG(key, sortedResult, 10, 1, doDCG=True)
+    p22, _,r22 = simplePrecisionNDCG(key, sortedResult, 10, 2, doDCG=True)
+    p23, _,r23 = simplePrecisionNDCG(key, sortedResult, 10, 3, doDCG=True)
+    p31, ndcg3,r31 = simplePrecisionNDCG(key, sortedResult, 15, 1, doDCG=True)
+    p32, _,r32 = simplePrecisionNDCG(key, sortedResult, 15, 2, doDCG=True)
+    p33, _,r33 = simplePrecisionNDCG(key, sortedResult, 15, 3, doDCG=True)
+    p41, ndcg4,r41 = simplePrecisionNDCG(key, sortedResult, 20, 1, doDCG=True)
+    p42, _,r42 = simplePrecisionNDCG(key, sortedResult, 20, 2, doDCG=True)
+    p43, _,r43 = simplePrecisionNDCG(key, sortedResult, 20, 3, doDCG=True)
+    
+    out_path = utils.output_result_path
+
+    def cal_f1(p,r):
+        return 2*(p*r)/(p+r)
+    #files store topk result, with level 1-3
+    if model_str:
+        with open(os.path.join(out_path,model_str,'_top5_precision.txt')) as f:
+            f.write(p11+'\t'+p12+'\t'+p13+'\n')
+        with open(os.path.join(out_path,model_str,'_top10_precision.txt')) as f:
+            f.write(p21+'\t'+p22+'\t'+p23+'\n')
+        with open(os.path.join(out_path,model_str,'_top15_precision.txt')) as f:
+            f.write(p31+'\t'+p32+'\t'+p33+'\n')
+        with open(os.path.join(out_path,model_str,'_top20_precision.txt')) as f:
+            f.write(p41+'\t'+p42+'\t'+p43+'\n')
+            
+        with open(os.path.join(out_path,model_str,'_top5_recall.txt')) as f:
+            f.write(r11+'\t'+r12+'\t'+r13+'\n')
+        with open(os.path.join(out_path,model_str,'_top10_recall.txt')) as f:
+            f.write(r21+'\t'+r22+'\t'+r23+'\n')
+        with open(os.path.join(out_path,model_str,'_top15_recall.txt')) as f:
+            f.write(r31+'\t'+r32+'\t'+r33+'\n')
+        with open(os.path.join(out_path,model_str,'_top20_recall.txt')) as f:
+            f.write(r41+'\t'+r42+'\t'+r43+'\n')
+
+        with open(os.path.join(out_path,model_str,'_top5_f1.txt')) as f:
+            f.write(cal_f1(p11,r11)+'\t'+cal_f1(p12,r12)+'\t'+cal_f1(p13,r13)+'\n')
+        with open(os.path.join(out_path,model_str,'_top10_f1.txt')) as f:
+            f.write(cal_f1(p21,r21)+'\t'+cal_f1(p22,r22)+'\t'+cal_f1(p23,r23)+'\n')
+        with open(os.path.join(out_path,model_str,'_top15_f1.txt')) as f:
+            f.write(cal_f1(p31,r31)+'\t'+cal_f1(p32,r32)+'\t'+cal_f1(p33,r33)+'\n')
+        with open(os.path.join(out_path,model_str,'_top20_f1.txt')) as f:
+            f.write(cal_f1(p41,r41)+'\t'+cal_f1(p42,r42)+'\t'+cal_f1(p43,r43)+'\n')
+
+    # #files store topk result, with top 5-20
+    # with open(os.path.join(out_path,model_str,'_level_low.txt')) as f:
+    #     f.write(p11+'\t'+p21+'\t'+p31+'\t'+p41+'\n')
+    # with open(os.path.join(out_path,model_str,'_level_mid.txt')) as f:
+    #     f.write(p12+'\t'+p22+'\t'+p32+'\t'+p42+'\n')
+    # with open(os.path.join(out_path,model_str,'_level_high.txt')) as f:
+    #     f.write(p13+'\t'+p23+'\t'+p33+'\t'+p43+'\n')
 
     return (
         (ndcg1 + ndcg2 + ndcg3 + ndcg4) / 4,
-        (p11 + p21 + p31 + p41) / 4,
+        (p11 + p21 + p31 + p41) / 4, # this is the average of top 5-20 of level 1
         (p12 + p22 + p32 + p42) / 4,
         (p13 + p23 + p33 + p43) / 4,
     )
@@ -74,6 +120,12 @@ def simplePrecisionNDCG(reqName, pred_r, topK=5, level=3, doDCG=False):
     IDCG = 1
     len_p = getLen(reqName, level)
     precisionK = len_p if len_p < topK else topK
+    tp_fn = 0
+
+    for t in pred_r:#calculate tp+fn
+        pred, r = t
+        if r>=level:
+            tp_fn += 1
 
     for i, t in enumerate(pred_r):
         if i >= topK:
@@ -86,7 +138,7 @@ def simplePrecisionNDCG(reqName, pred_r, topK=5, level=3, doDCG=False):
             tp += 1
     if doDCG:
         IDCG = calculatePrecision.calculateIDCG(reqName, topK)
-    return tp / (precisionK), DCG / IDCG
+    return tp / (precisionK), DCG / IDCG,tp/tp_fn
 
 
 def trainOneModel(
@@ -239,7 +291,8 @@ def trainOneModel(
             # sort by pred , calculate by r
             predicts += list(zip(pred, r))  # list of (predict,r)
         sortedResult = sorted(predicts, key=lambda k: k[0], reverse=True)
-        NDCGs, p1s, p2s, p3s = calculateLevelsPN(key, sortedResult)
+        with lock:  
+            NDCGs, p1s, p2s, p3s = calculateLevelsPN(key, sortedResult,args.prog)
         NDCG += NDCGs
         p1 += p1s
         p2 += p2s
@@ -266,6 +319,7 @@ def trainOneModel(
 def main():
 
     parser = argparse.ArgumentParser("LSTM")
+    parser.add_argument("--prog", type=str, default=parser.prog)
     parser.add_argument("--outDim", type=int, default=4)
     parser.add_argument("--input_size", type=int, default=300)
     parser.add_argument("--hidden_size", type=int, default=150)
