@@ -43,7 +43,7 @@ WSDL_TF_path = OWLS_WSDL_TF_path
 rq_LDA_path = OWLS_rq_LDA_path
 wsdl_LDA_path = OWLS_wsdl_LDA_path
 
-output_result_path = rootPath+r'../results'
+output_result_path = os.path.dirname(rootPath)+r'/results'
 
 def generateDirs(dirPath):
     if os.path.exists(dirPath):

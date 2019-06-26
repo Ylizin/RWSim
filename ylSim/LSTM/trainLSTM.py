@@ -42,36 +42,47 @@ def calculateLevelsPN(key, sortedResult,model_str=None):
     out_path = utils.output_result_path
 
     def cal_f1(p,r):
-        return 2*(p*r)/(p+r)
+        if p+r == 0:
+            return str(0)
+        return str(2*(p*r)/(p+r))
     #files store topk result, with level 1-3
     if model_str:
-        with open(os.path.join(out_path,model_str,'_top5_precision.txt')) as f:
-            f.write(p11+'\t'+p12+'\t'+p13+'\n')
-        with open(os.path.join(out_path,model_str,'_top10_precision.txt')) as f:
-            f.write(p21+'\t'+p22+'\t'+p23+'\n')
-        with open(os.path.join(out_path,model_str,'_top15_precision.txt')) as f:
-            f.write(p31+'\t'+p32+'\t'+p33+'\n')
-        with open(os.path.join(out_path,model_str,'_top20_precision.txt')) as f:
-            f.write(p41+'\t'+p42+'\t'+p43+'\n')
+        with open(os.path.join(out_path,model_str+'_top5_precision.txt'),'a') as f:
+            f.write(str(p11)+'\t'+str(p12)+'\t'+str(p13)+'\n')
+        with open(os.path.join(out_path,model_str+'_top10_precision.txt'),'a') as f:
+            f.write(str(p21)+'\t'+str(p22)+'\t'+str(p23)+'\n')
+        with open(os.path.join(out_path,model_str+'_top15_precision.txt'),'a') as f:
+            f.write(str(p31)+'\t'+str(p32)+'\t'+str(p33)+'\n')
+        with open(os.path.join(out_path,model_str+'_top20_precision.txt'),'a') as f:
+            f.write(str(p41)+'\t'+str(p42)+'\t'+str(p43)+'\n')
             
-        with open(os.path.join(out_path,model_str,'_top5_recall.txt')) as f:
-            f.write(r11+'\t'+r12+'\t'+r13+'\n')
-        with open(os.path.join(out_path,model_str,'_top10_recall.txt')) as f:
-            f.write(r21+'\t'+r22+'\t'+r23+'\n')
-        with open(os.path.join(out_path,model_str,'_top15_recall.txt')) as f:
-            f.write(r31+'\t'+r32+'\t'+r33+'\n')
-        with open(os.path.join(out_path,model_str,'_top20_recall.txt')) as f:
-            f.write(r41+'\t'+r42+'\t'+r43+'\n')
+        with open(os.path.join(out_path,model_str+'_top5_recall.txt'),'a') as f:
+            f.write(str(r11)+'\t'+str(r12)+'\t'+str(r13)+'\n')
+        with open(os.path.join(out_path,model_str+'_top10_recall.txt'),'a') as f:
+            f.write(str(r21)+'\t'+str(r22)+'\t'+str(r23)+'\n')
+        with open(os.path.join(out_path,model_str+'_top15_recall.txt'),'a') as f:
+            f.write(str(r31)+'\t'+str(r32)+'\t'+str(r33)+'\n')
+        with open(os.path.join(out_path,model_str+'_top20_recall.txt'),'a') as f:
+            f.write(str(r41)+'\t'+str(r42)+'\t'+str(r43)+'\n')
 
-        with open(os.path.join(out_path,model_str,'_top5_f1.txt')) as f:
+        with open(os.path.join(out_path,model_str+'_top5_f1.txt'),'a') as f:
             f.write(cal_f1(p11,r11)+'\t'+cal_f1(p12,r12)+'\t'+cal_f1(p13,r13)+'\n')
-        with open(os.path.join(out_path,model_str,'_top10_f1.txt')) as f:
+        with open(os.path.join(out_path,model_str+'_top10_f1.txt'),'a') as f:
             f.write(cal_f1(p21,r21)+'\t'+cal_f1(p22,r22)+'\t'+cal_f1(p23,r23)+'\n')
-        with open(os.path.join(out_path,model_str,'_top15_f1.txt')) as f:
+        with open(os.path.join(out_path,model_str+'_top15_f1.txt'),'a') as f:
             f.write(cal_f1(p31,r31)+'\t'+cal_f1(p32,r32)+'\t'+cal_f1(p33,r33)+'\n')
-        with open(os.path.join(out_path,model_str,'_top20_f1.txt')) as f:
+        with open(os.path.join(out_path,model_str+'_top20_f1.txt'),'a') as f:
             f.write(cal_f1(p41,r41)+'\t'+cal_f1(p42,r42)+'\t'+cal_f1(p43,r43)+'\n')
 
+        with open(os.path.join(out_path,model_str+'_top5_ndcg.txt'),'a') as f:
+            f.write(str(ndcg1)+'\n')
+        with open(os.path.join(out_path,model_str+'_top10_ndcg.txt'),'a') as f:
+            f.write(str(ndcg2)+'\n')
+        with open(os.path.join(out_path,model_str+'_top15_ndcg.txt'),'a') as f:
+            f.write(str(ndcg3)+'\n')
+        with open(os.path.join(out_path,model_str+'_top20_ndcg.txt'),'a') as f:
+            f.write(str(ndcg4)+'\n')
+                
     # #files store topk result, with top 5-20
     # with open(os.path.join(out_path,model_str,'_level_low.txt')) as f:
     #     f.write(p11+'\t'+p21+'\t'+p31+'\t'+p41+'\n')

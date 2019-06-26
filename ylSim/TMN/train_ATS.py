@@ -161,7 +161,8 @@ def trainATS(
             r = r.type_as(pred)
             # sort by pred , calculate by r
             predicts += list(zip(pred, r))  # list of (predict,r)
-        sortedResult = sorted(predicts, key=lambda k: k[0], reverse=True)
+        with lock:  
+            NDCGs, p1s, p2s, p3s = calculateLevelsPN(key, sortedResult,args.prog)
         NDCGs, p1s, p2s, p3s = calculateLevelsPN(key, sortedResult)
         NDCG += NDCGs
         p1 += p1s
@@ -188,6 +189,7 @@ def trainATS(
 def main():
     print(datetime.datetime.now())
     parser = argparse.ArgumentParser("VAE")
+    parser.add_argument("--prog", type=str, default=parser.prog)
     parser.add_argument("--batch_size", type=int, default=128)
     parser.add_argument("--vocab_size", type=int, default=1195)
     parser.add_argument("--embedding_size", type=int, default=300)
