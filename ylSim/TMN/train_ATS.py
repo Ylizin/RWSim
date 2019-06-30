@@ -161,9 +161,9 @@ def trainATS(
             r = r.type_as(pred)
             # sort by pred , calculate by r
             predicts += list(zip(pred, r))  # list of (predict,r)
+        sortedResult = sorted(predicts, key=lambda k: k[0], reverse=True)
         with lock:  
             NDCGs, p1s, p2s, p3s = calculateLevelsPN(key, sortedResult,args.prog)
-        NDCGs, p1s, p2s, p3s = calculateLevelsPN(key, sortedResult)
         NDCG += NDCGs
         p1 += p1s
         p2 += p2s
