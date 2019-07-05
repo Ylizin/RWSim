@@ -64,7 +64,8 @@ def trainATS(
             req_b,rq_lda = zip(*req_b)
             wsdl_b,wsdl_lda = zip(*wsdl_b)
             r = torch.tensor(rel)
-            dist = model(req_b, wsdl_b,req,wsdl)
+            
+            dist = model(req_b, wsdl_b,req,wsdl,rq_lda,wsdl_lda)
             if _CUDA:
                 r = r.cuda()
             
