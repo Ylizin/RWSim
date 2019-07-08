@@ -103,6 +103,7 @@ def calHighRelevancePrecision(thisReqName, topKPredict, confusionMatrix, topK=5)
     '''
     thisHighReq = relevanceDict[thisReqName]['highRelevance']
     precisionK = topK
+    _true_label_set = set(thisHighReq)
 
     if topK > getLen(thisReqName,3):
         precisionK = getLen(thisReqName,3)
@@ -114,6 +115,9 @@ def calHighRelevancePrecision(thisReqName, topKPredict, confusionMatrix, topK=5)
         # else:
             # fp
             # confusionMatrix[1][0] += 1
+    for req in _true_label_set:
+        if req not in topKPredict:
+            confusionMatrix[0][1] += 1
     confusionMatrix[1][0] += precisionK-confusionMatrix[0][0]
     return confusionMatrix, calculateNDCG(thisReqName, topKPredict, topK)
 
@@ -122,6 +126,8 @@ def calHighAndMidPrecision(thisReqName, topKPredict, confusionMatrix, topK=5):
     thisHighReq = relevanceDict[thisReqName]['highRelevance']
     thisMidReq = relevanceDict[thisReqName]['midRelevance']
     precisionK = topK
+    _true_label_set = set(thisHighReq) | set(thisMidReq)
+
     if topK > getLen(thisReqName,2):
        precisionK = getLen(thisReqName,2)
     for predict in topKPredict:
@@ -129,6 +135,9 @@ def calHighAndMidPrecision(thisReqName, topKPredict, confusionMatrix, topK=5):
             confusionMatrix[0][0] += 1
         # else:
             # confusionMatrix[1][0] += 1
+    for req in _true_label_set:
+        if req not in topKPredict:
+            confusionMatrix[0][1] += 1
     confusionMatrix[1][0] += precisionK-confusionMatrix[0][0]
     return confusionMatrix, calculateNDCG(thisReqName, topKPredict, topK)
 
@@ -138,6 +147,7 @@ def calHighAndMidAndLowPrecision(thisReqName, topKPredict, confusionMatrix, topK
     thisMidReq = relevanceDict[thisReqName]['midRelevance']
     thisLowReq = relevanceDict[thisReqName]['lowRelevance']
     precisionK = topK
+    _true_label_set = set(thisHighReq) | set(thisMidReq) | set(thisLowReq)
 
     if topK > getLen(thisReqName,1):
        precisionK = getLen(thisReqName,1)
@@ -147,6 +157,9 @@ def calHighAndMidAndLowPrecision(thisReqName, topKPredict, confusionMatrix, topK
         # else:
         #     confusionMatrix[1][0] += 1
     #this is another calculaion strategy
+    for req in _true_label_set:
+        if req not in topKPredict:
+            confusionMatrix[0][1] += 1
     confusionMatrix[1][0] += precisionK-confusionMatrix[0][0]
 
     return confusionMatrix, calculateNDCG(thisReqName, topKPredict, topK)
