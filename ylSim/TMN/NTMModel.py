@@ -125,9 +125,9 @@ class NTMModel(nn.Module):
         mse_loss = torch.sum(1-cos(X_bow,predict_x_bow))
         KLD_element = mu.pow(2).add(log_var.exp()).mul(-1).add(1).add(log_var)
         KLD = torch.sum(KLD_element).mul(-0.5)
-        if mse_loss/KLD>1:
-            alpha = -1e-2
-        else:
-            alpha = 1
+        # if mse_loss/KLD>1:
+        #     alpha = -1e-2
+        # else:
+        #     alpha = 1
       
-        return mse_loss + KLD *alpha
+        return mse_loss + KLD 
