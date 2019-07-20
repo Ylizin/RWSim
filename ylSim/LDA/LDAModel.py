@@ -7,8 +7,8 @@ import utils
 
 import LDA.LDALoadData as load_data
 
-__default_model_path = r'./LDA/OWLSLDA.model'
-__default_dict_path = r'./LDA/OWLSLDA.dict'
+__default_model_path = r'./LDA/LDA.model'
+__default_dict_path = r'./LDA/LDA.dict'
 
 def __make_lda_model(model_path = __default_model_path,dict_path = __default_dict_path):
 
@@ -31,7 +31,7 @@ def __make_lda_model(model_path = __default_model_path,dict_path = __default_dic
 def __save_dict(dic,dict_path):
     dic.save(dict_path)
 
-def __load_dict(dict_path):
+def __load_dict(dict_path=__default_dict_path):
     dic = None
     if os.path.exists(dict_path):
         dic = gen_dict.load(dict_path,mmap='r')
@@ -60,11 +60,14 @@ if __name__ == '__main__':
     #     print(vec)
     # print(model.get_topics().shape)
     # print(model.get_term_topics(dic.token2id['car']))
+
+    
+    for i,c in enumerate(co):
     # the whole possibility vec should be exracted in this way, but there are a lot of zero-equaled value
-
-
-    # for i,c in enumerate(co):
-    #     vec = model.get_document_topics(c,minimum_probability= 0)
+        vec = model.get_document_topics(c,minimum_probability= 0)
+        _,_vec = zip(*vec)
+        vec = np.array(_vec)
+        # print(type(vec),vec.dtype)
     #     ids,vec = zip(*vec)
     #     array = np.array(vec)
 

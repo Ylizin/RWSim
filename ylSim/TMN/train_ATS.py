@@ -192,7 +192,7 @@ def main():
     parser = argparse.ArgumentParser("VAE")
     parser.add_argument("--prog", type=str, default=parser.prog)
     parser.add_argument("--batch_size", type=int, default=128)
-    parser.add_argument("--vocab_size", type=int, default=1195)
+    parser.add_argument("--vocab_size", type=int, default=646)
     parser.add_argument("--embedding_size", type=int, default=300)
     parser.add_argument("--topic_embedding_size", type=int, default=300)
     parser.add_argument("--max_length", type=int, default=50)
@@ -209,7 +209,7 @@ def main():
 
     parser.add_argument("--testEvery", type=int, default=10)
     parser.add_argument("--nepoch", type=int, default=30)
-    parser.add_argument("--modelFile", default="./NTM/NTM_l1")
+    parser.add_argument("--modelFile", default="./TMN/NTM_l1")
     args = parser.parse_args()
 
     loadFeatures()

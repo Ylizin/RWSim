@@ -61,6 +61,7 @@ class NTMModel(nn.Module):
         return eps
 
     def vectorize_bow(self,bow):
+        # bow is bzs*list_of_tfs
         len_bow = len(bow)
         
         stacked_bow = []

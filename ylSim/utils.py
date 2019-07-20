@@ -33,15 +33,15 @@ OWLS_rq_LDA_path = rootPath + r'/WsdlLDA/OWLS_query_LDA'
 OWLS_wsdl_LDA_path = rootPath + r'/WsdlLDA/OWLS_LDA'
 
 
-RQPath = OWLS_query_path
-RelevancePath = OWLS_RelevancePath
-WSDLPath = OWLS_path
-RQ_IDX_Path = OWLS_IDX_Path
-WSDL_IDX_Path = OWLS_RQ_IDX_Path
-RQ_TF_path = OWLS_RQ_TF_path
-WSDL_TF_path = OWLS_WSDL_TF_path
-rq_LDA_path = OWLS_rq_LDA_path
-wsdl_LDA_path = OWLS_wsdl_LDA_path
+# RQPath = OWLS_query_path
+# RelevancePath = OWLS_RelevancePath
+# WSDLPath = OWLS_path
+# RQ_IDX_Path = OWLS_IDX_Path
+# WSDL_IDX_Path = OWLS_RQ_IDX_Path
+# RQ_TF_path = OWLS_RQ_TF_path
+# WSDL_TF_path = OWLS_WSDL_TF_path
+# rq_LDA_path = OWLS_rq_LDA_path
+# wsdl_LDA_path = OWLS_wsdl_LDA_path
 
 output_result_path = os.path.dirname(rootPath)+r'/results'
 

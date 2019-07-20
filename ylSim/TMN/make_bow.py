@@ -1,4 +1,5 @@
 from LDA.LDAModel import __make_lda_model as make_LDA
+from LDA.LDAModel import __load_dict as load_lda_dict
 import os
 import utils
 
@@ -7,7 +8,8 @@ WSDLPath = utils.WSDLPath
 RQ_TF_path = utils.RQ_TF_path
 WSDL_TF_path = utils.WSDL_TF_path
 
-__corpus_dict = make_LDA()[1]
+__corpus_dict = load_lda_dict()
+# __corpus_dict = make_LDA()[1] # get the LDA dict
 
 def __make_list_bow(li):
     return __corpus_dict.doc2bow(li)

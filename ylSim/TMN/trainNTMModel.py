@@ -59,7 +59,7 @@ def trainNTM(args, model, seqs):
 _pretrained = False
 def main():
     parser = argparse.ArgumentParser("VAE")
-    parser.add_argument("--vocab_size", type=int, default=1195)
+    parser.add_argument("--vocab_size", type=int, default=646)
     parser.add_argument("--embedding_size", type=int, default=300)
     parser.add_argument("--topic_size", type=int, default=120)
     parser.add_argument("--pretrained",type = bool,default = _pretrained)
@@ -80,7 +80,7 @@ def main():
 
 def load_model(new_model = False):
     parser = argparse.ArgumentParser("VAE")
-    parser.add_argument("--vocab_size", type=int, default=1195)
+    parser.add_argument("--vocab_size", type=int, default=646)
     parser.add_argument("--embedding_size", type=int, default=300)
     parser.add_argument("--topic_size", type=int, default=120)
     parser.add_argument("--pretrained",type = bool,default = _pretrained)

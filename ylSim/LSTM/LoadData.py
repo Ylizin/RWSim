@@ -29,7 +29,7 @@ def loadFeatures(relevancePath= utils.RelevancePath, wsdlPath =utils.WSDLPath):
         wsdlPath {[type]} -- [description] (default: {utils.WSDLPath})
     '''
     loadRelevance.loadRelevance()
-   
+    # _len = []
     global relevanceDict
     relevanceDict.update(loadRelevance.relevanceDict)
 
@@ -46,7 +46,14 @@ def loadFeatures(relevancePath= utils.RelevancePath, wsdlPath =utils.WSDLPath):
             continue
         fullpath = os.path.join(wsdlFeaturePath, file+'.npy')
         wsdlFeatures[file] = np.load(fullpath)
+        # _len.append(wsdlFeatures[file].shape[0])
+    # print(relevancePath)
+    # plt.hist(_len,bins=20)
+    # plt.xlabel('WSDLs\' words length distribution')
+    
+    # plt.show()
     print('features reading complete')
+    
 
 def generateTrainAndTest(cvNum,use_saved_seqs = False):
     '''
