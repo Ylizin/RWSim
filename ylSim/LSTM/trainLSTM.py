@@ -26,6 +26,26 @@ def calculateLevelsPN(key, sortedResult,model_str=None):
         p11 means top5 in level 1
 
     '''
+    def cal_f1(p,r):
+        if p+r == 0:
+            return str(0)
+        return str(2*(p*r)/(p+r))
+
+    out_path = utils.output_result_path
+    tops = range(5,55,5)
+    for top in tops:
+        p1,ndcg,r1 = simplePrecisionNDCG(key, sortedResult, top, 1, doDCG=True)
+        p2,_,r2 = simplePrecisionNDCG(key, sortedResult, top, 2, doDCG=True)
+        p3,_,r3 = simplePrecisionNDCG(key, sortedResult, top, 3, doDCG=True)
+        with open(os.path.join(out_path,model_str+'_top{}_precision.txt'.format(top)),'a') as f:
+            f.write(key+'\t'+str(p1)+'\t'+str(p2)+'\t'+str(p3)+'\n')
+        with open(os.path.join(out_path,model_str+'_top{}_recall.txt'.format(top)),'a') as f:
+            f.write(key+'\t'+str(r1)+'\t'+str(r2)+'\t'+str(r3)+'\n')
+        with open(os.path.join(out_path,model_str+'_top{}_f1.txt'.format(top)),'a') as f:
+            f.write(key+'\t'+cal_f1(p1,r1)+'\t'+cal_f1(p2,r2)+'\t'+cal_f1(p3,r3)+'\n')
+        with open(os.path.join(out_path,model_str+'_top{}_ndcg.txt'.format(top)),'a') as f:
+            f.write(key+'\t'+str(ndcg)+'\n')
+
     p11, ndcg1,r11 = simplePrecisionNDCG(key, sortedResult, 5, 1, doDCG=True)
     p12, _,r12 = simplePrecisionNDCG(key, sortedResult, 5, 2, doDCG=True)
     p13, _,r13 = simplePrecisionNDCG(key, sortedResult, 5, 3, doDCG=True)
@@ -35,53 +55,49 @@ def calculateLevelsPN(key, sortedResult,model_str=None):
     p31, ndcg3,r31 = simplePrecisionNDCG(key, sortedResult, 15, 1, doDCG=True)
     p32, _,r32 = simplePrecisionNDCG(key, sortedResult, 15, 2, doDCG=True)
     p33, _,r33 = simplePrecisionNDCG(key, sortedResult, 15, 3, doDCG=True)
-    p41, ndcg4,r41 = simplePrecisionNDCG(key, sortedResult, 20, 1, doDCG=True)
+    p41, ndcg4,r41 = simplePrecisionNDCG(key, sortedResult, 20, 1, doDCG=True)   
     p42, _,r42 = simplePrecisionNDCG(key, sortedResult, 20, 2, doDCG=True)
     p43, _,r43 = simplePrecisionNDCG(key, sortedResult, 20, 3, doDCG=True)
     
-    out_path = utils.output_result_path
 
-    def cal_f1(p,r):
-        if p+r == 0:
-            return str(0)
-        return str(2*(p*r)/(p+r))
+
+    # if model_str:
     #files store topk result, with level 1-3
-    if model_str:
-        with open(os.path.join(out_path,model_str+'_top5_precision.txt'),'a') as f:
-            f.write(key+':'+str(p11)+'\t'+str(p12)+'\t'+str(p13)+'\n')
-        with open(os.path.join(out_path,model_str+'_top10_precision.txt'),'a') as f:
-            f.write(key+':'+str(p21)+'\t'+str(p22)+'\t'+str(p23)+'\n')
-        with open(os.path.join(out_path,model_str+'_top15_precision.txt'),'a') as f:
-            f.write(key+':'+str(p31)+'\t'+str(p32)+'\t'+str(p33)+'\n')
-        with open(os.path.join(out_path,model_str+'_top20_precision.txt'),'a') as f:
-            f.write(key+':'+str(p41)+'\t'+str(p42)+'\t'+str(p43)+'\n')
+        # with open(os.path.join(out_path,model_str+'_top5_precision.txt'),'a') as f:
+        #     f.write(key+':'+str(p11)+'\t'+str(p12)+'\t'+str(p13)+'\n')
+        # with open(os.path.join(out_path,model_str+'_top10_precision.txt'),'a') as f:
+        #     f.write(key+':'+str(p21)+'\t'+str(p22)+'\t'+str(p23)+'\n')
+        # with open(os.path.join(out_path,model_str+'_top15_precision.txt'),'a') as f:
+        #     f.write(key+':'+str(p31)+'\t'+str(p32)+'\t'+str(p33)+'\n')
+        # with open(os.path.join(out_path,model_str+'_top20_precision.txt'),'a') as f:
+        #     f.write(key+':'+str(p41)+'\t'+str(p42)+'\t'+str(p43)+'\n')
             
-        with open(os.path.join(out_path,model_str+'_top5_recall.txt'),'a') as f:
-            f.write(key+':'+str(r11)+'\t'+str(r12)+'\t'+str(r13)+'\n')
-        with open(os.path.join(out_path,model_str+'_top10_recall.txt'),'a') as f:
-            f.write(key+':'+str(r21)+'\t'+str(r22)+'\t'+str(r23)+'\n')
-        with open(os.path.join(out_path,model_str+'_top15_recall.txt'),'a') as f:
-            f.write(key+':'+str(r31)+'\t'+str(r32)+'\t'+str(r33)+'\n')
-        with open(os.path.join(out_path,model_str+'_top20_recall.txt'),'a') as f:
-            f.write(key+':'+str(r41)+'\t'+str(r42)+'\t'+str(r43)+'\n')
+        # with open(os.path.join(out_path,model_str+'_top5_recall.txt'),'a') as f:
+        #     f.write(key+':'+str(r11)+'\t'+str(r12)+'\t'+str(r13)+'\n')
+        # with open(os.path.join(out_path,model_str+'_top10_recall.txt'),'a') as f:
+        #     f.write(key+':'+str(r21)+'\t'+str(r22)+'\t'+str(r23)+'\n')
+        # with open(os.path.join(out_path,model_str+'_top15_recall.txt'),'a') as f:
+        #     f.write(key+':'+str(r31)+'\t'+str(r32)+'\t'+str(r33)+'\n')
+        # with open(os.path.join(out_path,model_str+'_top20_recall.txt'),'a') as f:
+        #     f.write(key+':'+str(r41)+'\t'+str(r42)+'\t'+str(r43)+'\n')
 
-        with open(os.path.join(out_path,model_str+'_top5_f1.txt'),'a') as f:
-            f.write(key+':'+cal_f1(p11,r11)+'\t'+cal_f1(p12,r12)+'\t'+cal_f1(p13,r13)+'\n')
-        with open(os.path.join(out_path,model_str+'_top10_f1.txt'),'a') as f:
-            f.write(key+':'+cal_f1(p21,r21)+'\t'+cal_f1(p22,r22)+'\t'+cal_f1(p23,r23)+'\n')
-        with open(os.path.join(out_path,model_str+'_top15_f1.txt'),'a') as f:
-            f.write(key+':'+cal_f1(p31,r31)+'\t'+cal_f1(p32,r32)+'\t'+cal_f1(p33,r33)+'\n')
-        with open(os.path.join(out_path,model_str+'_top20_f1.txt'),'a') as f:
-            f.write(key+':'+cal_f1(p41,r41)+'\t'+cal_f1(p42,r42)+'\t'+cal_f1(p43,r43)+'\n')
+        # with open(os.path.join(out_path,model_str+'_top5_f1.txt'),'a') as f:
+        #     f.write(key+':'+cal_f1(p11,r11)+'\t'+cal_f1(p12,r12)+'\t'+cal_f1(p13,r13)+'\n')
+        # with open(os.path.join(out_path,model_str+'_top10_f1.txt'),'a') as f:
+        #     f.write(key+':'+cal_f1(p21,r21)+'\t'+cal_f1(p22,r22)+'\t'+cal_f1(p23,r23)+'\n')
+        # with open(os.path.join(out_path,model_str+'_top15_f1.txt'),'a') as f:
+        #     f.write(key+':'+cal_f1(p31,r31)+'\t'+cal_f1(p32,r32)+'\t'+cal_f1(p33,r33)+'\n')
+        # with open(os.path.join(out_path,model_str+'_top20_f1.txt'),'a') as f:
+        #     f.write(key+':'+cal_f1(p41,r41)+'\t'+cal_f1(p42,r42)+'\t'+cal_f1(p43,r43)+'\n')
 
-        with open(os.path.join(out_path,model_str+'_top5_ndcg.txt'),'a') as f:
-            f.write(key+':'+str(ndcg1)+'\n')
-        with open(os.path.join(out_path,model_str+'_top10_ndcg.txt'),'a') as f:
-            f.write(key+':'+str(ndcg2)+'\n')
-        with open(os.path.join(out_path,model_str+'_top15_ndcg.txt'),'a') as f:
-            f.write(key+':'+str(ndcg3)+'\n')
-        with open(os.path.join(out_path,model_str+'_top20_ndcg.txt'),'a') as f:
-            f.write(key+':'+str(ndcg4)+'\n')
+        # with open(os.path.join(out_path,model_str+'_top5_ndcg.txt'),'a') as f:
+        #     f.write(key+':'+str(ndcg1)+'\n')
+        # with open(os.path.join(out_path,model_str+'_top10_ndcg.txt'),'a') as f:
+        #     f.write(key+':'+str(ndcg2)+'\n')
+        # with open(os.path.join(out_path,model_str+'_top15_ndcg.txt'),'a') as f:
+        #     f.write(key+':'+str(ndcg3)+'\n')
+        # with open(os.path.join(out_path,model_str+'_top20_ndcg.txt'),'a') as f:
+        #     f.write(key+':'+str(ndcg4)+'\n')
                 
     # #files store topk result, with top 5-20
     # with open(os.path.join(out_path,model_str,'_level_low.txt')) as f:
@@ -133,7 +149,7 @@ def simplePrecisionNDCG(reqName, pred_r, topK=5, level=3, doDCG=False):
     precisionK = len_p if len_p < topK else topK
     tp_fn = 0
 
-    for t in pred_r:#calculate tp+fn
+    for t in pred_r:#calculate tp+fn，->all true labels 
         pred, r = t
         if r>=level:
             tp_fn += 1

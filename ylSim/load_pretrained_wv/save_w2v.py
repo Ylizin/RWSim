@@ -38,7 +38,6 @@ def save_w2v_w2i(word_dict,pret_path = utils.google_pretrained_path,save_path = 
         save_path {[type]} -- [description] (default: {utils.extract_w2v_path})
     '''
 
-    global __saved_path
     model = load_w2v(pret_path)
     vec_list = []
     for word in word_dict:

@@ -108,8 +108,8 @@ class NTMModel(nn.Module):
         log_var = self.f_sigma(pi)
         z = self.reparameterize(mu, log_var)
 
+        # when inferencing, use mu, when trainning use z
         theta = self.relu(self.f_theta(z))
-        
         theta = self.softmax(theta)
         out_bow = self.softmax(self.f_phi(theta))
         # X_bow = word_embedding

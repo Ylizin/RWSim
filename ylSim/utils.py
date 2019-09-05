@@ -13,7 +13,7 @@ WSDL_IDX_Path = rootPath + r'/WsdlLDA/originalWSDLsIDXs'
 RQ_TF_path = rootPath + r'/WsdlLDA/originalRequestsWordsTF'
 WSDL_TF_path = rootPath + r'/WsdlLDA/originalWSDLsWordsTF'
 
-google_pretrained_path = r''
+google_pretrained_path = r'./Google.bin.gz'
 extract_w2v_path = r'./load_pretrained_wv/pret'
 
 bertPath = rootPath + r'/bert'
